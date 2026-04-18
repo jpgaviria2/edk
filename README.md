@@ -61,7 +61,7 @@ Each module in the EDK includes:
 
 | Activity | Concept | Summary |
 |-----------|----------|---------|
-| **Block 1** | History of Money | Includes a mobile-first static mini app MVP at `BLOCK 1 - THE HISTORY OF MONEY/mini-app/index.html` for barter, commodity money, inflation, recap, Bitcoin bridge, and replay. |
+| **Block 1** | History of Money | Includes the static mini app at the repo root / GitHub Pages entrypoint, backed by `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`, with solo mode plus presenter / conference mode for barter, commodity money, inflation, recap, Bitcoin bridge, voting scaffold, and replay. |
 | **Block 2** | TITLE | description |
 | **Block 3** | TITLE | description |
 | **Block 4** | TITLE | description |
@@ -86,6 +86,12 @@ The **Learning Bitcoin EDK** is based on these key principles:
 
 1. **Choose an activity**  
    Each activity focuses on a foundational concept of Bitcoin (trade, scarcity, value, etc.)
+
+### Launching the History of Money mini app
+
+- Open the repository root on GitHub Pages and it now launches directly into the **History of Money** mini app.
+- The app source lives in `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`.
+- The root `index.html` is a lightweight redirect so the GitHub Pages root cleanly opens the experience.
 
 2. **Gather materials**  
    You’ll find PDFs and editable files in each activity folder. Each activity requires certain physical materials.

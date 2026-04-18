@@ -1,35 +1,44 @@
-# History of Money Mini App MVP
+# History of Money Mini App
 
-Lean mobile-first mini app for the EDK `Block 1` lesson.
+A polished static mini app for the EDK `Block 1` lesson.
 
-## What it includes
+## What it now includes
 
-- Intro screen
-- Round 1: barter
-- Round 2: commodity money
-- Round 3: inflation
-- Money properties recap
-- Short Bitcoin bridge
-- Replay support
+- Cleaner landing page with clear entry points for:
+  - **Solo mode**
+  - **Presenter / conference mode**
+- Three polished rounds:
+  - barter
+  - commodity money
+  - inflation
+- Stronger feedback states for correct and incorrect answers
+- Improved recap readability with round history and selected money traits
+- Bitcoin bridge and clearer replay options
+- Presenter foundations:
+  - projector-friendly layout
+  - reveal / hide lesson controls
+  - next / restart / reset round / skip round controls
+  - lightweight facilitator prompts in the UI
+  - simple audience vote board scaffold with per-round reset
 
-## Why this location
+## GitHub Pages / root launch
 
-This repo currently appears to be content-first and does not yet contain a dedicated Fedi or web app package scaffold. To keep the MVP directly usable in JP's fork without inventing a larger app architecture, this mini app lives beside the relevant lesson content in:
+This repo now launches the History of Money experience from the **repository root** via `index.html`.
 
-- `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`
+Implementation detail:
+- root `index.html` redirects to `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`
+- app source remains inside the lesson folder so the experience stays close to its educational content
 
-That makes it easy to:
+## Why this approach
 
-- open directly as a static web experience
-- wrap or port into a future Fedi mini app container
-- evolve the content next to the underlying lesson materials
+It keeps the project:
+- **static-site friendly** for GitHub Pages
+- suitable for mini app wrapping later
+- modular enough for the History of Money lesson to grow
+- focused on this lesson only, without introducing a generic platform
 
-## Run locally
+## Files
 
-Open `index.html` directly in a browser, or serve the folder with any simple static server if preferred.
-
-## Structure
-
-- `index.html` — shell
-- `styles.css` — mobile-first UI
-- `app.js` — tiny reusable round engine + configurable content
+- `index.html` — document shell
+- `styles.css` — mobile-first and projector-aware styling
+- `app.js` — lesson flow, presenter controls, voting scaffold, and content model
