@@ -61,7 +61,7 @@ Each module in the EDK includes:
 
 | Activity | Concept | Summary |
 |-----------|----------|---------|
-| **Block 1** | TITLE | description |
+| **Block 1** | History of Money | Includes a mobile-first static mini app MVP at `BLOCK 1 - THE HISTORY OF MONEY/mini-app/index.html` for barter, commodity money, inflation, recap, Bitcoin bridge, and replay. |
 | **Block 2** | TITLE | description |
 | **Block 3** | TITLE | description |
 | **Block 4** | TITLE | description |
