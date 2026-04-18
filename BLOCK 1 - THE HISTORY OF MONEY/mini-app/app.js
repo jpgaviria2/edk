@@ -1,124 +1,228 @@
 const GAME_COPY = {
   title: 'History of Money',
   subtitle: 'A fast interactive journey from barter to Bitcoin',
-  soloDuration: '~4 min solo run',
-  presenterDuration: '~10–14 min facilitated session',
+  soloDuration: '~5 min solo run',
+  presenterDuration: '~10–15 min facilitated session',
 };
 
 const marketItems = {
+  cow: {
+    id: 'cow',
+    emoji: '🐄',
+    label: 'Cow',
+    unitLabel: 'cow',
+    pluralLabel: 'cows',
+    defaultQty: 1,
+    divisible: false,
+    bulk: 'very bulky',
+    moneyTraits: 'high value, but awkward and indivisible',
+    description: 'Huge value, but hard to divide, move, or price into smaller everyday trades.',
+  },
+  apples: {
+    id: 'apples',
+    emoji: '🍎',
+    label: 'Apples',
+    unitLabel: 'apple',
+    pluralLabel: 'apples',
+    defaultQty: 500,
+    divisible: true,
+    bulk: 'bulky in large sacks',
+    moneyTraits: 'divisible, but perishable and awkward in volume',
+    description: 'Easy to count, but 500 apples is a lot to carry and they do not last forever.',
+  },
   fish: {
     id: 'fish',
     emoji: '🐟',
     label: 'Fish',
-    short: 'Fresh fish',
-    description: 'Useful food, but it spoils fast.',
-  },
-  grain: {
-    id: 'grain',
-    emoji: '🌾',
-    label: 'Grain',
-    short: 'Grain sack',
-    description: 'Staple food that many people value.',
-  },
-  salt: {
-    id: 'salt',
-    emoji: '🧂',
-    label: 'Salt',
-    short: 'Salt pouch',
-    description: 'Portable, divisible, and widely wanted.',
-  },
-  pots: {
-    id: 'pots',
-    emoji: '🏺',
-    label: 'Clay pots',
-    short: 'Clay pots',
-    description: 'Useful containers for homes and trade.',
-  },
-  wool: {
-    id: 'wool',
-    emoji: '🧶',
-    label: 'Wool cloth',
-    short: 'Wool cloth',
-    description: 'Warm fabric for clothing and trade.',
+    unitLabel: 'fish',
+    pluralLabel: 'fish',
+    defaultQty: 2,
+    divisible: false,
+    bulk: 'perishable bundle',
+    moneyTraits: 'useful food, but spoils fast',
+    description: 'Useful food, but it spoils quickly and is awkward for pricing other goods.',
   },
   shoes: {
     id: 'shoes',
     emoji: '👞',
     label: 'Shoes',
-    short: 'Winter shoes',
-    description: 'The thing you urgently need before winter.',
+    unitLabel: 'pair of shoes',
+    pluralLabel: 'pairs of shoes',
+    defaultQty: 1,
+    divisible: false,
+    bulk: 'portable pair',
+    moneyTraits: 'useful, but not a general money',
+    description: 'Exactly what you need before winter, but a pair of shoes is not easy to split into smaller payments.',
+  },
+  grain: {
+    id: 'grain',
+    emoji: '🌾',
+    label: 'Grain',
+    unitLabel: 'sack of grain',
+    pluralLabel: 'sacks of grain',
+    defaultQty: 3,
+    divisible: true,
+    bulk: 'moderately bulky sacks',
+    moneyTraits: 'widely useful, divisible by sack, but still bulky',
+    description: 'A staple good lots of people want, though sacks still take space and effort to move.',
+  },
+  salt: {
+    id: 'salt',
+    emoji: '🧂',
+    label: 'Salt',
+    unitLabel: 'salt pouch',
+    pluralLabel: 'salt pouches',
+    defaultQty: 4,
+    divisible: true,
+    bulk: 'portable pouches',
+    moneyTraits: 'portable, divisible, and widely wanted',
+    description: 'Portable, divisible, and broadly useful. It starts to feel money-like.',
+  },
+  wool: {
+    id: 'wool',
+    emoji: '🧶',
+    label: 'Wool Cloth',
+    unitLabel: 'roll of wool cloth',
+    pluralLabel: 'rolls of wool cloth',
+    defaultQty: 2,
+    divisible: false,
+    bulk: 'soft bundle',
+    moneyTraits: 'valuable, but less standardized',
+    description: 'Warm and valuable, but not everyone wants exactly the same amount at the same time.',
+  },
+  pots: {
+    id: 'pots',
+    emoji: '🏺',
+    label: 'Clay Pots',
+    unitLabel: 'clay pot',
+    pluralLabel: 'clay pots',
+    defaultQty: 3,
+    divisible: false,
+    bulk: 'fragile stack',
+    moneyTraits: 'useful, but fragile and uneven',
+    description: 'Useful containers, but fragile and awkward for pricing many other things.',
   },
   shells: {
     id: 'shells',
     emoji: '🐚',
     label: 'Shells',
-    short: 'Shell necklace',
-    description: 'Pretty and recognizable, but supply can change.',
+    unitLabel: 'string of shells',
+    pluralLabel: 'strings of shells',
+    defaultQty: 12,
+    divisible: true,
+    bulk: 'lightweight strings',
+    moneyTraits: 'recognizable, but scarcity can change',
+    description: 'Portable and familiar, but only useful as money if people trust the supply stays limited.',
   },
 };
 
 const barterScenario = {
   id: 'barter-market',
-  title: 'Barter market challenge',
+  title: 'Barter in the plaza',
   kicker: 'Round 1',
   intro:
-    'You enter a crowded village market. You start with one item. Winter is coming and your goal is to leave with shoes.',
+    'You step into a busy market plaza before winter. People are walking, shouting prices, and guarding piles of real goods. You need shoes before you leave.',
   prompt:
-    'Trade step-by-step with visible market participants. Each trader will only swap if you offer the item they want.',
+    'Walk the plaza person by person. Tap anyone to inspect what they have, what they want, and why a trade may fail.',
   facilitatorNote:
-    'Let the room suggest trades out loud. Tap through their proposed route and notice how often barter stalls unless wants line up exactly.',
+    'Let the room “walk” the market out loud. Ask who to approach first, then inspect that person before deciding whether barter actually works.',
   audiencePrompt:
-    'Ask the group to predict the shortest path before making the first trade.',
-  playerStartItemId: 'fish',
-  targetItemId: 'shoes',
-  traders: [
+    'Ask the group: where does barter break first here — wants, quantity, or indivisibility?',
+  lessonSummary:
+    'Barter fails for more than one reason: the other person may want the wrong thing, the amounts may not match, big goods like cows are hard to split, and carrying awkward goods across many trades is exhausting.',
+  playerStart: { itemId: 'cow', quantity: 1 },
+  target: { itemId: 'shoes', quantity: 1 },
+  people: [
+    {
+      id: 'toma',
+      name: 'Toma the Orchard Keeper',
+      role: 'Fruit seller',
+      x: 22,
+      y: 28,
+      tone: 'tone-1',
+      greeting: 'I have apples from the orchard. I need fish for my family supper.',
+      offer: { itemId: 'apples', quantity: 500 },
+      ask: { itemId: 'fish', quantity: 2 },
+      tradeMode: 'exact',
+      failureHint: 'Even though apples are countable, Toma does not want your cow at all. That is a wants mismatch.',
+    },
     {
       id: 'mara',
       name: 'Mara the Potter',
       role: 'Potter',
-      line: 'I have clay pots. Bring me fish and we have a deal.',
-      have: 'pots',
-      want: 'fish',
+      x: 60,
+      y: 20,
+      tone: 'tone-2',
+      greeting: 'Three sturdy pots for anyone who brings me 500 apples. Pottery for produce.',
+      offer: { itemId: 'pots', quantity: 3 },
+      ask: { itemId: 'apples', quantity: 500 },
+      tradeMode: 'exact',
+      failureHint: 'Mara is open to trade, but only for a very specific amount of apples.',
     },
     {
       id: 'gita',
       name: 'Gita the Weaver',
       role: 'Weaver',
-      line: 'I can trade wool cloth, but only if you bring me clay pots.',
-      have: 'wool',
-      want: 'pots',
+      x: 78,
+      y: 48,
+      tone: 'tone-3',
+      greeting: 'Two rolls of wool cloth for three clay pots. No pots, no cloth.',
+      offer: { itemId: 'wool', quantity: 2 },
+      ask: { itemId: 'pots', quantity: 3 },
+      tradeMode: 'exact',
+      failureHint: 'You need exactly the right goods in exactly the right scale.',
     },
     {
       id: 'soren',
       name: 'Soren the Salt Merchant',
       role: 'Salt trader',
-      line: 'I carry salt pouches and will swap for wool cloth.',
-      have: 'salt',
-      want: 'wool',
+      x: 46,
+      y: 58,
+      tone: 'tone-4',
+      greeting: 'I will swap four salt pouches for two rolls of wool cloth.',
+      offer: { itemId: 'salt', quantity: 4 },
+      ask: { itemId: 'wool', quantity: 2 },
+      tradeMode: 'exact',
+      failureHint: 'Salt starts to look useful because more people will take it later.',
     },
     {
       id: 'tala',
       name: 'Tala the Farmer',
       role: 'Farmer',
-      line: 'I will trade grain for salt. My family always needs salt.',
-      have: 'grain',
-      want: 'salt',
+      x: 28,
+      y: 70,
+      tone: 'tone-5',
+      greeting: 'I will give three sacks of grain if you bring me two salt pouches.',
+      offer: { itemId: 'grain', quantity: 3 },
+      ask: { itemId: 'salt', quantity: 2 },
+      tradeMode: 'partial-ok',
+      failureHint: 'Salt is divisible enough that Tala can accept part of your salt instead of all of it.',
     },
     {
       id: 'bako',
       name: 'Bako the Shoemaker',
       role: 'Shoemaker',
-      line: 'I made sturdy winter shoes. Bring me grain and they are yours.',
-      have: 'shoes',
-      want: 'grain',
+      x: 69,
+      y: 74,
+      tone: 'tone-6',
+      greeting: 'One pair of winter shoes costs one sack of grain. I cannot cut shoes in half for change.',
+      offer: { itemId: 'shoes', quantity: 1 },
+      ask: { itemId: 'grain', quantity: 1 },
+      tradeMode: 'partial-ok',
+      failureHint: 'Shoes are indivisible. Even if values feel close, you cannot split one pair into tiny pieces to make exact change.',
     },
     {
       id: 'lina',
-      name: 'Lina the Jeweler',
-      role: 'Jeweler',
-      line: 'I have shell jewelry, but I only want salt today.',
-      have: 'shells',
-      want: 'salt',
+      name: 'Lina the Herder',
+      role: 'Livestock trader',
+      x: 12,
+      y: 52,
+      tone: 'tone-2',
+      greeting: 'A whole cow? That is too much for what I have. I only need a pair of shoes, and I cannot give you “part of a cow” back as change.',
+      offer: { itemId: 'fish', quantity: 2 },
+      ask: { itemId: 'shoes', quantity: 1 },
+      tradeMode: 'exact',
+      failureHint: 'This is indivisibility directly: your cow may be valuable, but it is too lumpy for a smaller trade.',
     },
   ],
 };
@@ -128,9 +232,9 @@ const rounds = [
     id: 'commodity',
     title: 'Commodity money emerges',
     kicker: 'Round 2',
-    prompt: 'After that messy barter run, your village starts converging on one item to trade through. Which good works best as money?',
+    prompt: 'After struggling through the plaza, your village starts using one good to trade through more often. Which good works best as money?',
     facilitatorNote:
-      'Connect this back to the market you just played. Ask which item would have made all those trades easier to coordinate.',
+      'Connect this back to the plaza. Which item solved the most friction: wants mismatch, scale mismatch, and indivisibility?',
     revealLabel: 'Reveal the stronger money',
     question: 'Which good is strongest money?',
     correctChoiceId: 'salt',
@@ -138,31 +242,31 @@ const rounds = [
       {
         id: 'salt',
         label: 'Salt',
-        detail: 'Useful, portable, divisible, and already wanted by multiple traders.',
+        detail: 'Portable, divisible, and already accepted by several traders in the plaza.',
         feedback:
-          'Exactly. Useful commodities can become money because people already recognize their value and expect others to accept them.',
+          'Exactly. Salt starts working as money because it is useful, portable, divisible, and already widely wanted.',
       },
       {
-        id: 'berries',
-        label: 'Berries',
-        detail: 'Easy to gather, easy to bruise, easy to rot.',
+        id: 'cow',
+        label: 'Cow',
+        detail: 'High value, but too indivisible and awkward for many everyday trades.',
         feedback:
-          'Berries fail durability. Good money has to survive time, handling, and storage.',
+          'A cow can store a lot of value, but it is terrible for making smaller, precise exchanges. That is a money weakness.',
       },
       {
-        id: 'giant-rock',
-        label: 'A giant rock',
-        detail: 'Scarce maybe. Portable definitely not.',
+        id: 'fish',
+        label: 'Fish',
+        detail: 'Useful, but spoils quickly and is hard to carry through time.',
         feedback:
-          'Scarcity alone is not enough. Money also needs to move easily and fit many trade sizes.',
+          'Fish is valuable for eating, but weak money must be replaced often. Good money should survive time better than fish.',
       },
     ],
     summary: [
-      'Commodity money works when many people value the good already.',
-      'Durability, portability, recognizability, and divisibility matter a lot.',
-      'A commonly desired trade good reduces the friction you felt in barter.',
+      'Commodity money emerges when one trade good becomes easier to pass on than all the others.',
+      'The plaza made divisibility and broad acceptance feel important, not abstract.',
+      'Money reduces the need for long barter chains of exact matches.',
     ],
-    audiencePrompt: 'Ask for a show of hands before revealing: salt, berries, or giant rock?',
+    audiencePrompt: 'Ask the group which item they would rather carry across ten more trades: salt, a cow, or fish?',
   },
   {
     id: 'inflation',
@@ -170,7 +274,7 @@ const rounds = [
     kicker: 'Round 3',
     prompt: 'Your town now uses shells as money. Then a ship arrives carrying huge sacks of identical shells. What changes first?',
     facilitatorNote:
-      'Pause after answers and ask: do more money units automatically mean more real wealth?',
+      'Ask whether “more units” means “more wealth,” or whether it mainly changes pricing and trust.',
     revealLabel: 'Reveal the inflation lesson',
     question: 'What happens when supply explodes?',
     correctChoiceId: 'prices-up',
@@ -178,31 +282,31 @@ const rounds = [
       {
         id: 'prices-up',
         label: 'Prices rise over time',
-        detail: 'Each shell buys less once shells are much easier to get.',
+        detail: 'Each shell buys less once shells become much easier to get.',
         feedback:
-          'Right. When the money supply grows much faster than goods and services, purchasing power tends to fall.',
+          'Right. If money supply grows much faster than goods and services, each unit tends to lose purchasing power.',
       },
       {
         id: 'everyone-richer',
         label: 'Everyone becomes richer instantly',
-        detail: 'More units is not the same as more wealth.',
+        detail: 'Extra money units are not the same as extra real goods.',
         feedback:
-          'Nominal balances may rise, but real wealth does not magically appear. More money units do not create more goods.',
+          'Nominal balances can rise without real wealth increasing. More money does not magically create more shoes, grain, or fish.',
       },
       {
         id: 'nothing',
         label: 'Nothing changes',
-        detail: 'Supply changes hit expectations and pricing fast.',
+        detail: 'Supply changes usually hit expectations and pricing quickly.',
         feedback:
-          'Money depends on trust in scarcity and predictability. A sudden supply flood weakens that trust.',
+          'Money depends on trust in scarcity and predictability. A sudden supply flood weakens both.',
       },
     ],
     summary: [
       'Strong money should be hard to produce unexpectedly.',
       'Easy supply growth tends to weaken purchasing power.',
-      'Reliable scarcity matters because people save into money, not just spend it.',
+      'People save into money because they trust it to hold value across time.',
     ],
-    audiencePrompt: 'Ask the group: if shells become easy to gather, would you still save in them?',
+    audiencePrompt: 'If shells suddenly became common on every beach, would you still save in them?',
   },
 ];
 
@@ -210,22 +314,22 @@ const properties = [
   {
     id: 'durable',
     title: 'Durable',
-    description: 'It should survive time without rotting or breaking down.',
+    description: 'It should survive time without rotting, spoiling, or falling apart.',
   },
   {
     id: 'portable',
     title: 'Portable',
-    description: 'It should move easily across distance and between people.',
+    description: 'It should move easily from one place to another.',
   },
   {
     id: 'divisible',
     title: 'Divisible',
-    description: 'Small and large payments should both be possible.',
+    description: 'It should handle both small and large payments cleanly.',
   },
   {
     id: 'verifiable',
     title: 'Verifiable',
-    description: 'People should be able to check that it is real.',
+    description: 'People should be able to check that it is real and trustworthy.',
   },
   {
     id: 'scarce',
@@ -235,7 +339,7 @@ const properties = [
   {
     id: 'acceptable',
     title: 'Widely accepted',
-    description: 'Others must trust they can trade it onward too.',
+    description: 'Other people should expect they can trade it onward too.',
   },
 ];
 
@@ -247,9 +351,9 @@ const bridgePoints = [
 ];
 
 const presenterTips = [
-  'Treat each trader as a person in the market with a real have/need role the audience can reason about.',
-  'Use “reveal” only after the room has committed to an answer or a market route.',
-  'If the room is mixed, ask beginners for intuition first and experienced participants for refinements second.',
+  'Treat each participant as a real person in the market, not just a card on a screen.',
+  'Inspect people before trading so the room can see why barter fails or succeeds.',
+  'Use the trade log to name the exact failure mode: wants mismatch, scale mismatch, indivisibility, or awkward bulk.',
 ];
 
 const state = {
@@ -263,10 +367,14 @@ const state = {
   presenterReveal: false,
   showVotePanel: false,
   voteCounts: {},
-  marketInventory: barterScenario.playerStartItemId,
+  playerInventory: { ...barterScenario.playerStart },
+  targetInventory: { ...barterScenario.target },
   marketCompleted: false,
   marketTradeCount: 0,
   marketLog: [],
+  inspectedPersonId: null,
+  marketPeople: [],
+  failureBadgesSeen: [],
   conferenceParticipants: [],
   conferenceActiveParticipantId: null,
 };
@@ -283,13 +391,21 @@ function createInitialVotes() {
   }, {});
 }
 
+function cloneOffer(offer) {
+  return { itemId: offer.itemId, quantity: offer.quantity };
+}
+
+function buildMarketPeople() {
+  return barterScenario.people.map((person) => ({ ...person, offer: cloneOffer(person.offer), ask: cloneOffer(person.ask) }));
+}
+
 function buildConferenceParticipants() {
-  return barterScenario.traders.map((trader, index) => ({
-    id: trader.id,
-    name: trader.name,
-    role: trader.role,
-    have: trader.have,
-    want: trader.want,
+  return barterScenario.people.map((person, index) => ({
+    id: person.id,
+    name: person.name,
+    role: person.role,
+    have: cloneOffer(person.offer),
+    want: cloneOffer(person.ask),
     colorClass: `participant-tone-${(index % 6) + 1}`,
   }));
 }
@@ -298,14 +414,49 @@ function resetVotes() {
   state.voteCounts = createInitialVotes();
 }
 
+function item(itemId) {
+  return marketItems[itemId];
+}
+
+function pluralizeItemLabel(itemId, quantity) {
+  const current = item(itemId);
+  return quantity === 1 ? current.unitLabel : current.pluralLabel;
+}
+
+function quantityLabel(goods) {
+  return `${goods.quantity} ${pluralizeItemLabel(goods.itemId, goods.quantity)}`;
+}
+
+function itemPhrase(itemId) {
+  const current = item(itemId);
+  return `${current.emoji} ${current.label}`;
+}
+
+function goodsPhrase(goods) {
+  const current = item(goods.itemId);
+  return `${current.emoji} ${quantityLabel(goods)}`;
+}
+
+function appendMarketLog(type, text, badge = null) {
+  state.marketLog.unshift({ type, text, badge });
+  if (badge && !state.failureBadgesSeen.includes(badge)) {
+    state.failureBadgesSeen.push(badge);
+  }
+}
+
 function resetMarketState() {
-  state.marketInventory = barterScenario.playerStartItemId;
+  state.playerInventory = { ...barterScenario.playerStart };
+  state.targetInventory = { ...barterScenario.target };
   state.marketCompleted = false;
   state.marketTradeCount = 0;
+  state.inspectedPersonId = barterScenario.people[0]?.id || null;
+  state.marketPeople = buildMarketPeople();
+  state.failureBadgesSeen = [];
   state.marketLog = [
     {
       type: 'start',
-      text: `You enter the market holding ${itemPhrase(barterScenario.playerStartItemId)} and needing ${itemPhrase(barterScenario.targetItemId)}.`,
+      text: `You enter the plaza holding ${goodsPhrase(state.playerInventory)} and needing ${goodsPhrase(state.targetInventory)}.`,
+      badge: null,
     },
   ];
 }
@@ -359,67 +510,167 @@ function currentRound() {
   return rounds[state.roundIndex];
 }
 
-function item(itemId) {
-  return marketItems[itemId];
+function getPerson(personId) {
+  return state.marketPeople.find((entry) => entry.id === personId);
 }
 
-function itemPhrase(itemId) {
-  const current = item(itemId);
-  return `${current.emoji} ${current.label}`;
+function inventoryMatches(goodsA, goodsB) {
+  return goodsA.itemId === goodsB.itemId && goodsA.quantity === goodsB.quantity;
 }
 
-function marketTraderStatus(trader) {
-  if (state.marketCompleted && state.marketInventory === barterScenario.targetItemId) {
-    return trader.have === barterScenario.targetItemId ? 'target-hit' : 'closed';
+function evaluateTrade(person) {
+  const player = state.playerInventory;
+
+  if (player.itemId !== person.ask.itemId) {
+    return {
+      ok: false,
+      reason: 'wants-mismatch',
+      headline: `${person.name} does not want ${itemPhrase(player.itemId)}.`,
+      detail: `${person.name} wants ${goodsPhrase(person.ask)}, not ${goodsPhrase(player)}. ${person.failureHint}`,
+    };
   }
-  if (state.marketInventory === trader.want) return 'ready';
-  if (state.marketInventory === trader.have) return 'holding-same';
+
+  const wantedQty = person.ask.quantity;
+  const playerQty = player.quantity;
+  const playerItem = item(player.itemId);
+
+  if (person.tradeMode === 'exact' && playerQty !== wantedQty) {
+    if (playerQty > wantedQty && !playerItem.divisible) {
+      return {
+        ok: false,
+        reason: 'indivisibility',
+        headline: `${goodsPhrase(player)} is too lumpy for this trade.`,
+        detail: `${person.name} wants ${goodsPhrase(person.ask)}, but you only have ${goodsPhrase(player)}. ${playerItem.label} is indivisible here, so you cannot shave off “part of it” as change.`,
+      };
+    }
+
+    return {
+      ok: false,
+      reason: 'scale-mismatch',
+      headline: `The quantities do not line up.`,
+      detail: `${person.name} wants ${goodsPhrase(person.ask)}, but you have ${goodsPhrase(player)}. Barter often stalls because scale and quantity do not match cleanly.`,
+    };
+  }
+
+  if (person.tradeMode === 'partial-ok' && playerQty < wantedQty) {
+    return {
+      ok: false,
+      reason: 'scale-mismatch',
+      headline: `You do not have enough ${item(player.itemId).label.toLowerCase()}.`,
+      detail: `${person.name} wants ${goodsPhrase(person.ask)}, but you only have ${goodsPhrase(player)}. Even when goods are divisible, quantity still matters.`,
+    };
+  }
+
+  const consumedQty = person.tradeMode === 'partial-ok' ? wantedQty : playerQty;
+  const remainingQty = playerQty - consumedQty;
+  const nextInventory = cloneOffer(person.offer);
+
+  return {
+    ok: true,
+    reason: remainingQty > 0 ? 'partial-trade' : 'exact-trade',
+    consumedQty,
+    remainingQty,
+    nextInventory,
+    awkwardness: playerItem.bulk,
+  };
+}
+
+function marketPersonStatus(person) {
+  if (state.marketCompleted && inventoryMatches(state.playerInventory, state.targetInventory)) {
+    return person.offer.itemId === state.targetInventory.itemId ? 'target-hit' : 'closed';
+  }
+
+  const evaluation = evaluateTrade(person);
+  if (evaluation.ok) return 'ready';
+  if (evaluation.reason === 'wants-mismatch') return 'blocked';
+  if (evaluation.reason === 'scale-mismatch') return 'quantity';
+  if (evaluation.reason === 'indivisibility') return 'indivisible';
   return 'blocked';
 }
 
+function marketFailureLabel(reason) {
+  switch (reason) {
+    case 'wants-mismatch':
+      return 'Wants mismatch';
+    case 'scale-mismatch':
+      return 'Scale mismatch';
+    case 'indivisibility':
+      return 'Indivisibility';
+    case 'awkwardness':
+      return 'Awkward bulk';
+    default:
+      return 'Barter friction';
+  }
+}
+
+function inspectPerson(personId) {
+  state.inspectedPersonId = personId;
+  if (state.mode === 'presenter') {
+    state.conferenceActiveParticipantId = personId;
+  }
+  render();
+}
+
 function markMarketHistory(success) {
-  const prior = state.history.find((item) => item.roundId === barterScenario.id);
+  const prior = state.history.find((entry) => entry.roundId === barterScenario.id);
   if (prior) return;
   state.history.push({
     roundId: barterScenario.id,
     roundTitle: barterScenario.title,
     correct: success,
     choiceId: success ? 'route-found' : 'market-skipped',
-    choice: success ? `Reached ${itemPhrase(barterScenario.targetItemId)} in ${state.marketTradeCount} trades` : 'Skipped market challenge',
+    choice: success
+      ? `Reached ${goodsPhrase(state.targetInventory)} in ${state.marketTradeCount} trades`
+      : 'Skipped market challenge',
   });
-  if (success) {
-    state.score += 1;
-  }
+  if (success) state.score += 1;
 }
 
-function tradeWithTrader(traderId) {
+function tryTrade(personId) {
   if (state.marketCompleted) return;
-  const trader = barterScenario.traders.find((entry) => entry.id === traderId);
-  if (!trader) return;
+  const person = getPerson(personId);
+  if (!person) return;
 
-  const beforeItem = state.marketInventory;
-  if (beforeItem !== trader.want) {
-    state.marketLog.unshift({
-      type: 'blocked',
-      text: `${trader.name} wants ${itemPhrase(trader.want)}, not ${itemPhrase(beforeItem)}.`,
-    });
+  inspectPerson(personId);
+  const result = evaluateTrade(person);
+
+  if (!result.ok) {
+    appendMarketLog('blocked', result.detail, result.reason);
     render();
     return;
   }
 
-  state.marketInventory = trader.have;
+  const before = { ...state.playerInventory };
+  state.playerInventory = result.nextInventory;
   state.marketTradeCount += 1;
-  state.marketLog.unshift({
-    type: 'trade',
-    text: `Trade ${state.marketTradeCount}: You gave ${itemPhrase(beforeItem)} to ${trader.name} and received ${itemPhrase(trader.have)}.`,
-  });
 
-  if (state.marketInventory === barterScenario.targetItemId) {
+  appendMarketLog(
+    'trade',
+    `Trade ${state.marketTradeCount}: You gave ${goodsPhrase({ itemId: before.itemId, quantity: result.consumedQty })} to ${person.name} and received ${goodsPhrase(result.nextInventory)}.`,
+    null,
+  );
+
+  if (result.remainingQty > 0) {
+    appendMarketLog(
+      'note',
+      `You would still be left holding ${result.remainingQty} ${pluralizeItemLabel(before.itemId, result.remainingQty)} in a more realistic market. Even partial trades create awkward leftovers to price and carry.`,
+      'awkwardness',
+    );
+  } else if (item(before.itemId).bulk === 'very bulky') {
+    appendMarketLog(
+      'note',
+      `${goodsPhrase(before)} was ${item(before.itemId).bulk}. Large barter goods are awkward to drag from one trade to the next.`,
+      'awkwardness',
+    );
+  }
+
+  if (inventoryMatches(state.playerInventory, state.targetInventory)) {
     state.marketCompleted = true;
-    state.marketLog.unshift({
-      type: 'success',
-      text: `Success: you finally reached ${itemPhrase(barterScenario.targetItemId)} after ${state.marketTradeCount} separate swaps.`,
-    });
+    appendMarketLog(
+      'success',
+      `Success: you finally reached ${goodsPhrase(state.targetInventory)} after ${state.marketTradeCount} swaps across the plaza. ${barterScenario.lessonSummary}`,
+      null,
+    );
     markMarketHistory(true);
   }
 
@@ -427,7 +678,7 @@ function tradeWithTrader(traderId) {
 }
 
 function skipMarket() {
-  if (!state.history.find((item) => item.roundId === barterScenario.id)) {
+  if (!state.history.find((entry) => entry.roundId === barterScenario.id)) {
     state.history.push({
       roundId: barterScenario.id,
       roundTitle: barterScenario.title,
@@ -451,7 +702,7 @@ function continueFromMarket() {
 }
 
 function markHistory(round, choice) {
-  const prior = state.history.find((item) => item.roundId === round.id);
+  const prior = state.history.find((entry) => entry.roundId === round.id);
   if (prior) return;
   state.history.push({
     roundId: round.id,
@@ -460,23 +711,17 @@ function markHistory(round, choice) {
     choiceId: choice.id,
     choice: choice.label,
   });
-  if (choice.id === round.correctChoiceId) {
-    state.score += 1;
-  }
+  if (choice.id === round.correctChoiceId) state.score += 1;
 }
 
 function selectChoice(choiceId) {
   const round = currentRound();
-  const choice = round.choices.find((item) => item.id === choiceId);
+  const choice = round.choices.find((entry) => entry.id === choiceId);
   if (!choice) return;
 
   state.selectedChoice = choice;
   markHistory(round, choice);
-
-  if (state.mode === 'presenter') {
-    state.presenterReveal = false;
-  }
-
+  if (state.mode === 'presenter') state.presenterReveal = false;
   render();
 }
 
@@ -513,32 +758,30 @@ function finishExperience() {
 }
 
 function restartCurrentMode() {
-  if (state.mode === 'presenter') {
-    startPresenter();
-  } else {
-    startSolo();
-  }
+  if (state.mode === 'presenter') startPresenter();
+  else startSolo();
 }
 
 function resetCurrentRound() {
   const round = currentRound();
   state.selectedChoice = null;
   state.presenterReveal = false;
-  state.history = state.history.filter((item) => item.roundId !== round.id);
-  state.score = state.history.filter((item) => item.correct).length;
+  state.history = state.history.filter((entry) => entry.roundId !== round.id);
+  state.score = state.history.filter((entry) => entry.correct).length;
   render();
 }
 
 function resetMarketRound() {
-  state.history = state.history.filter((item) => item.roundId !== barterScenario.id);
-  state.score = state.history.filter((item) => item.correct).length;
+  state.history = state.history.filter((entry) => entry.roundId !== barterScenario.id);
+  state.score = state.history.filter((entry) => entry.correct).length;
   resetMarketState();
+  resetConferenceParticipants();
   render();
 }
 
 function skipRound() {
   const round = currentRound();
-  const prior = state.history.find((item) => item.roundId === round.id);
+  const prior = state.history.find((entry) => entry.roundId === round.id);
   if (!prior) {
     state.history.push({
       roundId: round.id,
@@ -564,8 +807,7 @@ function toggleVotePanel() {
 
 function castVote(choiceId) {
   const round = currentRound();
-  const roundVotes = state.voteCounts[round.id];
-  roundVotes[choiceId] += 1;
+  state.voteCounts[round.id][choiceId] += 1;
   render();
 }
 
@@ -580,6 +822,7 @@ function resetRoundVotes() {
 
 function setConferenceParticipant(participantId) {
   state.conferenceActiveParticipantId = participantId;
+  state.inspectedPersonId = participantId;
   render();
 }
 
@@ -591,7 +834,7 @@ function progressPercent() {
 }
 
 function selectedPropertiesSummary() {
-  return properties.filter((item) => state.selectedProperties.includes(item.id));
+  return properties.filter((entry) => state.selectedProperties.includes(entry.id));
 }
 
 function finalHeadline() {
@@ -636,29 +879,29 @@ function landingScreen() {
     <section class="hero card glow-card stack-lg">
       <div class="hero-copy stack">
         <div class="eyebrow">Interactive lesson</div>
-        <h1>From barter friction to Bitcoin logic.</h1>
-        <p class="lede">Start inside a real barter market, trade person-to-person toward a target item, then carry that intuition into commodity money, inflation, and Bitcoin.</p>
+        <h1>Walk the plaza from barter friction to Bitcoin logic.</h1>
+        <p class="lede">Start inside an embodied market full of people, inspect their goods and needs, feel why barter breaks, then carry that intuition into commodity money, inflation, and Bitcoin.</p>
       </div>
       <div class="hero-grid">
         <article class="info-card panel">
           <div class="pill-badge">Solo</div>
-          <h2>Play the market yourself</h2>
-          <p>${GAME_COPY.soloDuration}. You begin with a concrete item, see each trader’s HAVE and WANT, and trade step-by-step until you reach your target.</p>
+          <h2>Explore the market yourself</h2>
+          <p>${GAME_COPY.soloDuration}. Tap through a plaza, inspect traders, and discover why a cow is awkward, quantities matter, and exact wants rarely line up.</p>
           <ul class="feature-list">
-            <li>Visible trader cards and market state</li>
-            <li>Tactile step-by-step barter path</li>
-            <li>Clear recap into money properties</li>
+            <li>Embodied market plaza with visible people</li>
+            <li>Quantity-aware barter and indivisibility</li>
+            <li>Clear failure modes before the money lesson</li>
           </ul>
           <button class="btn primary" data-action="start-solo">Start solo</button>
         </article>
         <article class="info-card panel presenter-entry">
           <div class="pill-badge alt">Presenter</div>
-          <h2>Run it as a live market</h2>
-          <p>${GAME_COPY.presenterDuration}. Conference mode models participants as people in the market, gives you a presenter-controlled simulation, and keeps everything projector-friendly.</p>
+          <h2>Run a live market session</h2>
+          <p>${GAME_COPY.presenterDuration}. Conference mode mirrors the same plaza logic with participant roles, presenter control, and projector-safe inspection/trade flow.</p>
           <ul class="feature-list">
-            <li>Participant role board for the market</li>
-            <li>Presenter-controlled market progression</li>
-            <li>Discussion prompts and vote scaffold</li>
+            <li>Participant roles as people in the market</li>
+            <li>Presenter-controlled inspections and trades</li>
+            <li>Vote scaffold for later rounds</li>
           </ul>
           <button class="btn secondary strong" data-action="start-presenter">Open presenter mode</button>
         </article>
@@ -666,9 +909,9 @@ function landingScreen() {
       <section class="mini-panel stack">
         <div class="eyebrow">What learners discover</div>
         <div class="stat-row">
-          <span class="stat-chip">Barter needs coincidence of wants</span>
-          <span class="stat-chip">Common goods reduce friction</span>
-          <span class="stat-chip">Easy supply weakens money</span>
+          <span class="stat-chip">Wants mismatch blocks trades</span>
+          <span class="stat-chip">Scale mismatch blocks trades</span>
+          <span class="stat-chip">Indivisible goods are awkward money</span>
           <span class="stat-chip">Bitcoin extends the story digitally</span>
         </div>
       </section>
@@ -682,8 +925,8 @@ function conferenceIntroScreen() {
       <div class="row wrap-row">
         <div class="stack">
           <div class="eyebrow">Conference mode</div>
-          <h1>Turn the room into a market.</h1>
-          <p class="lede">This mode treats participants as people with real have/need roles. If full live multiplayer is not available, the presenter still gets a coherent market simulation to drive on screen.</p>
+          <h1>Turn the room into a plaza.</h1>
+          <p class="lede">This mode treats participants as people with visible have/need roles. Even without live backend infrastructure, the presenter can run a coherent, human market simulation on screen.</p>
         </div>
         <div class="badge big-badge">${GAME_COPY.presenterDuration}</div>
       </div>
@@ -691,16 +934,16 @@ function conferenceIntroScreen() {
         <section class="panel stack">
           <h3>Presenter flow</h3>
           <ol class="ordered-list">
-            <li>Show the participant market board and assign attention to one trader at a time.</li>
-            <li>Ask the room which person the player should approach next.</li>
-            <li>Tap the trader card to execute the barter if wants line up.</li>
-            <li>After the market resolves, continue into commodity money and inflation.</li>
+            <li>Open the plaza and inspect one person at a time.</li>
+            <li>Ask the room whether the trade fails because of wants, quantity, or indivisibility.</li>
+            <li>Execute the trade only when the room can explain why it works.</li>
+            <li>Bridge from plaza friction into commodity money and inflation.</li>
           </ol>
         </section>
         <section class="panel stack">
           <h3>What is simulated live</h3>
-          <p>The room sees the player inventory, target item, participant roles, and trade log. This keeps conference mode grounded in people trading with other people, not abstract quiz choices.</p>
-          <div class="inline-note">Static-site safe: no server, no sockets, still presentation-ready.</div>
+          <p>The room sees a live plaza map, the player inventory, the target good, participant roles, and a trade log that names the exact failure modes.</p>
+          <div class="inline-note">Static-site safe: no backend, no sockets, still conference-ready.</div>
         </section>
       </div>
       <section class="tip-strip">
@@ -714,9 +957,26 @@ function conferenceIntroScreen() {
   `, { projector: true });
 }
 
+function marketFailureChips() {
+  const all = [
+    { id: 'wants-mismatch', label: 'Wants mismatch' },
+    { id: 'scale-mismatch', label: 'Scale mismatch' },
+    { id: 'indivisibility', label: 'Indivisibility' },
+    { id: 'awkwardness', label: 'Awkward bulk' },
+  ];
+
+  return all
+    .map(
+      (entry) => `<span class="stat-chip ${state.failureBadgesSeen.includes(entry.id) ? 'chip-highlight' : 'chip-dim'}">${entry.label}</span>`,
+    )
+    .join('');
+}
+
 function marketScreen() {
-  const currentItem = item(state.marketInventory);
-  const targetItem = item(barterScenario.targetItemId);
+  const currentItem = item(state.playerInventory.itemId);
+  const targetItem = item(state.targetInventory.itemId);
+  const inspectedPerson = getPerson(state.inspectedPersonId) || state.marketPeople[0];
+  const inspectedEvaluation = inspectedPerson ? evaluateTrade(inspectedPerson) : null;
   const activeParticipant = state.conferenceParticipants.find((entry) => entry.id === state.conferenceActiveParticipantId);
 
   shell(`
@@ -727,74 +987,112 @@ function marketScreen() {
             <div class="eyebrow">${barterScenario.kicker}</div>
             <h1>${barterScenario.title}</h1>
           </div>
-          <div class="badge big-badge">Market</div>
+          <div class="badge big-badge">Plaza</div>
         </div>
         <p class="prompt">${barterScenario.intro}</p>
         <section class="market-objective panel stack">
           <div class="row wrap-row objective-row">
             <div class="inventory-card inventory-now">
               <span class="inventory-label">You have</span>
-              <div class="inventory-item"><span class="inventory-emoji">${currentItem.emoji}</span><strong>${currentItem.label}</strong></div>
+              <div class="inventory-item"><span class="inventory-emoji">${currentItem.emoji}</span><strong>${quantityLabel(state.playerInventory)}</strong></div>
               <p>${currentItem.description}</p>
             </div>
             <div class="market-arrow">→</div>
             <div class="inventory-card inventory-target">
               <span class="inventory-label">You need</span>
-              <div class="inventory-item"><span class="inventory-emoji">${targetItem.emoji}</span><strong>${targetItem.label}</strong></div>
+              <div class="inventory-item"><span class="inventory-emoji">${targetItem.emoji}</span><strong>${quantityLabel(state.targetInventory)}</strong></div>
               <p>${targetItem.description}</p>
             </div>
           </div>
           <div class="market-status-row">
             <span class="stat-chip">Trades made: ${state.marketTradeCount}</span>
-            <span class="stat-chip">Goal: reach ${targetItem.label}</span>
-            <span class="stat-chip ${state.marketCompleted ? 'chip-success' : ''}">${state.marketCompleted ? 'Target reached' : 'Market still in motion'}</span>
+            <span class="stat-chip">Current burden: ${currentItem.bulk}</span>
+            <span class="stat-chip ${state.marketCompleted ? 'chip-success' : ''}">${state.marketCompleted ? 'Target reached' : 'Still bargaining'}</span>
           </div>
+          <div class="failure-chip-row">${marketFailureChips()}</div>
         </section>
-        <section class="trader-board stack">
+
+        <section class="plaza-scene panel stack">
           <div class="row wrap-row">
             <div>
-              <div class="eyebrow">Visible traders</div>
-              <h3>Choose who to approach next</h3>
+              <div class="eyebrow">Market plaza</div>
+              <h3>Tap a person to inspect or trade</h3>
             </div>
-            ${state.mode === 'presenter' ? '<div class="inline-note">Presenter can spotlight a participant on the right.</div>' : ''}
+            <div class="inline-note">Visible people, visible goods, visible trade friction.</div>
           </div>
-          <div class="trader-grid ${state.mode === 'presenter' ? 'trader-grid-large' : ''}">
-            ${barterScenario.traders
-              .map((trader) => {
-                const status = marketTraderStatus(trader);
-                const canTrade = status === 'ready';
+          <div class="plaza-map">
+            ${state.marketPeople
+              .map((person) => {
+                const status = marketPersonStatus(person);
                 return `
-                  <button class="trader-card trader-${status}" data-trader="${trader.id}">
-                    <div class="row wrap-row trader-topline">
-                      <div>
-                        <strong>${trader.name}</strong>
-                        <div class="trader-role">${trader.role}</div>
-                      </div>
-                      <span class="trader-status-pill">${canTrade ? 'Trade now' : status === 'holding-same' ? 'Same item' : status === 'target-hit' ? 'Target item reached' : 'Needs something else'}</span>
-                    </div>
-                    <div class="trade-pair-row">
-                      <div class="trade-pair have-pair">
-                        <span class="trade-label">HAVE</span>
-                        <div class="trade-item">${item(trader.have).emoji} ${item(trader.have).label}</div>
-                      </div>
-                      <div class="trade-swap-arrow">⇄</div>
-                      <div class="trade-pair want-pair">
-                        <span class="trade-label">WANT</span>
-                        <div class="trade-item">${item(trader.want).emoji} ${item(trader.want).label}</div>
-                      </div>
-                    </div>
-                    <p>${trader.line}</p>
+                  <button class="plaza-person ${person.tone} person-${status} ${person.id === state.inspectedPersonId ? 'person-inspected' : ''}" data-inspect="${person.id}" style="left:${person.x}%; top:${person.y}%;">
+                    <span class="person-avatar">🧑</span>
+                    <span class="person-name">${person.name.split(' ')[0]}</span>
+                    <span class="person-goods">${item(person.offer.itemId).emoji}</span>
                   </button>
                 `;
               })
               .join('')}
+            <div class="plaza-centerpiece">⛲</div>
           </div>
         </section>
+
+        ${
+          inspectedPerson
+            ? `
+              <section class="inspection-card panel stack">
+                <div class="row wrap-row">
+                  <div>
+                    <div class="eyebrow">Inspected person</div>
+                    <h3>${inspectedPerson.name} · ${inspectedPerson.role}</h3>
+                  </div>
+                  <span class="trader-status-pill inspect-pill ${inspectedEvaluation?.ok ? 'pill-ready' : ''}">${
+                    inspectedEvaluation?.ok ? 'Trade works now' : marketFailureLabel(inspectedEvaluation?.reason)
+                  }</span>
+                </div>
+                <p>${inspectedPerson.greeting}</p>
+                <div class="inspection-grid">
+                  <div class="trade-pair have-pair">
+                    <span class="trade-label">HAS</span>
+                    <div class="trade-item">${goodsPhrase(inspectedPerson.offer)}</div>
+                    <p>${item(inspectedPerson.offer.itemId).moneyTraits}</p>
+                  </div>
+                  <div class="trade-pair want-pair">
+                    <span class="trade-label">WANTS</span>
+                    <div class="trade-item">${goodsPhrase(inspectedPerson.ask)}</div>
+                    <p>${inspectedPerson.failureHint}</p>
+                  </div>
+                </div>
+                <section class="feedback-card ${inspectedEvaluation?.ok ? 'feedback-good' : 'feedback-warn'}">
+                  <div class="result-tag ${inspectedEvaluation?.ok ? '' : 'subtle'}">${
+                    inspectedEvaluation?.ok ? 'Trade path open' : marketFailureLabel(inspectedEvaluation?.reason)
+                  }</div>
+                  <h3>${inspectedEvaluation?.ok ? 'This person will trade with you right now.' : inspectedEvaluation?.headline || 'Inspect a person to see the friction.'}</h3>
+                  <p>${
+                    inspectedEvaluation?.ok
+                      ? `You can swap ${goodsPhrase({ itemId: state.playerInventory.itemId, quantity: inspectedEvaluation.consumedQty })} for ${goodsPhrase(inspectedEvaluation.nextInventory)}.`
+                      : inspectedEvaluation?.detail || barterScenario.prompt
+                  }</p>
+                </section>
+                <div class="footer-actions single-row market-inline-actions">
+                  <button class="btn ghost" data-action="inspect-next">Next person</button>
+                  <button class="btn primary" data-trade="${inspectedPerson.id}" ${inspectedEvaluation?.ok ? '' : 'disabled'}>Trade with ${inspectedPerson.name.split(' ')[0]}</button>
+                </div>
+              </section>
+            `
+            : ''
+        }
+
         <section class="feedback-card ${state.marketCompleted ? 'feedback-good' : 'feedback-pending'}">
-          <div class="result-tag ${state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Barter lesson unlocked' : 'Trade-by-trade friction'}</div>
-          <h3>${state.marketCompleted ? 'You reached the target, but it took multiple specific matches.' : 'Each trade only works if one person has exactly what the next person wants.'}</h3>
-          <p>${state.marketCompleted ? 'This is the coincidence-of-wants problem in motion. Barter can work, but only through a fragile chain of matching needs.' : barterScenario.prompt}</p>
+          <div class="result-tag ${state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Barter lesson unlocked' : 'Trade friction in motion'}</div>
+          <h3>${
+            state.marketCompleted
+              ? 'You reached the target, but only through a fragile chain of specific matches.'
+              : 'Barter is not just about value. It is about matching the right person, the right thing, and the right quantity at the right moment.'
+          }</h3>
+          <p>${state.marketCompleted ? barterScenario.lessonSummary : barterScenario.prompt}</p>
         </section>
+
         <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions presenter-actions-market' : ''}">
           <button class="btn ghost" data-action="reset-market">Reset market</button>
           ${state.mode === 'presenter' ? '<button class="btn ghost" data-action="skip-market">Skip to next lesson</button>' : '<button class="btn ghost" data-action="restart-mode">Restart run</button>'}
@@ -807,14 +1105,14 @@ function marketScreen() {
             ? `
               <section class="card panel stack presenter-note-card">
                 <div class="eyebrow">Facilitator prompt</div>
-                <h3>Who should the player approach next?</h3>
+                <h3>Why does this trade fail or work?</h3>
                 <p>${barterScenario.facilitatorNote}</p>
                 <div class="inline-note">${barterScenario.audiencePrompt}</div>
               </section>
               <section class="card panel stack participant-panel">
                 <div class="eyebrow">Participant market board</div>
-                <h3>People in this market</h3>
-                <p class="small-copy">Use these as presenter-controlled participant roles even if the audience is not interacting through their own devices yet.</p>
+                <h3>People in this plaza</h3>
+                <p class="small-copy">These participant roles mirror the market people. The presenter can spotlight anyone even without live audience devices.</p>
                 <div class="participant-list">
                   ${state.conferenceParticipants
                     .map(
@@ -825,8 +1123,8 @@ function marketScreen() {
                             <div class="trader-role">${participant.role}</div>
                           </div>
                           <div class="participant-mini-pairs">
-                            <span>${item(participant.have).emoji} ${item(participant.have).label}</span>
-                            <span>needs ${item(participant.want).emoji} ${item(participant.want).label}</span>
+                            <span>Has ${goodsPhrase(participant.have)}</span>
+                            <span>Needs ${goodsPhrase(participant.want)}</span>
                           </div>
                         </button>
                       `,
@@ -839,7 +1137,7 @@ function marketScreen() {
                       <div class="participant-focus panel stack">
                         <div class="eyebrow">Spotlighted participant</div>
                         <h3>${activeParticipant.name}</h3>
-                        <p class="small-copy">Has ${itemPhrase(activeParticipant.have)} · Needs ${itemPhrase(activeParticipant.want)}</p>
+                        <p class="small-copy">Has ${goodsPhrase(activeParticipant.have)} · Needs ${goodsPhrase(activeParticipant.want)}</p>
                       </div>
                     `
                     : ''
@@ -849,15 +1147,15 @@ function marketScreen() {
             : `
               <section class="card panel stack recap-side-card">
                 <div class="eyebrow">Why this matters</div>
-                <h3>Barter can work, but it is clunky.</h3>
-                <p class="small-copy">You are feeling the system problem directly: every swap depends on another person wanting exactly what you hold right now.</p>
+                <h3>Big goods are not easy money.</h3>
+                <p class="small-copy">A cow may store a lot of value, but this plaza shows why value alone is not enough. You also need divisibility, portability, and broad acceptance.</p>
               </section>
             `
         }
         <section class="card panel stack market-log-panel">
           <div class="row wrap-row">
             <div>
-              <div class="eyebrow">Market log</div>
+              <div class="eyebrow">Trade log</div>
               <h3>What just happened</h3>
             </div>
             <span class="badge">${state.marketLog.length} events</span>
@@ -867,6 +1165,7 @@ function marketScreen() {
               .map(
                 (entry) => `
                   <article class="market-log-entry log-${entry.type}">
+                    ${entry.badge ? `<div class="result-tag subtle">${marketFailureLabel(entry.badge)}</div>` : ''}
                     <p>${entry.text}</p>
                   </article>
                 `,
@@ -899,10 +1198,10 @@ function roundScreen() {
         <div class="choice-grid ${state.mode === 'presenter' ? 'choice-grid-large' : ''}">
           ${round.choices
             .map(
-              (item) => `
-                <button class="choice ${choice?.id === item.id ? 'selected' : ''} ${showReveal && item.id === round.correctChoiceId ? 'choice-correct' : ''} ${showReveal && choice?.id === item.id && !correct ? 'choice-missed' : ''}" data-choice="${item.id}">
-                  <span class="choice-title">${item.label}</span>
-                  <span class="choice-detail">${item.detail}</span>
+              (entry) => `
+                <button class="choice ${choice?.id === entry.id ? 'selected' : ''} ${showReveal && entry.id === round.correctChoiceId ? 'choice-correct' : ''} ${showReveal && choice?.id === entry.id && !correct ? 'choice-missed' : ''}" data-choice="${entry.id}">
+                  <span class="choice-title">${entry.label}</span>
+                  <span class="choice-detail">${entry.detail}</span>
                 </button>
               `,
             )
@@ -913,17 +1212,17 @@ function roundScreen() {
             ? `
               <section class="feedback-card ${correct ? 'feedback-good' : 'feedback-warn'}">
                 <div class="result-tag">${correct ? 'Correct direction' : 'Useful failure'}</div>
-                <h3>${correct ? 'That moves the story forward.' : 'That choice teaches why better money emerged.'}</h3>
+                <h3>${correct ? 'That moves the story forward.' : 'That choice clarifies why stronger money emerged.'}</h3>
                 <p>${choice.feedback}</p>
                 <ul>
-                  ${round.summary.map((item) => `<li>${item}</li>`).join('')}
+                  ${round.summary.map((entry) => `<li>${entry}</li>`).join('')}
                 </ul>
               </section>
             `
             : `
               <section class="feedback-card feedback-pending">
                 <div class="result-tag subtle">${state.mode === 'presenter' ? 'Awaiting reveal' : 'Pick an option'}</div>
-                <p>${state.mode === 'presenter' ? 'Select an answer, discuss with the room, then reveal the lesson when ready.' : 'Choose an option to see what this round teaches.'}</p>
+                <p>${state.mode === 'presenter' ? 'Select an answer, discuss with the room, then reveal the lesson.' : 'Choose an option to see what this round teaches.'}</p>
               </section>
             `
         }
@@ -962,19 +1261,19 @@ function roundScreen() {
                   </div>
                   <button class="btn ghost small-btn" data-action="reset-votes">Reset votes</button>
                 </div>
-                <p class="small-copy">Use this as a simple hand-count tracker or scaffold for future multi-user voting.</p>
+                <p class="small-copy">Use this as a hand-count tracker or scaffold for future live multi-user voting.</p>
                 <div class="vote-list">
                   ${round.choices
                     .map(
-                      (item) => `
+                      (entry) => `
                         <div class="vote-row">
-                          <button class="vote-cast" data-vote="${item.id}">+1</button>
+                          <button class="vote-cast" data-vote="${entry.id}">+1</button>
                           <div class="vote-meta">
                             <div class="vote-line">
-                              <strong>${item.label}</strong>
-                              <span>${state.voteCounts[round.id][item.id]} votes · ${votePercent(round.id, item.id)}%</span>
+                              <strong>${entry.label}</strong>
+                              <span>${state.voteCounts[round.id][entry.id]} votes · ${votePercent(round.id, entry.id)}%</span>
                             </div>
-                            <div class="vote-bar"><span style="width:${votePercent(round.id, item.id)}%"></span></div>
+                            <div class="vote-bar"><span style="width:${votePercent(round.id, entry.id)}%"></span></div>
                           </div>
                         </div>
                       `,
@@ -987,7 +1286,7 @@ function roundScreen() {
               <section class="card panel stack recap-side-card">
                 <div class="eyebrow">Run status</div>
                 <h3>${state.score} / ${rounds.length + 1} complete</h3>
-                <p class="small-copy">The market showed barter friction directly. These next rounds explain why stronger money traits start to matter so much.</p>
+                <p class="small-copy">The plaza showed that barter breaks for several reasons at once. These rounds explain why societies search for stronger money.</p>
               </section>
             `
         }
@@ -1010,14 +1309,14 @@ function recapScreen() {
           </div>
           <div class="badge big-badge">${state.score} / ${rounds.length + 1}</div>
         </div>
-        <p class="prompt">Choose at least three traits. There is not one magical checklist, but strong money usually scores well across the same core properties.</p>
+        <p class="prompt">Choose at least three traits. Strong money is not magic, but it usually handles the same problems you felt in the plaza.</p>
         <div class="properties-grid ${state.mode === 'presenter' ? 'properties-grid-large' : ''}">
           ${properties
             .map(
-              (item) => `
-                <button class="pill ${state.selectedProperties.includes(item.id) ? 'selected' : ''}" data-property="${item.id}">
-                  <span class="choice-title">${item.title}</span>
-                  <span class="choice-detail">${item.description}</span>
+              (entry) => `
+                <button class="pill ${state.selectedProperties.includes(entry.id) ? 'selected' : ''}" data-property="${entry.id}">
+                  <span class="choice-title">${entry.title}</span>
+                  <span class="choice-detail">${entry.description}</span>
                 </button>
               `,
             )
@@ -1031,13 +1330,13 @@ function recapScreen() {
           <div class="history-list">
             ${state.history
               .map(
-                (item) => `
-                  <article class="history-item ${item.correct ? 'history-good' : 'history-warn'}">
+                (entry) => `
+                  <article class="history-item ${entry.correct ? 'history-good' : 'history-warn'}">
                     <div>
-                      <strong>${item.roundTitle}</strong>
-                      <p>${item.choice}</p>
+                      <strong>${entry.roundTitle}</strong>
+                      <p>${entry.choice}</p>
                     </div>
-                    <span class="status-dot">${item.correct ? '✓' : '•'}</span>
+                    <span class="status-dot">${entry.correct ? '✓' : '•'}</span>
                   </article>
                 `,
               )
@@ -1046,7 +1345,7 @@ function recapScreen() {
           <div class="selected-summary ${selected.length ? '' : 'empty-summary'}">
             ${
               selected.length
-                ? selected.map((item) => `<span class="stat-chip">${item.title}</span>`).join('')
+                ? selected.map((entry) => `<span class="stat-chip">${entry.title}</span>`).join('')
                 : '<span class="small-copy">Pick at least three traits to unlock the Bitcoin bridge.</span>'
             }
           </div>
@@ -1060,7 +1359,7 @@ function recapScreen() {
         <section class="card panel stack">
           <div class="eyebrow">Teaching prompt</div>
           <h3>Ask before you bridge</h3>
-          <p class="small-copy">Which money trait felt most important after the market simulation: portability, divisibility, scarcity, or acceptability?</p>
+          <p class="small-copy">Which money trait mattered most after the plaza: portability, divisibility, scarcity, or acceptability?</p>
         </section>
       </aside>
     </section>
@@ -1081,10 +1380,10 @@ function bitcoinScreen() {
         <div class="bridge-grid">
           ${bridgePoints
             .map(
-              (item, index) => `
+              (entry, index) => `
                 <article class="bridge-card panel">
                   <div class="bridge-index">0${index + 1}</div>
-                  <p>${item}</p>
+                  <p>${entry}</p>
                 </article>
               `,
             )
@@ -1093,7 +1392,7 @@ function bitcoinScreen() {
         <section class="feedback-card feedback-neutral">
           <div class="result-tag">Big idea</div>
           <h3>People keep searching for money that is easier to trust, harder to debase, and easier to move through space and time.</h3>
-          <p>Bitcoin matters in this lesson because it tries to solve those old money problems in a digital context, not because it appeared from nowhere.</p>
+          <p>Bitcoin matters here because it tries to solve old money problems in a digital environment, not because it appeared from nowhere.</p>
         </section>
         <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions' : ''}">
           <button class="btn ghost" data-action="restart-mode">Restart</button>
@@ -1104,7 +1403,7 @@ function bitcoinScreen() {
         <section class="card panel stack">
           <div class="eyebrow">Facilitator note</div>
           <h3>Keep the bridge modest</h3>
-          <p class="small-copy">The market and money-property logic should do most of the teaching. Bitcoin then appears as the next candidate in that longer history.</p>
+          <p class="small-copy">The plaza should do most of the teaching. Bitcoin then appears as the next candidate in the longer history of money.</p>
         </section>
       </aside>
     </section>
@@ -1116,7 +1415,7 @@ function endScreen() {
     <section class="card end-card stack-lg ${state.mode === 'presenter' ? 'projector-card' : ''}">
       <div class="eyebrow">Complete</div>
       <h1>${finalHeadline()}</h1>
-      <p class="lede">You moved through a live barter market, into commodity coordination, through the inflation problem, and into the Bitcoin bridge.</p>
+      <p class="lede">You walked a live market plaza, saw barter fail in concrete ways, moved into commodity money, through inflation, and into the Bitcoin bridge.</p>
       <div class="end-stats">
         <div class="panel stat-panel">
           <strong>Score</strong>
@@ -1128,7 +1427,7 @@ function endScreen() {
         </div>
         <div class="panel stat-panel">
           <strong>Selected traits</strong>
-          <span>${selectedPropertiesSummary().map((item) => item.title).join(', ') || 'None selected'}</span>
+          <span>${selectedPropertiesSummary().map((entry) => entry.title).join(', ') || 'None selected'}</span>
         </div>
       </div>
       <section class="panel stack">
@@ -1192,6 +1491,12 @@ function bind() {
   on('[data-action="reset-market"]', resetMarketRound);
   on('[data-action="continue-market"]', continueFromMarket);
   on('[data-action="skip-market"]', skipMarket);
+  on('[data-action="inspect-next"]', () => {
+    if (!state.marketPeople.length) return;
+    const currentIndex = state.marketPeople.findIndex((entry) => entry.id === state.inspectedPersonId);
+    const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % state.marketPeople.length : 0;
+    inspectPerson(state.marketPeople[nextIndex].id);
+  });
 
   app.querySelectorAll('[data-choice]').forEach((el) =>
     el.addEventListener('click', () => selectChoice(el.getAttribute('data-choice'))),
@@ -1205,8 +1510,12 @@ function bind() {
     el.addEventListener('click', () => castVote(el.getAttribute('data-vote'))),
   );
 
-  app.querySelectorAll('[data-trader]').forEach((el) =>
-    el.addEventListener('click', () => tradeWithTrader(el.getAttribute('data-trader'))),
+  app.querySelectorAll('[data-inspect]').forEach((el) =>
+    el.addEventListener('click', () => inspectPerson(el.getAttribute('data-inspect'))),
+  );
+
+  app.querySelectorAll('[data-trade]').forEach((el) =>
+    el.addEventListener('click', () => tryTrade(el.getAttribute('data-trade'))),
   );
 
   app.querySelectorAll('[data-participant]').forEach((el) =>
