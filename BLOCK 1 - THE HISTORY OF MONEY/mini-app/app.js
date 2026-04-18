@@ -1,58 +1,136 @@
 const GAME_COPY = {
   title: 'History of Money',
   subtitle: 'A fast interactive journey from barter to Bitcoin',
-  soloDuration: '~3 min solo run',
-  presenterDuration: '~8–12 min facilitated session',
+  soloDuration: '~4 min solo run',
+  presenterDuration: '~10–14 min facilitated session',
+};
+
+const marketItems = {
+  fish: {
+    id: 'fish',
+    emoji: '🐟',
+    label: 'Fish',
+    short: 'Fresh fish',
+    description: 'Useful food, but it spoils fast.',
+  },
+  grain: {
+    id: 'grain',
+    emoji: '🌾',
+    label: 'Grain',
+    short: 'Grain sack',
+    description: 'Staple food that many people value.',
+  },
+  salt: {
+    id: 'salt',
+    emoji: '🧂',
+    label: 'Salt',
+    short: 'Salt pouch',
+    description: 'Portable, divisible, and widely wanted.',
+  },
+  pots: {
+    id: 'pots',
+    emoji: '🏺',
+    label: 'Clay pots',
+    short: 'Clay pots',
+    description: 'Useful containers for homes and trade.',
+  },
+  wool: {
+    id: 'wool',
+    emoji: '🧶',
+    label: 'Wool cloth',
+    short: 'Wool cloth',
+    description: 'Warm fabric for clothing and trade.',
+  },
+  shoes: {
+    id: 'shoes',
+    emoji: '👞',
+    label: 'Shoes',
+    short: 'Winter shoes',
+    description: 'The thing you urgently need before winter.',
+  },
+  shells: {
+    id: 'shells',
+    emoji: '🐚',
+    label: 'Shells',
+    short: 'Shell necklace',
+    description: 'Pretty and recognizable, but supply can change.',
+  },
+};
+
+const barterScenario = {
+  id: 'barter-market',
+  title: 'Barter market challenge',
+  kicker: 'Round 1',
+  intro:
+    'You enter a crowded village market. You start with one item. Winter is coming and your goal is to leave with shoes.',
+  prompt:
+    'Trade step-by-step with visible market participants. Each trader will only swap if you offer the item they want.',
+  facilitatorNote:
+    'Let the room suggest trades out loud. Tap through their proposed route and notice how often barter stalls unless wants line up exactly.',
+  audiencePrompt:
+    'Ask the group to predict the shortest path before making the first trade.',
+  playerStartItemId: 'fish',
+  targetItemId: 'shoes',
+  traders: [
+    {
+      id: 'mara',
+      name: 'Mara the Potter',
+      role: 'Potter',
+      line: 'I have clay pots. Bring me fish and we have a deal.',
+      have: 'pots',
+      want: 'fish',
+    },
+    {
+      id: 'gita',
+      name: 'Gita the Weaver',
+      role: 'Weaver',
+      line: 'I can trade wool cloth, but only if you bring me clay pots.',
+      have: 'wool',
+      want: 'pots',
+    },
+    {
+      id: 'soren',
+      name: 'Soren the Salt Merchant',
+      role: 'Salt trader',
+      line: 'I carry salt pouches and will swap for wool cloth.',
+      have: 'salt',
+      want: 'wool',
+    },
+    {
+      id: 'tala',
+      name: 'Tala the Farmer',
+      role: 'Farmer',
+      line: 'I will trade grain for salt. My family always needs salt.',
+      have: 'grain',
+      want: 'salt',
+    },
+    {
+      id: 'bako',
+      name: 'Bako the Shoemaker',
+      role: 'Shoemaker',
+      line: 'I made sturdy winter shoes. Bring me grain and they are yours.',
+      have: 'shoes',
+      want: 'grain',
+    },
+    {
+      id: 'lina',
+      name: 'Lina the Jeweler',
+      role: 'Jeweler',
+      line: 'I have shell jewelry, but I only want salt today.',
+      have: 'shells',
+      want: 'salt',
+    },
+  ],
 };
 
 const rounds = [
   {
-    id: 'barter',
-    title: 'Barter breaks down',
-    kicker: 'Round 1',
-    prompt: 'You are a fisherman. Winter is coming and you need shoes. What is your best move in a barter world?',
-    facilitatorNote:
-      'Ask the room: what has to line up perfectly for barter to work? Let a few people answer before you reveal.',
-    revealLabel: 'Reveal the barter problem',
-    question: 'What is barter missing?',
-    correctChoiceId: 'fish-for-shoes',
-    choices: [
-      {
-        id: 'fish-for-shoes',
-        label: 'Trade fish for shoes',
-        detail: 'Only works if the shoemaker wants fish right now.',
-        feedback:
-          'That is the famous coincidence-of-wants problem. Barter depends on two people wanting each other’s goods at the same moment.',
-      },
-      {
-        id: 'save-fish',
-        label: 'Store fish for later',
-        detail: 'Fish spoil before they can carry value well.',
-        feedback:
-          'Perishable goods make terrible money because they are hard to save, move, and trust over time.',
-      },
-      {
-        id: 'borrow-shoes',
-        label: 'Borrow shoes',
-        detail: 'Useful for one person, not for the system.',
-        feedback:
-          'Credit can help temporarily, but it does not solve the broader exchange problem for everyone in the village.',
-      },
-    ],
-    summary: [
-      'Barter is fragile because exchange only works when wants line up.',
-      'Perishable goods are poor stores of value.',
-      'People start searching for something more tradeable than their own output.',
-    ],
-    audiencePrompt: 'Quick vote: which option feels most realistic in a village with no common money yet?',
-  },
-  {
     id: 'commodity',
     title: 'Commodity money emerges',
     kicker: 'Round 2',
-    prompt: 'Your village starts converging on one good to trade through. Which item works best as money?',
+    prompt: 'After that messy barter run, your village starts converging on one item to trade through. Which good works best as money?',
     facilitatorNote:
-      'Invite people to defend the wrong answers too. This helps surface money properties naturally instead of lecturing first.',
+      'Connect this back to the market you just played. Ask which item would have made all those trades easier to coordinate.',
     revealLabel: 'Reveal the stronger money',
     question: 'Which good is strongest money?',
     correctChoiceId: 'salt',
@@ -60,14 +138,14 @@ const rounds = [
       {
         id: 'salt',
         label: 'Salt',
-        detail: 'Useful, divisible, portable, and widely desired.',
+        detail: 'Useful, portable, divisible, and already wanted by multiple traders.',
         feedback:
           'Exactly. Useful commodities can become money because people already recognize their value and expect others to accept them.',
       },
       {
         id: 'berries',
         label: 'Berries',
-        detail: 'Easy to collect, easy to crush, easy to rot.',
+        detail: 'Easy to gather, easy to bruise, easy to rot.',
         feedback:
           'Berries fail durability. Good money has to survive time, handling, and storage.',
       },
@@ -82,7 +160,7 @@ const rounds = [
     summary: [
       'Commodity money works when many people value the good already.',
       'Durability, portability, recognizability, and divisibility matter a lot.',
-      'Physical money improves trade, but it still has costs and limitations.',
+      'A commonly desired trade good reduces the friction you felt in barter.',
     ],
     audiencePrompt: 'Ask for a show of hands before revealing: salt, berries, or giant rock?',
   },
@@ -90,7 +168,7 @@ const rounds = [
     id: 'inflation',
     title: 'Supply shocks break trust',
     kicker: 'Round 3',
-    prompt: 'Your town uses shells as money. Then a ship arrives carrying huge sacks of identical shells. What changes first?',
+    prompt: 'Your town now uses shells as money. Then a ship arrives carrying huge sacks of identical shells. What changes first?',
     facilitatorNote:
       'Pause after answers and ask: do more money units automatically mean more real wealth?',
     revealLabel: 'Reveal the inflation lesson',
@@ -169,8 +247,8 @@ const bridgePoints = [
 ];
 
 const presenterTips = [
-  'Use “reveal” only after the room has committed to an answer or a vote.',
-  'Keep the solo lesson moving. In conference mode, use pauses and discussion to slow it down.',
+  'Treat each trader as a person in the market with a real have/need role the audience can reason about.',
+  'Use “reveal” only after the room has committed to an answer or a market route.',
   'If the room is mixed, ask beginners for intuition first and experienced participants for refinements second.',
 ];
 
@@ -185,6 +263,12 @@ const state = {
   presenterReveal: false,
   showVotePanel: false,
   voteCounts: {},
+  marketInventory: barterScenario.playerStartItemId,
+  marketCompleted: false,
+  marketTradeCount: 0,
+  marketLog: [],
+  conferenceParticipants: [],
+  conferenceActiveParticipantId: null,
 };
 
 const app = document.getElementById('app');
@@ -199,8 +283,36 @@ function createInitialVotes() {
   }, {});
 }
 
+function buildConferenceParticipants() {
+  return barterScenario.traders.map((trader, index) => ({
+    id: trader.id,
+    name: trader.name,
+    role: trader.role,
+    have: trader.have,
+    want: trader.want,
+    colorClass: `participant-tone-${(index % 6) + 1}`,
+  }));
+}
+
 function resetVotes() {
   state.voteCounts = createInitialVotes();
+}
+
+function resetMarketState() {
+  state.marketInventory = barterScenario.playerStartItemId;
+  state.marketCompleted = false;
+  state.marketTradeCount = 0;
+  state.marketLog = [
+    {
+      type: 'start',
+      text: `You enter the market holding ${itemPhrase(barterScenario.playerStartItemId)} and needing ${itemPhrase(barterScenario.targetItemId)}.`,
+    },
+  ];
+}
+
+function resetConferenceParticipants() {
+  state.conferenceParticipants = buildConferenceParticipants();
+  state.conferenceActiveParticipantId = state.conferenceParticipants[0]?.id || null;
 }
 
 function resetProgress() {
@@ -212,6 +324,8 @@ function resetProgress() {
   state.presenterReveal = false;
   state.showVotePanel = false;
   resetVotes();
+  resetMarketState();
+  resetConferenceParticipants();
 }
 
 function resetToLanding() {
@@ -224,7 +338,7 @@ function resetToLanding() {
 function startSolo() {
   state.mode = 'solo';
   resetProgress();
-  state.screen = 'round';
+  state.screen = 'market';
   render();
 }
 
@@ -236,13 +350,104 @@ function startPresenter() {
 }
 
 function beginPresenterRun() {
-  state.screen = 'round';
+  state.screen = 'market';
   state.presenterReveal = false;
   render();
 }
 
 function currentRound() {
   return rounds[state.roundIndex];
+}
+
+function item(itemId) {
+  return marketItems[itemId];
+}
+
+function itemPhrase(itemId) {
+  const current = item(itemId);
+  return `${current.emoji} ${current.label}`;
+}
+
+function marketTraderStatus(trader) {
+  if (state.marketCompleted && state.marketInventory === barterScenario.targetItemId) {
+    return trader.have === barterScenario.targetItemId ? 'target-hit' : 'closed';
+  }
+  if (state.marketInventory === trader.want) return 'ready';
+  if (state.marketInventory === trader.have) return 'holding-same';
+  return 'blocked';
+}
+
+function markMarketHistory(success) {
+  const prior = state.history.find((item) => item.roundId === barterScenario.id);
+  if (prior) return;
+  state.history.push({
+    roundId: barterScenario.id,
+    roundTitle: barterScenario.title,
+    correct: success,
+    choiceId: success ? 'route-found' : 'market-skipped',
+    choice: success ? `Reached ${itemPhrase(barterScenario.targetItemId)} in ${state.marketTradeCount} trades` : 'Skipped market challenge',
+  });
+  if (success) {
+    state.score += 1;
+  }
+}
+
+function tradeWithTrader(traderId) {
+  if (state.marketCompleted) return;
+  const trader = barterScenario.traders.find((entry) => entry.id === traderId);
+  if (!trader) return;
+
+  const beforeItem = state.marketInventory;
+  if (beforeItem !== trader.want) {
+    state.marketLog.unshift({
+      type: 'blocked',
+      text: `${trader.name} wants ${itemPhrase(trader.want)}, not ${itemPhrase(beforeItem)}.`,
+    });
+    render();
+    return;
+  }
+
+  state.marketInventory = trader.have;
+  state.marketTradeCount += 1;
+  state.marketLog.unshift({
+    type: 'trade',
+    text: `Trade ${state.marketTradeCount}: You gave ${itemPhrase(beforeItem)} to ${trader.name} and received ${itemPhrase(trader.have)}.`,
+  });
+
+  if (state.marketInventory === barterScenario.targetItemId) {
+    state.marketCompleted = true;
+    state.marketLog.unshift({
+      type: 'success',
+      text: `Success: you finally reached ${itemPhrase(barterScenario.targetItemId)} after ${state.marketTradeCount} separate swaps.`,
+    });
+    markMarketHistory(true);
+  }
+
+  render();
+}
+
+function skipMarket() {
+  if (!state.history.find((item) => item.roundId === barterScenario.id)) {
+    state.history.push({
+      roundId: barterScenario.id,
+      roundTitle: barterScenario.title,
+      correct: false,
+      choiceId: 'market-skipped',
+      choice: 'Skipped market challenge',
+    });
+  }
+  state.screen = 'round';
+  state.roundIndex = 0;
+  render();
+}
+
+function continueFromMarket() {
+  if (!state.marketCompleted) return;
+  state.screen = 'round';
+  state.roundIndex = 0;
+  state.selectedChoice = null;
+  state.presenterReveal = false;
+  render();
 }
 
 function markHistory(round, choice) {
@@ -324,6 +529,13 @@ function resetCurrentRound() {
   render();
 }
 
+function resetMarketRound() {
+  state.history = state.history.filter((item) => item.roundId !== barterScenario.id);
+  state.score = state.history.filter((item) => item.correct).length;
+  resetMarketState();
+  render();
+}
+
 function skipRound() {
   const round = currentRound();
   const prior = state.history.find((item) => item.roundId === round.id);
@@ -366,12 +578,14 @@ function resetRoundVotes() {
   render();
 }
 
+function setConferenceParticipant(participantId) {
+  state.conferenceActiveParticipantId = participantId;
+  render();
+}
+
 function progressPercent() {
-  const steps = ['landing', 'conferenceIntro', 'round1', 'round2', 'round3', 'recap', 'bitcoin', 'end'];
-  const currentKey =
-    state.screen === 'round'
-      ? `round${state.roundIndex + 1}`
-      : state.screen;
+  const steps = ['landing', 'conferenceIntro', 'market', 'round1', 'round2', 'recap', 'bitcoin', 'end'];
+  const currentKey = state.screen === 'round' ? `round${state.roundIndex + 1}` : state.screen;
   const index = Math.max(0, steps.indexOf(currentKey));
   return ((index + 1) / steps.length) * 100;
 }
@@ -381,7 +595,7 @@ function selectedPropertiesSummary() {
 }
 
 function finalHeadline() {
-  if (state.score === rounds.length) return 'Strong run.';
+  if (state.score === rounds.length + 1) return 'Strong run.';
   if (state.score >= 2) return 'Nice progression.';
   return 'You completed the arc.';
 }
@@ -423,28 +637,28 @@ function landingScreen() {
       <div class="hero-copy stack">
         <div class="eyebrow">Interactive lesson</div>
         <h1>From barter friction to Bitcoin logic.</h1>
-        <p class="lede">A mobile-first lesson for meetups, classrooms, and mini apps. Play solo or launch a facilitator-friendly conference mode.</p>
+        <p class="lede">Start inside a real barter market, trade person-to-person toward a target item, then carry that intuition into commodity money, inflation, and Bitcoin.</p>
       </div>
       <div class="hero-grid">
         <article class="info-card panel">
           <div class="pill-badge">Solo</div>
-          <h2>Quick self-guided run</h2>
-          <p>${GAME_COPY.soloDuration}. Tap choices, learn from feedback, recap what strong money needs, then bridge into Bitcoin.</p>
+          <h2>Play the market yourself</h2>
+          <p>${GAME_COPY.soloDuration}. You begin with a concrete item, see each trader’s HAVE and WANT, and trade step-by-step until you reach your target.</p>
           <ul class="feature-list">
-            <li>Simple one-thumb interaction</li>
-            <li>Clear round-by-round feedback</li>
-            <li>Replayable in seconds</li>
+            <li>Visible trader cards and market state</li>
+            <li>Tactile step-by-step barter path</li>
+            <li>Clear recap into money properties</li>
           </ul>
           <button class="btn primary" data-action="start-solo">Start solo</button>
         </article>
         <article class="info-card panel presenter-entry">
           <div class="pill-badge alt">Presenter</div>
-          <h2>Conference / meetup mode</h2>
-          <p>${GAME_COPY.presenterDuration}. Project the story, collect lightweight room votes, use presenter controls, and reveal lessons at the right time.</p>
+          <h2>Run it as a live market</h2>
+          <p>${GAME_COPY.presenterDuration}. Conference mode models participants as people in the market, gives you a presenter-controlled simulation, and keeps everything projector-friendly.</p>
           <ul class="feature-list">
-            <li>Projector-friendly layout</li>
-            <li>Reveal and reset controls</li>
-            <li>Facilitator notes built in</li>
+            <li>Participant role board for the market</li>
+            <li>Presenter-controlled market progression</li>
+            <li>Discussion prompts and vote scaffold</li>
           </ul>
           <button class="btn secondary strong" data-action="start-presenter">Open presenter mode</button>
         </article>
@@ -453,9 +667,9 @@ function landingScreen() {
         <div class="eyebrow">What learners discover</div>
         <div class="stat-row">
           <span class="stat-chip">Barter needs coincidence of wants</span>
-          <span class="stat-chip">Commodity money improves coordination</span>
-          <span class="stat-chip">Unbounded supply weakens money</span>
-          <span class="stat-chip">Bitcoin enters as a strong-money candidate</span>
+          <span class="stat-chip">Common goods reduce friction</span>
+          <span class="stat-chip">Easy supply weakens money</span>
+          <span class="stat-chip">Bitcoin extends the story digitally</span>
         </div>
       </section>
     </section>
@@ -468,8 +682,8 @@ function conferenceIntroScreen() {
       <div class="row wrap-row">
         <div class="stack">
           <div class="eyebrow">Conference mode</div>
-          <h1>Teach the history of money live.</h1>
-          <p class="lede">This layout is tuned for projector use and guided facilitation. You control pacing, reveals, and optional audience vote tracking.</p>
+          <h1>Turn the room into a market.</h1>
+          <p class="lede">This mode treats participants as people with real have/need roles. If full live multiplayer is not available, the presenter still gets a coherent market simulation to drive on screen.</p>
         </div>
         <div class="badge big-badge">${GAME_COPY.presenterDuration}</div>
       </div>
@@ -477,16 +691,16 @@ function conferenceIntroScreen() {
         <section class="panel stack">
           <h3>Presenter flow</h3>
           <ol class="ordered-list">
-            <li>Ask the room to commit to an answer first.</li>
-            <li>Use <strong>Reveal</strong> to surface the lesson.</li>
-            <li>Use <strong>Next</strong> to move the narrative forward.</li>
-            <li>Use <strong>Reset round</strong> if you want to re-run the moment.</li>
+            <li>Show the participant market board and assign attention to one trader at a time.</li>
+            <li>Ask the room which person the player should approach next.</li>
+            <li>Tap the trader card to execute the barter if wants line up.</li>
+            <li>After the market resolves, continue into commodity money and inflation.</li>
           </ol>
         </section>
         <section class="panel stack">
-          <h3>Audience voting foundation</h3>
-          <p>The vote board is intentionally lightweight and static-first. You can tally raised hands or verbal responses with a tap, then reset per round.</p>
-          <div class="inline-note">No live infra required. It is a clean scaffold for future multiplayer expansion.</div>
+          <h3>What is simulated live</h3>
+          <p>The room sees the player inventory, target item, participant roles, and trade log. This keeps conference mode grounded in people trading with other people, not abstract quiz choices.</p>
+          <div class="inline-note">Static-site safe: no server, no sockets, still presentation-ready.</div>
         </section>
       </div>
       <section class="tip-strip">
@@ -498,6 +712,171 @@ function conferenceIntroScreen() {
       </div>
     </section>
   `, { projector: true });
+}
+
+function marketScreen() {
+  const currentItem = item(state.marketInventory);
+  const targetItem = item(barterScenario.targetItemId);
+  const activeParticipant = state.conferenceParticipants.find((entry) => entry.id === state.conferenceActiveParticipantId);
+
+  shell(`
+    <section class="experience-grid ${state.mode === 'presenter' ? 'presenter-grid market-grid' : 'market-grid'}">
+      <section class="card stage-card ${state.mode === 'presenter' ? 'projector-card' : ''}">
+        <div class="stage-header">
+          <div>
+            <div class="eyebrow">${barterScenario.kicker}</div>
+            <h1>${barterScenario.title}</h1>
+          </div>
+          <div class="badge big-badge">Market</div>
+        </div>
+        <p class="prompt">${barterScenario.intro}</p>
+        <section class="market-objective panel stack">
+          <div class="row wrap-row objective-row">
+            <div class="inventory-card inventory-now">
+              <span class="inventory-label">You have</span>
+              <div class="inventory-item"><span class="inventory-emoji">${currentItem.emoji}</span><strong>${currentItem.label}</strong></div>
+              <p>${currentItem.description}</p>
+            </div>
+            <div class="market-arrow">→</div>
+            <div class="inventory-card inventory-target">
+              <span class="inventory-label">You need</span>
+              <div class="inventory-item"><span class="inventory-emoji">${targetItem.emoji}</span><strong>${targetItem.label}</strong></div>
+              <p>${targetItem.description}</p>
+            </div>
+          </div>
+          <div class="market-status-row">
+            <span class="stat-chip">Trades made: ${state.marketTradeCount}</span>
+            <span class="stat-chip">Goal: reach ${targetItem.label}</span>
+            <span class="stat-chip ${state.marketCompleted ? 'chip-success' : ''}">${state.marketCompleted ? 'Target reached' : 'Market still in motion'}</span>
+          </div>
+        </section>
+        <section class="trader-board stack">
+          <div class="row wrap-row">
+            <div>
+              <div class="eyebrow">Visible traders</div>
+              <h3>Choose who to approach next</h3>
+            </div>
+            ${state.mode === 'presenter' ? '<div class="inline-note">Presenter can spotlight a participant on the right.</div>' : ''}
+          </div>
+          <div class="trader-grid ${state.mode === 'presenter' ? 'trader-grid-large' : ''}">
+            ${barterScenario.traders
+              .map((trader) => {
+                const status = marketTraderStatus(trader);
+                const canTrade = status === 'ready';
+                return `
+                  <button class="trader-card trader-${status}" data-trader="${trader.id}">
+                    <div class="row wrap-row trader-topline">
+                      <div>
+                        <strong>${trader.name}</strong>
+                        <div class="trader-role">${trader.role}</div>
+                      </div>
+                      <span class="trader-status-pill">${canTrade ? 'Trade now' : status === 'holding-same' ? 'Same item' : status === 'target-hit' ? 'Target item reached' : 'Needs something else'}</span>
+                    </div>
+                    <div class="trade-pair-row">
+                      <div class="trade-pair have-pair">
+                        <span class="trade-label">HAVE</span>
+                        <div class="trade-item">${item(trader.have).emoji} ${item(trader.have).label}</div>
+                      </div>
+                      <div class="trade-swap-arrow">⇄</div>
+                      <div class="trade-pair want-pair">
+                        <span class="trade-label">WANT</span>
+                        <div class="trade-item">${item(trader.want).emoji} ${item(trader.want).label}</div>
+                      </div>
+                    </div>
+                    <p>${trader.line}</p>
+                  </button>
+                `;
+              })
+              .join('')}
+          </div>
+        </section>
+        <section class="feedback-card ${state.marketCompleted ? 'feedback-good' : 'feedback-pending'}">
+          <div class="result-tag ${state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Barter lesson unlocked' : 'Trade-by-trade friction'}</div>
+          <h3>${state.marketCompleted ? 'You reached the target, but it took multiple specific matches.' : 'Each trade only works if one person has exactly what the next person wants.'}</h3>
+          <p>${state.marketCompleted ? 'This is the coincidence-of-wants problem in motion. Barter can work, but only through a fragile chain of matching needs.' : barterScenario.prompt}</p>
+        </section>
+        <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions presenter-actions-market' : ''}">
+          <button class="btn ghost" data-action="reset-market">Reset market</button>
+          ${state.mode === 'presenter' ? '<button class="btn ghost" data-action="skip-market">Skip to next lesson</button>' : '<button class="btn ghost" data-action="restart-mode">Restart run</button>'}
+          <button class="btn primary" data-action="continue-market" ${state.marketCompleted ? '' : 'disabled'}>Continue</button>
+        </div>
+      </section>
+      <aside class="stack sidebar">
+        ${
+          state.mode === 'presenter'
+            ? `
+              <section class="card panel stack presenter-note-card">
+                <div class="eyebrow">Facilitator prompt</div>
+                <h3>Who should the player approach next?</h3>
+                <p>${barterScenario.facilitatorNote}</p>
+                <div class="inline-note">${barterScenario.audiencePrompt}</div>
+              </section>
+              <section class="card panel stack participant-panel">
+                <div class="eyebrow">Participant market board</div>
+                <h3>People in this market</h3>
+                <p class="small-copy">Use these as presenter-controlled participant roles even if the audience is not interacting through their own devices yet.</p>
+                <div class="participant-list">
+                  ${state.conferenceParticipants
+                    .map(
+                      (participant) => `
+                        <button class="participant-card ${participant.id === state.conferenceActiveParticipantId ? 'participant-active' : ''} ${participant.colorClass}" data-participant="${participant.id}">
+                          <div>
+                            <strong>${participant.name}</strong>
+                            <div class="trader-role">${participant.role}</div>
+                          </div>
+                          <div class="participant-mini-pairs">
+                            <span>${item(participant.have).emoji} ${item(participant.have).label}</span>
+                            <span>needs ${item(participant.want).emoji} ${item(participant.want).label}</span>
+                          </div>
+                        </button>
+                      `,
+                    )
+                    .join('')}
+                </div>
+                ${
+                  activeParticipant
+                    ? `
+                      <div class="participant-focus panel stack">
+                        <div class="eyebrow">Spotlighted participant</div>
+                        <h3>${activeParticipant.name}</h3>
+                        <p class="small-copy">Has ${itemPhrase(activeParticipant.have)} · Needs ${itemPhrase(activeParticipant.want)}</p>
+                      </div>
+                    `
+                    : ''
+                }
+              </section>
+            `
+            : `
+              <section class="card panel stack recap-side-card">
+                <div class="eyebrow">Why this matters</div>
+                <h3>Barter can work, but it is clunky.</h3>
+                <p class="small-copy">You are feeling the system problem directly: every swap depends on another person wanting exactly what you hold right now.</p>
+              </section>
+            `
+        }
+        <section class="card panel stack market-log-panel">
+          <div class="row wrap-row">
+            <div>
+              <div class="eyebrow">Market log</div>
+              <h3>What just happened</h3>
+            </div>
+            <span class="badge">${state.marketLog.length} events</span>
+          </div>
+          <div class="market-log-list">
+            ${state.marketLog
+              .map(
+                (entry) => `
+                  <article class="market-log-entry log-${entry.type}">
+                    <p>${entry.text}</p>
+                  </article>
+                `,
+              )
+              .join('')}
+          </div>
+        </section>
+      </aside>
+    </section>
+  `, { projector: state.mode === 'presenter' });
 }
 
 function roundScreen() {
@@ -514,7 +893,7 @@ function roundScreen() {
             <div class="eyebrow">${round.kicker}</div>
             <h1>${round.title}</h1>
           </div>
-          <div class="badge big-badge">${state.roundIndex + 1} / ${rounds.length}</div>
+          <div class="badge big-badge">${state.roundIndex + 2} / ${rounds.length + 1}</div>
         </div>
         <p class="prompt">${round.prompt}</p>
         <div class="choice-grid ${state.mode === 'presenter' ? 'choice-grid-large' : ''}">
@@ -607,8 +986,8 @@ function roundScreen() {
             : `
               <section class="card panel stack recap-side-card">
                 <div class="eyebrow">Run status</div>
-                <h3>${state.score} / ${rounds.length} correct</h3>
-                <p class="small-copy">Each round shows why societies move toward better money: easier exchange, stronger coordination, and harder-to-manipulate supply.</p>
+                <h3>${state.score} / ${rounds.length + 1} complete</h3>
+                <p class="small-copy">The market showed barter friction directly. These next rounds explain why stronger money traits start to matter so much.</p>
               </section>
             `
         }
@@ -629,7 +1008,7 @@ function recapScreen() {
             <div class="eyebrow">Recap</div>
             <h1>What makes money strong?</h1>
           </div>
-          <div class="badge big-badge">${state.score} / ${rounds.length}</div>
+          <div class="badge big-badge">${state.score} / ${rounds.length + 1}</div>
         </div>
         <p class="prompt">Choose at least three traits. There is not one magical checklist, but strong money usually scores well across the same core properties.</p>
         <div class="properties-grid ${state.mode === 'presenter' ? 'properties-grid-large' : ''}">
@@ -681,7 +1060,7 @@ function recapScreen() {
         <section class="card panel stack">
           <div class="eyebrow">Teaching prompt</div>
           <h3>Ask before you bridge</h3>
-          <p class="small-copy">Which money trait felt most important to the room: durability, scarcity, portability, or verifiability? Let people answer before moving on.</p>
+          <p class="small-copy">Which money trait felt most important after the market simulation: portability, divisibility, scarcity, or acceptability?</p>
         </section>
       </aside>
     </section>
@@ -725,7 +1104,7 @@ function bitcoinScreen() {
         <section class="card panel stack">
           <div class="eyebrow">Facilitator note</div>
           <h3>Keep the bridge modest</h3>
-          <p class="small-copy">This lesson is about monetary evolution, not maximalism. Let the history set up the intuition for why Bitcoin becomes interesting.</p>
+          <p class="small-copy">The market and money-property logic should do most of the teaching. Bitcoin then appears as the next candidate in that longer history.</p>
         </section>
       </aside>
     </section>
@@ -737,11 +1116,11 @@ function endScreen() {
     <section class="card end-card stack-lg ${state.mode === 'presenter' ? 'projector-card' : ''}">
       <div class="eyebrow">Complete</div>
       <h1>${finalHeadline()}</h1>
-      <p class="lede">You moved from barter friction, to commodity coordination, to the inflation problem, and into the Bitcoin bridge.</p>
+      <p class="lede">You moved through a live barter market, into commodity coordination, through the inflation problem, and into the Bitcoin bridge.</p>
       <div class="end-stats">
         <div class="panel stat-panel">
           <strong>Score</strong>
-          <span>${state.score} / ${rounds.length}</span>
+          <span>${state.score} / ${rounds.length + 1}</span>
         </div>
         <div class="panel stat-panel">
           <strong>Mode</strong>
@@ -771,6 +1150,9 @@ function render() {
       break;
     case 'conferenceIntro':
       conferenceIntroScreen();
+      break;
+    case 'market':
+      marketScreen();
       break;
     case 'round':
       roundScreen();
@@ -802,11 +1184,14 @@ function bind() {
   on('[data-action="bridge"]', goToBitcoinBridge);
   on('[data-action="finish"]', finishExperience);
   on('[data-action="restart-mode"]', restartCurrentMode);
-  on('[data-action="reset-round"]', resetRound);
+  on('[data-action="reset-round"]', resetCurrentRound);
   on('[data-action="skip-round"]', skipRound);
   on('[data-action="toggle-reveal"]', toggleReveal);
   on('[data-action="toggle-votes"]', toggleVotePanel);
   on('[data-action="reset-votes"]', resetRoundVotes);
+  on('[data-action="reset-market"]', resetMarketRound);
+  on('[data-action="continue-market"]', continueFromMarket);
+  on('[data-action="skip-market"]', skipMarket);
 
   app.querySelectorAll('[data-choice]').forEach((el) =>
     el.addEventListener('click', () => selectChoice(el.getAttribute('data-choice'))),
@@ -819,7 +1204,15 @@ function bind() {
   app.querySelectorAll('[data-vote]').forEach((el) =>
     el.addEventListener('click', () => castVote(el.getAttribute('data-vote'))),
   );
+
+  app.querySelectorAll('[data-trader]').forEach((el) =>
+    el.addEventListener('click', () => tradeWithTrader(el.getAttribute('data-trader'))),
+  );
+
+  app.querySelectorAll('[data-participant]').forEach((el) =>
+    el.addEventListener('click', () => setConferenceParticipant(el.getAttribute('data-participant'))),
+  );
 }
 
-resetVotes();
+resetProgress();
 render();

@@ -7,16 +7,22 @@ A polished static mini app for the EDK `Block 1` lesson.
 - Cleaner landing page with clear entry points for:
   - **Solo mode**
   - **Presenter / conference mode**
-- Three polished rounds:
-  - barter
+- A genuine **interactive barter market** as the opening experience
+  - player starts with a concrete item
+  - player has a concrete target item to reach
+  - multiple visible trader cards with clear **HAVE** and **WANT** states
+  - step-by-step market trading with a visible trade log and market inventory
+- Follow-up rounds for:
   - commodity money
   - inflation
 - Stronger feedback states for correct and incorrect answers
 - Improved recap readability with round history and selected money traits
 - Bitcoin bridge and clearer replay options
-- Presenter foundations:
+- Presenter foundations aligned to the market simulation:
   - projector-friendly layout
-  - reveal / hide lesson controls
+  - participant market board with people/roles in the market
+  - presenter-controlled market progression
+  - reveal / hide lesson controls for later rounds
   - next / restart / reset round / skip round controls
   - lightweight facilitator prompts in the UI
   - simple audience vote board scaffold with per-round reset
@@ -40,5 +46,5 @@ It keeps the project:
 ## Files
 
 - `index.html` — document shell
-- `styles.css` — mobile-first and projector-aware styling
-- `app.js` — lesson flow, presenter controls, voting scaffold, and content model
+- `styles.css` — mobile-first, tactile market UI, and projector-aware styling
+- `app.js` — barter market game flow, presenter market simulation, later lesson rounds, and content model
