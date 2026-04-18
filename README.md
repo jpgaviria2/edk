@@ -61,7 +61,7 @@ Each module in the EDK includes:
 
 | Activity | Concept | Summary |
 |-----------|----------|---------|
-| **Block 1** | History of Money | Includes the static mini app at the repo root / GitHub Pages entrypoint, backed by `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`, with solo mode plus presenter / conference mode for barter, commodity money, inflation, recap, Bitcoin bridge, voting scaffold, and replay. |
+| **Block 1** | History of Money | Includes the static mini app at the repo root / GitHub Pages entrypoint, backed by `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`, with a full progressive lesson arc: simple barter success, crowded-plaza coincidence-of-wants friction, divisibility problems, commodity money, coin standardization, debasement, inflation, recap, Bitcoin bridge, presenter voting scaffold, and replay. |
 | **Block 2** | TITLE | description |
 | **Block 3** | TITLE | description |
 | **Block 4** | TITLE | description |

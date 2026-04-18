@@ -1,34 +1,46 @@
 const GAME_COPY = {
   title: 'History of Money',
-  subtitle: 'A fast interactive journey from barter to Bitcoin',
-  soloDuration: '~5 min solo run',
-  presenterDuration: '~10–15 min facilitated session',
+  subtitle: 'A progressive interactive journey from barter to Bitcoin',
+  soloDuration: '~8–10 min solo run',
+  presenterDuration: '~15–20 min facilitated session',
 };
 
 const marketItems = {
-  cow: {
-    id: 'cow',
-    emoji: '🐄',
-    label: 'Cow',
-    unitLabel: 'cow',
-    pluralLabel: 'cows',
+  bread: {
+    id: 'bread',
+    emoji: '🍞',
+    label: 'Bread',
+    unitLabel: 'loaf of bread',
+    pluralLabel: 'loaves of bread',
+    defaultQty: 2,
+    divisible: false,
+    bulk: 'easy to carry',
+    moneyTraits: 'useful food, but perishable',
+    description: 'Simple and useful, but it does not last long enough to serve as great money.',
+  },
+  eggs: {
+    id: 'eggs',
+    emoji: '🥚',
+    label: 'Eggs',
+    unitLabel: 'basket of eggs',
+    pluralLabel: 'baskets of eggs',
     defaultQty: 1,
     divisible: false,
-    bulk: 'very bulky',
-    moneyTraits: 'high value, but awkward and indivisible',
-    description: 'Huge value, but hard to divide, move, or price into smaller everyday trades.',
+    bulk: 'fragile basket',
+    moneyTraits: 'useful, but fragile and perishable',
+    description: 'Useful to eat, but fragile and hard to save for later.',
   },
-  apples: {
-    id: 'apples',
-    emoji: '🍎',
-    label: 'Apples',
-    unitLabel: 'apple',
-    pluralLabel: 'apples',
-    defaultQty: 500,
+  milk: {
+    id: 'milk',
+    emoji: '🥛',
+    label: 'Milk',
+    unitLabel: 'jug of milk',
+    pluralLabel: 'jugs of milk',
+    defaultQty: 1,
     divisible: true,
-    bulk: 'bulky in large sacks',
-    moneyTraits: 'divisible, but perishable and awkward in volume',
-    description: 'Easy to count, but 500 apples is a lot to carry and they do not last forever.',
+    bulk: 'sloshing jug',
+    moneyTraits: 'divisible, but spoils fast',
+    description: 'You can measure it, but it spoils quickly and is awkward to carry.',
   },
   fish: {
     id: 'fish',
@@ -41,6 +53,18 @@ const marketItems = {
     bulk: 'perishable bundle',
     moneyTraits: 'useful food, but spoils fast',
     description: 'Useful food, but it spoils quickly and is awkward for pricing other goods.',
+  },
+  apples: {
+    id: 'apples',
+    emoji: '🍎',
+    label: 'Apples',
+    unitLabel: 'apple',
+    pluralLabel: 'apples',
+    defaultQty: 500,
+    divisible: true,
+    bulk: 'bulky in large sacks',
+    moneyTraits: 'divisible, but perishable and awkward in volume',
+    description: 'Easy to count, but 500 apples is a lot to carry and they do not last forever.',
   },
   shoes: {
     id: 'shoes',
@@ -114,164 +138,423 @@ const marketItems = {
     moneyTraits: 'recognizable, but scarcity can change',
     description: 'Portable and familiar, but only useful as money if people trust the supply stays limited.',
   },
+  silver: {
+    id: 'silver',
+    emoji: '🥈',
+    label: 'Silver Pieces',
+    unitLabel: 'silver piece',
+    pluralLabel: 'silver pieces',
+    defaultQty: 8,
+    divisible: true,
+    bulk: 'compact pouch',
+    moneyTraits: 'portable and fairly durable, but can be clipped or diluted',
+    description: 'Useful as money when people trust its weight and purity.',
+  },
+  coin: {
+    id: 'coin',
+    emoji: '🪙',
+    label: 'Stamped Coins',
+    unitLabel: 'coin',
+    pluralLabel: 'coins',
+    defaultQty: 6,
+    divisible: true,
+    bulk: 'small pouch',
+    moneyTraits: 'portable, countable, and standardized',
+    description: 'Stamped coins are easier to count and trust than random piles of goods.',
+  },
+  cow: {
+    id: 'cow',
+    emoji: '🐄',
+    label: 'Cow',
+    unitLabel: 'cow',
+    pluralLabel: 'cows',
+    defaultQty: 1,
+    divisible: false,
+    bulk: 'very bulky',
+    moneyTraits: 'high value, but awkward and indivisible',
+    description: 'Huge value, but hard to divide, move, or price into smaller everyday trades.',
+  },
+  bitcoin: {
+    id: 'bitcoin',
+    emoji: '₿',
+    label: 'Bitcoin',
+    unitLabel: 'bitcoin',
+    pluralLabel: 'bitcoin',
+    defaultQty: 1,
+    divisible: true,
+    bulk: 'weightless to transmit',
+    moneyTraits: 'digital, scarce, divisible, and verifiable',
+    description: 'Digital money designed to stay scarce, verifiable, and easy to move globally.',
+  },
 };
 
-const barterScenario = {
-  id: 'barter-market',
-  title: 'Barter in the plaza',
-  kicker: 'Round 1',
-  intro:
-    'You step into a busy market plaza before winter. People are walking, shouting prices, and guarding piles of real goods. You need shoes before you leave.',
-  prompt:
-    'Walk the plaza person by person. Tap anyone to inspect what they have, what they want, and why a trade may fail.',
-  facilitatorNote:
-    'Let the room “walk” the market out loud. Ask who to approach first, then inspect that person before deciding whether barter actually works.',
-  audiencePrompt:
-    'Ask the group: where does barter break first here — wants, quantity, or indivisibility?',
-  lessonSummary:
-    'Barter fails for more than one reason: the other person may want the wrong thing, the amounts may not match, big goods like cows are hard to split, and carrying awkward goods across many trades is exhausting.',
-  playerStart: { itemId: 'cow', quantity: 1 },
-  target: { itemId: 'shoes', quantity: 1 },
-  people: [
-    {
-      id: 'toma',
-      name: 'Toma the Orchard Keeper',
-      role: 'Fruit seller',
-      x: 22,
-      y: 28,
-      tone: 'tone-1',
-      greeting: 'I have apples from the orchard. I need fish for my family supper.',
-      offer: { itemId: 'apples', quantity: 500 },
-      ask: { itemId: 'fish', quantity: 2 },
-      tradeMode: 'exact',
-      failureHint: 'Even though apples are countable, Toma does not want your cow at all. That is a wants mismatch.',
-    },
-    {
-      id: 'mara',
-      name: 'Mara the Potter',
-      role: 'Potter',
-      x: 60,
-      y: 20,
-      tone: 'tone-2',
-      greeting: 'Three sturdy pots for anyone who brings me 500 apples. Pottery for produce.',
-      offer: { itemId: 'pots', quantity: 3 },
-      ask: { itemId: 'apples', quantity: 500 },
-      tradeMode: 'exact',
-      failureHint: 'Mara is open to trade, but only for a very specific amount of apples.',
-    },
-    {
-      id: 'gita',
-      name: 'Gita the Weaver',
-      role: 'Weaver',
-      x: 78,
-      y: 48,
-      tone: 'tone-3',
-      greeting: 'Two rolls of wool cloth for three clay pots. No pots, no cloth.',
-      offer: { itemId: 'wool', quantity: 2 },
-      ask: { itemId: 'pots', quantity: 3 },
-      tradeMode: 'exact',
-      failureHint: 'You need exactly the right goods in exactly the right scale.',
-    },
-    {
-      id: 'soren',
-      name: 'Soren the Salt Merchant',
-      role: 'Salt trader',
-      x: 46,
-      y: 58,
-      tone: 'tone-4',
-      greeting: 'I will swap four salt pouches for two rolls of wool cloth.',
-      offer: { itemId: 'salt', quantity: 4 },
-      ask: { itemId: 'wool', quantity: 2 },
-      tradeMode: 'exact',
-      failureHint: 'Salt starts to look useful because more people will take it later.',
-    },
-    {
-      id: 'tala',
-      name: 'Tala the Farmer',
-      role: 'Farmer',
-      x: 28,
-      y: 70,
-      tone: 'tone-5',
-      greeting: 'I will give three sacks of grain if you bring me two salt pouches.',
-      offer: { itemId: 'grain', quantity: 3 },
-      ask: { itemId: 'salt', quantity: 2 },
-      tradeMode: 'partial-ok',
-      failureHint: 'Salt is divisible enough that Tala can accept part of your salt instead of all of it.',
-    },
-    {
-      id: 'bako',
-      name: 'Bako the Shoemaker',
-      role: 'Shoemaker',
-      x: 69,
-      y: 74,
-      tone: 'tone-6',
-      greeting: 'One pair of winter shoes costs one sack of grain. I cannot cut shoes in half for change.',
-      offer: { itemId: 'shoes', quantity: 1 },
-      ask: { itemId: 'grain', quantity: 1 },
-      tradeMode: 'partial-ok',
-      failureHint: 'Shoes are indivisible. Even if values feel close, you cannot split one pair into tiny pieces to make exact change.',
-    },
-    {
-      id: 'lina',
-      name: 'Lina the Herder',
-      role: 'Livestock trader',
-      x: 12,
-      y: 52,
-      tone: 'tone-2',
-      greeting: 'A whole cow? That is too much for what I have. I only need a pair of shoes, and I cannot give you “part of a cow” back as change.',
-      offer: { itemId: 'fish', quantity: 2 },
-      ask: { itemId: 'shoes', quantity: 1 },
-      tradeMode: 'exact',
-      failureHint: 'This is indivisibility directly: your cow may be valuable, but it is too lumpy for a smaller trade.',
-    },
-  ],
-};
+const barterScenarios = [
+  {
+    id: 'simple-barter',
+    title: 'Barter in a friendly lane',
+    kicker: 'Round 1',
+    intro:
+      'Start simple. You are in a tiny market lane. You have bread and need eggs. The chain is short and solvable, so you can feel barter working before it starts failing.',
+    prompt:
+      'Inspect the traders. A workable path exists. Your first job is just to learn how direct exchange feels.',
+    facilitatorNote:
+      'Let learners succeed quickly here. The point is not frustration yet. The point is understanding that barter means swapping real goods person to person.',
+    audiencePrompt:
+      'Ask the room: who should we talk to first if we want eggs and only have bread?',
+    lessonSummary:
+      'Barter can work when the chain is short and people line up cleanly. But even here, you still need the right person with the right wants.',
+    playerStart: { itemId: 'bread', quantity: 2 },
+    target: { itemId: 'eggs', quantity: 1 },
+    people: [
+      {
+        id: 'niva',
+        name: 'Niva the Dairy Farmer',
+        role: 'Milk seller',
+        x: 22,
+        y: 32,
+        tone: 'tone-1',
+        greeting: 'I can trade one jug of milk for two loaves of bread.',
+        offer: { itemId: 'milk', quantity: 1 },
+        ask: { itemId: 'bread', quantity: 2 },
+        tradeMode: 'exact',
+        failureHint: 'This one is clean: she wants what you have in exactly the amount you hold.',
+      },
+      {
+        id: 'peta',
+        name: 'Peta the Chicken Keeper',
+        role: 'Egg seller',
+        x: 70,
+        y: 34,
+        tone: 'tone-2',
+        greeting: 'Bring me one jug of milk and I will trade you a basket of eggs.',
+        offer: { itemId: 'eggs', quantity: 1 },
+        ask: { itemId: 'milk', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'You cannot trade with Peta first because she wants milk, not bread.',
+      },
+      {
+        id: 'varo',
+        name: 'Varo the Fisher',
+        role: 'Fish seller',
+        x: 48,
+        y: 72,
+        tone: 'tone-3',
+        greeting: 'I only swap fish for eggs today.',
+        offer: { itemId: 'fish', quantity: 2 },
+        ask: { itemId: 'eggs', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'He is here to show that even in a simple market, not everybody matches your needs.',
+      },
+    ],
+  },
+  {
+    id: 'barter-market',
+    title: 'Barter in the crowded plaza',
+    kicker: 'Round 2',
+    intro:
+      'Now the market is larger, noisier, and less forgiving. You step into a busy plaza before winter. People are shouting, guarding piles of goods, and demanding very specific trades. You need shoes before you leave.',
+    prompt:
+      'Walk the plaza person by person. Tap anyone to inspect what they have, what they want, and why a trade may fail. This time the chain is longer and friction shows up everywhere.',
+    facilitatorNote:
+      'Let the room “walk” the market out loud. Ask who to approach first, then inspect that person before deciding whether barter actually works.',
+    audiencePrompt:
+      'Ask the group: where does barter break first here — wants, quantity, or indivisibility?',
+    lessonSummary:
+      'Barter fails for more than one reason: the other person may want the wrong thing, the amounts may not match, big goods like cows are hard to split, and carrying awkward goods across many trades is exhausting.',
+    playerStart: { itemId: 'cow', quantity: 1 },
+    target: { itemId: 'shoes', quantity: 1 },
+    people: [
+      {
+        id: 'toma',
+        name: 'Toma the Orchard Keeper',
+        role: 'Fruit seller',
+        x: 22,
+        y: 28,
+        tone: 'tone-1',
+        greeting: 'I have apples from the orchard. I need fish for my family supper.',
+        offer: { itemId: 'apples', quantity: 500 },
+        ask: { itemId: 'fish', quantity: 2 },
+        tradeMode: 'exact',
+        failureHint: 'Even though apples are countable, Toma does not want your cow at all. That is a wants mismatch.',
+      },
+      {
+        id: 'mara',
+        name: 'Mara the Potter',
+        role: 'Potter',
+        x: 60,
+        y: 20,
+        tone: 'tone-2',
+        greeting: 'Three sturdy pots for anyone who brings me 500 apples. Pottery for produce.',
+        offer: { itemId: 'pots', quantity: 3 },
+        ask: { itemId: 'apples', quantity: 500 },
+        tradeMode: 'exact',
+        failureHint: 'Mara is open to trade, but only for a very specific amount of apples.',
+      },
+      {
+        id: 'gita',
+        name: 'Gita the Weaver',
+        role: 'Weaver',
+        x: 78,
+        y: 48,
+        tone: 'tone-3',
+        greeting: 'Two rolls of wool cloth for three clay pots. No pots, no cloth.',
+        offer: { itemId: 'wool', quantity: 2 },
+        ask: { itemId: 'pots', quantity: 3 },
+        tradeMode: 'exact',
+        failureHint: 'You need exactly the right goods in exactly the right scale.',
+      },
+      {
+        id: 'soren',
+        name: 'Soren the Salt Merchant',
+        role: 'Salt trader',
+        x: 46,
+        y: 58,
+        tone: 'tone-4',
+        greeting: 'I will swap four salt pouches for two rolls of wool cloth.',
+        offer: { itemId: 'salt', quantity: 4 },
+        ask: { itemId: 'wool', quantity: 2 },
+        tradeMode: 'exact',
+        failureHint: 'Salt starts to look useful because more people will take it later.',
+      },
+      {
+        id: 'tala',
+        name: 'Tala the Farmer',
+        role: 'Farmer',
+        x: 28,
+        y: 70,
+        tone: 'tone-5',
+        greeting: 'I will give three sacks of grain if you bring me two salt pouches.',
+        offer: { itemId: 'grain', quantity: 3 },
+        ask: { itemId: 'salt', quantity: 2 },
+        tradeMode: 'partial-ok',
+        failureHint: 'Salt is divisible enough that Tala can accept part of your salt instead of all of it.',
+      },
+      {
+        id: 'bako',
+        name: 'Bako the Shoemaker',
+        role: 'Shoemaker',
+        x: 69,
+        y: 74,
+        tone: 'tone-6',
+        greeting: 'One pair of winter shoes costs one sack of grain. I cannot cut shoes in half for change.',
+        offer: { itemId: 'shoes', quantity: 1 },
+        ask: { itemId: 'grain', quantity: 1 },
+        tradeMode: 'partial-ok',
+        failureHint: 'Shoes are indivisible. Even if values feel close, you cannot split one pair into tiny pieces to make exact change.',
+      },
+      {
+        id: 'lina',
+        name: 'Lina the Herder',
+        role: 'Livestock trader',
+        x: 12,
+        y: 52,
+        tone: 'tone-2',
+        greeting: 'A whole cow? That is too much for what I have. I only need a pair of shoes, and I cannot give you “part of a cow” back as change.',
+        offer: { itemId: 'fish', quantity: 2 },
+        ask: { itemId: 'shoes', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'This is indivisibility directly: your cow may be valuable, but it is too lumpy for a smaller trade.',
+      },
+    ],
+  },
+  {
+    id: 'divisibility-dilemma',
+    title: 'The divisibility dilemma',
+    kicker: 'Round 3',
+    intro:
+      'Now you are wealthy on paper but clumsy in practice. You hold one whole cow, but today you only need a small basket of apples and a little grain for dinner.',
+    prompt:
+      'Inspect the traders and try to see the problem before you trade: high value is not the same thing as good money.',
+    facilitatorNote:
+      'Pause on the cow. Ask the room whether having something expensive automatically means it works well for daily exchange.',
+    audiencePrompt:
+      'Ask: would you rather hold one cow or many smaller units if you needed to buy lunch, shoes, and rent separately?',
+    lessonSummary:
+      'A money good must fit both large and small trades. If a unit is too large to split cleanly, everyday exchange gets messy fast.',
+    playerStart: { itemId: 'cow', quantity: 1 },
+    target: { itemId: 'apples', quantity: 20 },
+    people: [
+      {
+        id: 'riva',
+        name: 'Riva the Orchard Seller',
+        role: 'Fruit seller',
+        x: 26,
+        y: 30,
+        tone: 'tone-1',
+        greeting: 'I will trade 20 apples for 1 salt pouch. I cannot price my apples against a whole cow.',
+        offer: { itemId: 'apples', quantity: 20 },
+        ask: { itemId: 'salt', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'The apples are small and everyday. Your cow is large and lumpy. The units do not fit each other.',
+      },
+      {
+        id: 'hela',
+        name: 'Hela the Grain Seller',
+        role: 'Farmer',
+        x: 68,
+        y: 28,
+        tone: 'tone-2',
+        greeting: 'I can trade 1 sack of grain for 2 silver pieces, or 1 salt pouch. I do not have the change for a cow.',
+        offer: { itemId: 'grain', quantity: 1 },
+        ask: { itemId: 'salt', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'Even when people know the cow is valuable, they may not have enough smaller goods to break it down.',
+      },
+      {
+        id: 'sami',
+        name: 'Sami the Salt Trader',
+        role: 'Salt merchant',
+        x: 42,
+        y: 56,
+        tone: 'tone-4',
+        greeting: 'I will trade 4 salt pouches for 1 sack of grain. Salt moves through the market much more easily than cattle.',
+        offer: { itemId: 'salt', quantity: 4 },
+        ask: { itemId: 'grain', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'Salt acts like a bridge because smaller units can unlock more trades.',
+      },
+      {
+        id: 'orun',
+        name: 'Orun the Stable Owner',
+        role: 'Livestock buyer',
+        x: 74,
+        y: 64,
+        tone: 'tone-5',
+        greeting: 'I can take your cow, but all I can offer back today is 1 sack of grain. The values do not match and I cannot make change.',
+        offer: { itemId: 'grain', quantity: 1 },
+        ask: { itemId: 'cow', quantity: 1 },
+        tradeMode: 'exact',
+        failureHint: 'This is the classic problem: the cow is too big a unit for a small purchase.',
+      },
+    ],
+  },
+];
 
 const rounds = [
   {
-    id: 'commodity',
+    id: 'commodity-emergence',
     title: 'Commodity money emerges',
-    kicker: 'Round 2',
-    prompt: 'After struggling through the plaza, your village starts using one good to trade through more often. Which good works best as money?',
+    kicker: 'Round 4',
+    prompt: 'After struggling through barter, your village starts using one good as a common stepping-stone between trades. Which good works best as early money?',
     facilitatorNote:
       'Connect this back to the plaza. Which item solved the most friction: wants mismatch, scale mismatch, and indivisibility?',
     revealLabel: 'Reveal the stronger money',
-    question: 'Which good is strongest money?',
+    question: 'Which good is strongest early money?',
     correctChoiceId: 'salt',
     choices: [
       {
         id: 'salt',
         label: 'Salt',
-        detail: 'Portable, divisible, and already accepted by several traders in the plaza.',
+        detail: 'Portable, divisible, broadly useful, and already accepted by several traders.',
         feedback:
-          'Exactly. Salt starts working as money because it is useful, portable, divisible, and already widely wanted.',
+          'Exactly. Salt starts working as money because it is useful, portable, divisible, and already widely wanted. It reduces the need for perfect barter matches.',
       },
       {
         id: 'cow',
         label: 'Cow',
-        detail: 'High value, but too indivisible and awkward for many everyday trades.',
+        detail: 'Stores high value, but is too indivisible and awkward for daily trade.',
         feedback:
-          'A cow can store a lot of value, but it is terrible for making smaller, precise exchanges. That is a money weakness.',
+          'A cow can store a lot of value, but it is terrible for making smaller, precise exchanges. That is a money weakness, not a strength.',
       },
       {
         id: 'fish',
         label: 'Fish',
-        detail: 'Useful, but spoils quickly and is hard to carry through time.',
+        detail: 'Useful food, but it spoils quickly and is hard to carry across time.',
         feedback:
           'Fish is valuable for eating, but weak money must be replaced often. Good money should survive time better than fish.',
       },
     ],
     summary: [
       'Commodity money emerges when one trade good becomes easier to pass on than all the others.',
-      'The plaza made divisibility and broad acceptance feel important, not abstract.',
+      'The earlier rounds made divisibility and broad acceptance feel important, not abstract.',
       'Money reduces the need for long barter chains of exact matches.',
     ],
     audiencePrompt: 'Ask the group which item they would rather carry across ten more trades: salt, a cow, or fish?',
   },
   {
+    id: 'coin-standardization',
+    title: 'Stamped money speeds trade',
+    kicker: 'Round 5',
+    prompt: 'Commodity money helps, but weighing, testing, and arguing over quality still takes time. A ruler begins stamping standard coins. What improves first?',
+    facilitatorNote:
+      'This is the move from useful commodity to standardized medium. Emphasize reduced haggling and faster verification.',
+    revealLabel: 'Reveal the coin lesson',
+    question: 'What do stamped coins improve most?',
+    correctChoiceId: 'verification',
+    choices: [
+      {
+        id: 'verification',
+        label: 'Trade becomes faster to verify',
+        detail: 'Standardized units reduce constant weighing and bargaining over purity.',
+        feedback:
+          'Right. Standardized coins compress trust into a recognizable unit. That makes trade faster and wider because people do not renegotiate every time.',
+      },
+      {
+        id: 'scarcity',
+        label: 'Scarcity becomes perfect forever',
+        detail: 'Stamping a coin does not automatically prevent future dilution or overproduction.',
+        feedback:
+          'Coins help standardize trade, but they do not guarantee perfect scarcity. Governments and rulers can still clip, debase, or overissue them.',
+      },
+      {
+        id: 'barter',
+        label: 'Barter returns as the easiest system',
+        detail: 'Standard money exists precisely because barter is too slow and clumsy.',
+        feedback:
+          'No. Coins emerge because societies are trying to escape barter friction, not return to it.',
+      },
+    ],
+    summary: [
+      'Standardized money reduces time spent checking every trade from scratch.',
+      'Recognition and verification matter almost as much as divisibility and portability.',
+      'Money evolves toward easier trust at larger scale.',
+    ],
+    audiencePrompt: 'If every silver piece must be weighed separately, is that still better than a coin everyone instantly recognizes?',
+  },
+  {
+    id: 'debasement',
+    title: 'When money gets weakened',
+    kicker: 'Round 6',
+    prompt: 'Later, the ruler starts minting more coins by mixing in cheaper metal. The coin looks similar, but each unit contains less silver. What is the core problem?',
+    facilitatorNote:
+      'Use this to introduce debasement: same label, weaker substance. Link it to trust and purchasing power, not just chemistry.',
+    revealLabel: 'Reveal the debasement lesson',
+    question: 'What breaks when coins are diluted?',
+    correctChoiceId: 'trust',
+    choices: [
+      {
+        id: 'trust',
+        label: 'People trust the money less',
+        detail: 'If units stop meaning what people thought they meant, prices and confidence start moving.',
+        feedback:
+          'Exactly. Money depends on trust in what each unit represents. Debasement weakens that trust and often shows up as higher prices and defensive behavior.',
+      },
+      {
+        id: 'nothing',
+        label: 'Nothing important changes',
+        detail: 'If each coin holds less value than before, trade does not stay the same.',
+        feedback:
+          'Something important changes immediately: people realize the unit is less reliable. That affects pricing, savings, and confidence.',
+      },
+      {
+        id: 'more-wealth',
+        label: 'Society becomes wealthier',
+        detail: 'Changing the unit is not the same as creating more real goods.',
+        feedback:
+          'No. More weakened units do not create more bread, shoes, or labor. They mostly change who gets paid first and how prices adjust.',
+      },
+    ],
+    summary: [
+      'Reliable money should not be easy to quietly weaken.',
+      'Purchasing power depends on trusted units, not just more units.',
+      'Money that can be diluted becomes harder to save in over long periods.',
+    ],
+    audiencePrompt: 'Would you still save in a coin if the issuer could silently reduce what was inside it?',
+  },
+  {
     id: 'inflation',
-    title: 'Supply shocks break trust',
-    kicker: 'Round 3',
+    title: 'Supply shocks break purchasing power',
+    kicker: 'Round 7',
     prompt: 'Your town now uses shells as money. Then a ship arrives carrying huge sacks of identical shells. What changes first?',
     facilitatorNote:
       'Ask whether “more units” means “more wealth,” or whether it mainly changes pricing and trust.',
@@ -307,6 +590,46 @@ const rounds = [
       'People save into money because they trust it to hold value across time.',
     ],
     audiencePrompt: 'If shells suddenly became common on every beach, would you still save in them?',
+  },
+  {
+    id: 'bitcoin-connection',
+    title: 'Why Bitcoin feels like the next chapter',
+    kicker: 'Round 8',
+    prompt: 'After all these earlier money problems, which bundle of traits best explains why many people compare Bitcoin to strong money?',
+    facilitatorNote:
+      'This should feel earned now. Learners have already felt barter friction, divisibility problems, standardization, debasement, and inflation risk.',
+    revealLabel: 'Reveal the Bitcoin connection',
+    question: 'Which combination best connects Bitcoin to the history of money?',
+    correctChoiceId: 'scarce-divisible-verifiable',
+    choices: [
+      {
+        id: 'scarce-divisible-verifiable',
+        label: 'Predictably scarce, highly divisible, easy to verify',
+        detail: 'It tries to keep the strongest money traits while becoming digital and global.',
+        feedback:
+          'Exactly. Bitcoin matters in this story because it tries to carry forward scarcity, divisibility, portability, and verification in a digital form.',
+      },
+      {
+        id: 'issued-faster',
+        label: 'Easy for leaders to create whenever needed',
+        detail: 'That sounds convenient, but it recreates old problems around dilution and trust.',
+        feedback:
+          'That would actually reintroduce one of the central problems from earlier rounds: money becoming easy to expand or manipulate.',
+      },
+      {
+        id: 'valuable-because-new',
+        label: 'Mainly valuable because it is modern and trendy',
+        detail: 'The lesson arc points toward monetary properties, not novelty.',
+        feedback:
+          'No. In this lesson, Bitcoin is not the endpoint because it is new. It is interesting because it attempts to solve long-running money problems in a new environment.',
+      },
+    ],
+    summary: [
+      'Bitcoin is best understood as part of the long search for better money.',
+      'Its pitch is not “digital because digital,” but strong monetary properties in networked form.',
+      'The connection lands only after learners feel what earlier money systems struggled with.',
+    ],
+    audiencePrompt: 'Which old money problem does Bitcoin seem most designed to resist: barter friction, debasement, or arbitrary supply growth?',
   },
 ];
 
@@ -347,18 +670,19 @@ const bridgePoints = [
   'Bitcoin is digital, but it tries to preserve strong-money traits in a new form.',
   'Its supply is predictable instead of being easy to expand suddenly.',
   'It is highly divisible, easy to verify, and can move globally.',
-  'That is why many people see Bitcoin as a new chapter in the history of money.',
+  'That is why many people see Bitcoin as a new chapter in the history of money, not a story disconnected from it.',
 ];
 
 const presenterTips = [
-  'Treat each participant as a real person in the market, not just a card on a screen.',
-  'Inspect people before trading so the room can see why barter fails or succeeds.',
-  'Use the trade log to name the exact failure mode: wants mismatch, scale mismatch, indivisibility, or awkward bulk.',
+  'Let the first lane feel easy so the audience learns barter before it fails.',
+  'Name the friction out loud: wants mismatch, scale mismatch, indivisibility, awkward bulk, weak verification, weak scarcity.',
+  'By the time Bitcoin appears, the room should already want something more reliable than barter, shells, or diluted coins.',
 ];
 
 const state = {
   mode: 'solo',
   screen: 'landing',
+  marketRoundIndex: 0,
   roundIndex: 0,
   selectedChoice: null,
   score: 0,
@@ -367,8 +691,8 @@ const state = {
   presenterReveal: false,
   showVotePanel: false,
   voteCounts: {},
-  playerInventory: { ...barterScenario.playerStart },
-  targetInventory: { ...barterScenario.target },
+  playerInventory: null,
+  targetInventory: null,
   marketCompleted: false,
   marketTradeCount: 0,
   marketLog: [],
@@ -395,25 +719,6 @@ function cloneOffer(offer) {
   return { itemId: offer.itemId, quantity: offer.quantity };
 }
 
-function buildMarketPeople() {
-  return barterScenario.people.map((person) => ({ ...person, offer: cloneOffer(person.offer), ask: cloneOffer(person.ask) }));
-}
-
-function buildConferenceParticipants() {
-  return barterScenario.people.map((person, index) => ({
-    id: person.id,
-    name: person.name,
-    role: person.role,
-    have: cloneOffer(person.offer),
-    want: cloneOffer(person.ask),
-    colorClass: `participant-tone-${(index % 6) + 1}`,
-  }));
-}
-
-function resetVotes() {
-  state.voteCounts = createInitialVotes();
-}
-
 function item(itemId) {
   return marketItems[itemId];
 }
@@ -437,6 +742,29 @@ function goodsPhrase(goods) {
   return `${current.emoji} ${quantityLabel(goods)}`;
 }
 
+function currentMarketScenario() {
+  return barterScenarios[state.marketRoundIndex];
+}
+
+function buildMarketPeople() {
+  return currentMarketScenario().people.map((person) => ({ ...person, offer: cloneOffer(person.offer), ask: cloneOffer(person.ask) }));
+}
+
+function buildConferenceParticipants() {
+  return currentMarketScenario().people.map((person, index) => ({
+    id: person.id,
+    name: person.name,
+    role: person.role,
+    have: cloneOffer(person.offer),
+    want: cloneOffer(person.ask),
+    colorClass: `participant-tone-${(index % 6) + 1}`,
+  }));
+}
+
+function resetVotes() {
+  state.voteCounts = createInitialVotes();
+}
+
 function appendMarketLog(type, text, badge = null) {
   state.marketLog.unshift({ type, text, badge });
   if (badge && !state.failureBadgesSeen.includes(badge)) {
@@ -445,17 +773,18 @@ function appendMarketLog(type, text, badge = null) {
 }
 
 function resetMarketState() {
-  state.playerInventory = { ...barterScenario.playerStart };
-  state.targetInventory = { ...barterScenario.target };
+  const scenario = currentMarketScenario();
+  state.playerInventory = { ...scenario.playerStart };
+  state.targetInventory = { ...scenario.target };
   state.marketCompleted = false;
   state.marketTradeCount = 0;
-  state.inspectedPersonId = barterScenario.people[0]?.id || null;
+  state.inspectedPersonId = scenario.people[0]?.id || null;
   state.marketPeople = buildMarketPeople();
   state.failureBadgesSeen = [];
   state.marketLog = [
     {
       type: 'start',
-      text: `You enter the plaza holding ${goodsPhrase(state.playerInventory)} and needing ${goodsPhrase(state.targetInventory)}.`,
+      text: `You enter holding ${goodsPhrase(state.playerInventory)} and needing ${goodsPhrase(state.targetInventory)}.`,
       badge: null,
     },
   ];
@@ -467,6 +796,7 @@ function resetConferenceParticipants() {
 }
 
 function resetProgress() {
+  state.marketRoundIndex = 0;
   state.roundIndex = 0;
   state.selectedChoice = null;
   state.score = 0;
@@ -520,6 +850,7 @@ function inventoryMatches(goodsA, goodsB) {
 
 function evaluateTrade(person) {
   const player = state.playerInventory;
+  if (!player) return { ok: false, reason: 'wants-mismatch', headline: 'No inventory.', detail: 'Player inventory is missing.' };
 
   if (player.itemId !== person.ask.itemId) {
     return {
@@ -612,11 +943,12 @@ function inspectPerson(personId) {
 }
 
 function markMarketHistory(success) {
-  const prior = state.history.find((entry) => entry.roundId === barterScenario.id);
+  const scenario = currentMarketScenario();
+  const prior = state.history.find((entry) => entry.roundId === scenario.id);
   if (prior) return;
   state.history.push({
-    roundId: barterScenario.id,
-    roundTitle: barterScenario.title,
+    roundId: scenario.id,
+    roundTitle: scenario.title,
     correct: success,
     choiceId: success ? 'route-found' : 'market-skipped',
     choice: success
@@ -668,7 +1000,7 @@ function tryTrade(personId) {
     state.marketCompleted = true;
     appendMarketLog(
       'success',
-      `Success: you finally reached ${goodsPhrase(state.targetInventory)} after ${state.marketTradeCount} swaps across the plaza. ${barterScenario.lessonSummary}`,
+      `Success: you reached ${goodsPhrase(state.targetInventory)} after ${state.marketTradeCount} swaps. ${currentMarketScenario().lessonSummary}`,
       null,
     );
     markMarketHistory(true);
@@ -678,26 +1010,42 @@ function tryTrade(personId) {
 }
 
 function skipMarket() {
-  if (!state.history.find((entry) => entry.roundId === barterScenario.id)) {
+  const scenario = currentMarketScenario();
+  if (!state.history.find((entry) => entry.roundId === scenario.id)) {
     state.history.push({
-      roundId: barterScenario.id,
-      roundTitle: barterScenario.title,
+      roundId: scenario.id,
+      roundTitle: scenario.title,
       correct: false,
       choiceId: 'market-skipped',
       choice: 'Skipped market challenge',
     });
   }
-  state.screen = 'round';
-  state.roundIndex = 0;
+
+  if (state.marketRoundIndex < barterScenarios.length - 1) {
+    state.marketRoundIndex += 1;
+    resetMarketState();
+    resetConferenceParticipants();
+    state.screen = 'market';
+  } else {
+    state.screen = 'round';
+    state.roundIndex = 0;
+  }
   render();
 }
 
 function continueFromMarket() {
   if (!state.marketCompleted) return;
-  state.screen = 'round';
-  state.roundIndex = 0;
   state.selectedChoice = null;
   state.presenterReveal = false;
+  if (state.marketRoundIndex < barterScenarios.length - 1) {
+    state.marketRoundIndex += 1;
+    resetMarketState();
+    resetConferenceParticipants();
+    state.screen = 'market';
+  } else {
+    state.screen = 'round';
+    state.roundIndex = 0;
+  }
   render();
 }
 
@@ -772,7 +1120,8 @@ function resetCurrentRound() {
 }
 
 function resetMarketRound() {
-  state.history = state.history.filter((entry) => entry.roundId !== barterScenario.id);
+  const scenario = currentMarketScenario();
+  state.history = state.history.filter((entry) => entry.roundId !== scenario.id);
   state.score = state.history.filter((entry) => entry.correct).length;
   resetMarketState();
   resetConferenceParticipants();
@@ -827,10 +1176,17 @@ function setConferenceParticipant(participantId) {
 }
 
 function progressPercent() {
-  const steps = ['landing', 'conferenceIntro', 'market', 'round1', 'round2', 'recap', 'bitcoin', 'end'];
-  const currentKey = state.screen === 'round' ? `round${state.roundIndex + 1}` : state.screen;
-  const index = Math.max(0, steps.indexOf(currentKey));
-  return ((index + 1) / steps.length) * 100;
+  const totalSteps = barterScenarios.length + rounds.length + 3;
+  let completed = 1;
+
+  if (state.screen === 'conferenceIntro') completed = 1;
+  else if (state.screen === 'market') completed = 1 + state.marketRoundIndex;
+  else if (state.screen === 'round') completed = 1 + barterScenarios.length + state.roundIndex;
+  else if (state.screen === 'recap') completed = 1 + barterScenarios.length + rounds.length;
+  else if (state.screen === 'bitcoin') completed = 2 + barterScenarios.length + rounds.length;
+  else if (state.screen === 'end') completed = totalSteps;
+
+  return (completed / totalSteps) * 100;
 }
 
 function selectedPropertiesSummary() {
@@ -838,8 +1194,9 @@ function selectedPropertiesSummary() {
 }
 
 function finalHeadline() {
-  if (state.score === rounds.length + 1) return 'Strong run.';
-  if (state.score >= 2) return 'Nice progression.';
+  const perfect = barterScenarios.length + rounds.length;
+  if (state.score === perfect) return 'Strong run.';
+  if (state.score >= Math.ceil(perfect * 0.65)) return 'Nice progression.';
   return 'You completed the arc.';
 }
 
@@ -879,40 +1236,43 @@ function landingScreen() {
     <section class="hero card glow-card stack-lg">
       <div class="hero-copy stack">
         <div class="eyebrow">Interactive lesson</div>
-        <h1>Walk the plaza from barter friction to Bitcoin logic.</h1>
-        <p class="lede">Start inside an embodied market full of people, inspect their goods and needs, feel why barter breaks, then carry that intuition into commodity money, inflation, and Bitcoin.</p>
+        <h1>Walk from barter to Bitcoin in a real learning arc.</h1>
+        <p class="lede">Start with a simple solvable barter chain. Then move into coincidence of wants, divisibility problems, commodity money, coin standardization, debasement, inflation, and finally Bitcoin as an earned conclusion.</p>
       </div>
       <div class="hero-grid">
         <article class="info-card panel">
           <div class="pill-badge">Solo</div>
-          <h2>Explore the market yourself</h2>
-          <p>${GAME_COPY.soloDuration}. Tap through a plaza, inspect traders, and discover why a cow is awkward, quantities matter, and exact wants rarely line up.</p>
+          <h2>Play the lesson yourself</h2>
+          <p>${GAME_COPY.soloDuration}. Learn through progressive rounds that get harder on purpose instead of throwing all the friction at you immediately.</p>
           <ul class="feature-list">
-            <li>Embodied market plaza with visible people</li>
-            <li>Quantity-aware barter and indivisibility</li>
-            <li>Clear failure modes before the money lesson</li>
+            <li>Three interactive market rounds before quiz-style synthesis</li>
+            <li>Clear pacing from easy barter to hard money questions</li>
+            <li>Static-site safe for GitHub Pages and Fedi mini app use</li>
           </ul>
           <button class="btn primary" data-action="start-solo">Start solo</button>
         </article>
         <article class="info-card panel presenter-entry">
           <div class="pill-badge alt">Presenter</div>
-          <h2>Run a live market session</h2>
-          <p>${GAME_COPY.presenterDuration}. Conference mode mirrors the same plaza logic with participant roles, presenter control, and projector-safe inspection/trade flow.</p>
+          <h2>Run a live room session</h2>
+          <p>${GAME_COPY.presenterDuration}. Conference mode keeps the expanded structure coherent with spotlighted traders, facilitator prompts, and audience vote scaffolding.</p>
           <ul class="feature-list">
-            <li>Participant roles as people in the market</li>
-            <li>Presenter-controlled inspections and trades</li>
-            <li>Vote scaffold for later rounds</li>
+            <li>Presenter-safe pacing across the full round sequence</li>
+            <li>Participant roles mapped onto each market</li>
+            <li>Reveal controls for discussion-first teaching</li>
           </ul>
           <button class="btn secondary strong" data-action="start-presenter">Open presenter mode</button>
         </article>
       </div>
       <section class="mini-panel stack">
-        <div class="eyebrow">What learners discover</div>
+        <div class="eyebrow">Lesson arc</div>
         <div class="stat-row">
-          <span class="stat-chip">Wants mismatch blocks trades</span>
-          <span class="stat-chip">Scale mismatch blocks trades</span>
-          <span class="stat-chip">Indivisible goods are awkward money</span>
-          <span class="stat-chip">Bitcoin extends the story digitally</span>
+          <span class="stat-chip">1. Simple barter success</span>
+          <span class="stat-chip">2. Coincidence of wants problem</span>
+          <span class="stat-chip">3. Divisibility problem</span>
+          <span class="stat-chip">4. Commodity money</span>
+          <span class="stat-chip">5. Coins and standardization</span>
+          <span class="stat-chip">6. Debasement and inflation</span>
+          <span class="stat-chip">7. Bitcoin bridge</span>
         </div>
       </section>
     </section>
@@ -925,8 +1285,8 @@ function conferenceIntroScreen() {
       <div class="row wrap-row">
         <div class="stack">
           <div class="eyebrow">Conference mode</div>
-          <h1>Turn the room into a plaza.</h1>
-          <p class="lede">This mode treats participants as people with visible have/need roles. Even without live backend infrastructure, the presenter can run a coherent, human market simulation on screen.</p>
+          <h1>Turn the room into a money story.</h1>
+          <p class="lede">This mode now follows the full progression: easy barter first, then harder barter, then divisibility, then money emergence, then money failure modes, then Bitcoin.</p>
         </div>
         <div class="badge big-badge">${GAME_COPY.presenterDuration}</div>
       </div>
@@ -934,16 +1294,16 @@ function conferenceIntroScreen() {
         <section class="panel stack">
           <h3>Presenter flow</h3>
           <ol class="ordered-list">
-            <li>Open the plaza and inspect one person at a time.</li>
-            <li>Ask the room whether the trade fails because of wants, quantity, or indivisibility.</li>
-            <li>Execute the trade only when the room can explain why it works.</li>
-            <li>Bridge from plaza friction into commodity money and inflation.</li>
+            <li>Let the room solve the first simple barter lane quickly.</li>
+            <li>Increase complexity with a crowded plaza and divisibility failure.</li>
+            <li>Bridge into money as the social solution to barter friction.</li>
+            <li>Close with debasement, inflation, and Bitcoin as an earned comparison.</li>
           </ol>
         </section>
         <section class="panel stack">
-          <h3>What is simulated live</h3>
-          <p>The room sees a live plaza map, the player inventory, the target good, participant roles, and a trade log that names the exact failure modes.</p>
-          <div class="inline-note">Static-site safe: no backend, no sockets, still conference-ready.</div>
+          <h3>What stays static-site safe</h3>
+          <p>No backend, no sockets, no runtime dependencies. The full lesson still works as a single front-end bundle for GitHub Pages and mini app deployment.</p>
+          <div class="inline-note">Expanded pedagogy without breaking deploy simplicity.</div>
         </section>
       </div>
       <section class="tip-strip">
@@ -973,6 +1333,7 @@ function marketFailureChips() {
 }
 
 function marketScreen() {
+  const scenario = currentMarketScenario();
   const currentItem = item(state.playerInventory.itemId);
   const targetItem = item(state.targetInventory.itemId);
   const inspectedPerson = getPerson(state.inspectedPersonId) || state.marketPeople[0];
@@ -984,12 +1345,12 @@ function marketScreen() {
       <section class="card stage-card ${state.mode === 'presenter' ? 'projector-card' : ''}">
         <div class="stage-header">
           <div>
-            <div class="eyebrow">${barterScenario.kicker}</div>
-            <h1>${barterScenario.title}</h1>
+            <div class="eyebrow">${scenario.kicker}</div>
+            <h1>${scenario.title}</h1>
           </div>
-          <div class="badge big-badge">Plaza</div>
+          <div class="badge big-badge">Market ${state.marketRoundIndex + 1} / ${barterScenarios.length}</div>
         </div>
-        <p class="prompt">${barterScenario.intro}</p>
+        <p class="prompt">${scenario.intro}</p>
         <section class="market-objective panel stack">
           <div class="row wrap-row objective-row">
             <div class="inventory-card inventory-now">
@@ -1018,7 +1379,7 @@ function marketScreen() {
               <div class="eyebrow">Market plaza</div>
               <h3>Tap a person to inspect or trade</h3>
             </div>
-            <div class="inline-note">Visible people, visible goods, visible trade friction.</div>
+            <div class="inline-note">${scenario.prompt}</div>
           </div>
           <div class="plaza-map">
             ${state.marketPeople
@@ -1071,7 +1432,7 @@ function marketScreen() {
                   <p>${
                     inspectedEvaluation?.ok
                       ? `You can swap ${goodsPhrase({ itemId: state.playerInventory.itemId, quantity: inspectedEvaluation.consumedQty })} for ${goodsPhrase(inspectedEvaluation.nextInventory)}.`
-                      : inspectedEvaluation?.detail || barterScenario.prompt
+                      : inspectedEvaluation?.detail || scenario.prompt
                   }</p>
                 </section>
                 <div class="footer-actions single-row market-inline-actions">
@@ -1084,19 +1445,19 @@ function marketScreen() {
         }
 
         <section class="feedback-card ${state.marketCompleted ? 'feedback-good' : 'feedback-pending'}">
-          <div class="result-tag ${state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Barter lesson unlocked' : 'Trade friction in motion'}</div>
+          <div class="result-tag ${state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Lesson unlocked' : 'Trade friction in motion'}</div>
           <h3>${
             state.marketCompleted
-              ? 'You reached the target, but only through a fragile chain of specific matches.'
+              ? 'You reached the target, but the path itself teaches the lesson.'
               : 'Barter is not just about value. It is about matching the right person, the right thing, and the right quantity at the right moment.'
           }</h3>
-          <p>${state.marketCompleted ? barterScenario.lessonSummary : barterScenario.prompt}</p>
+          <p>${state.marketCompleted ? scenario.lessonSummary : scenario.prompt}</p>
         </section>
 
         <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions presenter-actions-market' : ''}">
           <button class="btn ghost" data-action="reset-market">Reset market</button>
           ${state.mode === 'presenter' ? '<button class="btn ghost" data-action="skip-market">Skip to next lesson</button>' : '<button class="btn ghost" data-action="restart-mode">Restart run</button>'}
-          <button class="btn primary" data-action="continue-market" ${state.marketCompleted ? '' : 'disabled'}>Continue</button>
+          <button class="btn primary" data-action="continue-market" ${state.marketCompleted ? '' : 'disabled'}>${state.marketRoundIndex === barterScenarios.length - 1 ? 'Continue to money' : 'Next market'}</button>
         </div>
       </section>
       <aside class="stack sidebar">
@@ -1105,14 +1466,14 @@ function marketScreen() {
             ? `
               <section class="card panel stack presenter-note-card">
                 <div class="eyebrow">Facilitator prompt</div>
-                <h3>Why does this trade fail or work?</h3>
-                <p>${barterScenario.facilitatorNote}</p>
-                <div class="inline-note">${barterScenario.audiencePrompt}</div>
+                <h3>What exactly is the friction here?</h3>
+                <p>${scenario.facilitatorNote}</p>
+                <div class="inline-note">${scenario.audiencePrompt}</div>
               </section>
               <section class="card panel stack participant-panel">
                 <div class="eyebrow">Participant market board</div>
-                <h3>People in this plaza</h3>
-                <p class="small-copy">These participant roles mirror the market people. The presenter can spotlight anyone even without live audience devices.</p>
+                <h3>People in this market</h3>
+                <p class="small-copy">These roles mirror the market people so presenter mode stays coherent across the expanded lesson.</p>
                 <div class="participant-list">
                   ${state.conferenceParticipants
                     .map(
@@ -1146,9 +1507,9 @@ function marketScreen() {
             `
             : `
               <section class="card panel stack recap-side-card">
-                <div class="eyebrow">Why this matters</div>
-                <h3>Big goods are not easy money.</h3>
-                <p class="small-copy">A cow may store a lot of value, but this plaza shows why value alone is not enough. You also need divisibility, portability, and broad acceptance.</p>
+                <div class="eyebrow">Why this round exists</div>
+                <h3>${scenario.kicker}</h3>
+                <p class="small-copy">Each market round adds one more layer of monetary pressure so the lesson ramps instead of front-loading complexity.</p>
               </section>
             `
         }
@@ -1183,6 +1544,8 @@ function roundScreen() {
   const choice = state.selectedChoice;
   const correct = choice ? choice.id === round.correctChoiceId : false;
   const showReveal = state.mode === 'solo' ? Boolean(choice) : Boolean(choice && state.presenterReveal);
+  const totalLessonRounds = barterScenarios.length + rounds.length;
+  const displayedRoundNumber = barterScenarios.length + state.roundIndex + 1;
 
   shell(`
     <section class="experience-grid ${state.mode === 'presenter' ? 'presenter-grid' : ''}">
@@ -1192,7 +1555,7 @@ function roundScreen() {
             <div class="eyebrow">${round.kicker}</div>
             <h1>${round.title}</h1>
           </div>
-          <div class="badge big-badge">${state.roundIndex + 2} / ${rounds.length + 1}</div>
+          <div class="badge big-badge">${displayedRoundNumber} / ${totalLessonRounds}</div>
         </div>
         <p class="prompt">${round.prompt}</p>
         <div class="choice-grid ${state.mode === 'presenter' ? 'choice-grid-large' : ''}">
@@ -1212,7 +1575,7 @@ function roundScreen() {
             ? `
               <section class="feedback-card ${correct ? 'feedback-good' : 'feedback-warn'}">
                 <div class="result-tag">${correct ? 'Correct direction' : 'Useful failure'}</div>
-                <h3>${correct ? 'That moves the story forward.' : 'That choice clarifies why stronger money emerged.'}</h3>
+                <h3>${correct ? 'That moves the story forward.' : 'That choice helps clarify what stronger money needs.'}</h3>
                 <p>${choice.feedback}</p>
                 <ul>
                   ${round.summary.map((entry) => `<li>${entry}</li>`).join('')}
@@ -1285,8 +1648,8 @@ function roundScreen() {
             : `
               <section class="card panel stack recap-side-card">
                 <div class="eyebrow">Run status</div>
-                <h3>${state.score} / ${rounds.length + 1} complete</h3>
-                <p class="small-copy">The plaza showed that barter breaks for several reasons at once. These rounds explain why societies search for stronger money.</p>
+                <h3>${state.score} / ${barterScenarios.length + rounds.length} complete</h3>
+                <p class="small-copy">The market rounds created the intuition. The later rounds explain how societies keep trying to improve money.</p>
               </section>
             `
         }
@@ -1307,9 +1670,9 @@ function recapScreen() {
             <div class="eyebrow">Recap</div>
             <h1>What makes money strong?</h1>
           </div>
-          <div class="badge big-badge">${state.score} / ${rounds.length + 1}</div>
+          <div class="badge big-badge">${state.score} / ${barterScenarios.length + rounds.length}</div>
         </div>
-        <p class="prompt">Choose at least three traits. Strong money is not magic, but it usually handles the same problems you felt in the plaza.</p>
+        <p class="prompt">Choose at least three traits. By now, these should feel earned from the lesson, not memorized from a slide.</p>
         <div class="properties-grid ${state.mode === 'presenter' ? 'properties-grid-large' : ''}">
           ${properties
             .map(
@@ -1359,7 +1722,7 @@ function recapScreen() {
         <section class="card panel stack">
           <div class="eyebrow">Teaching prompt</div>
           <h3>Ask before you bridge</h3>
-          <p class="small-copy">Which money trait mattered most after the plaza: portability, divisibility, scarcity, or acceptability?</p>
+          <p class="small-copy">Which property mattered most in the earlier rounds: divisibility, verifiability, scarcity, or broad acceptance?</p>
         </section>
       </aside>
     </section>
@@ -1392,7 +1755,7 @@ function bitcoinScreen() {
         <section class="feedback-card feedback-neutral">
           <div class="result-tag">Big idea</div>
           <h3>People keep searching for money that is easier to trust, harder to debase, and easier to move through space and time.</h3>
-          <p>Bitcoin matters here because it tries to solve old money problems in a digital environment, not because it appeared from nowhere.</p>
+          <p>Bitcoin matters here because it tries to solve old money problems in a digital environment, not because it appeared from nowhere. The earlier rounds are what make that comparison meaningful.</p>
         </section>
         <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions' : ''}">
           <button class="btn ghost" data-action="restart-mode">Restart</button>
@@ -1402,8 +1765,8 @@ function bitcoinScreen() {
       <aside class="stack sidebar">
         <section class="card panel stack">
           <div class="eyebrow">Facilitator note</div>
-          <h3>Keep the bridge modest</h3>
-          <p class="small-copy">The plaza should do most of the teaching. Bitcoin then appears as the next candidate in the longer history of money.</p>
+          <h3>Keep the bridge earned</h3>
+          <p class="small-copy">If the audience already understands why barter is clumsy and why money fails when it is weak or easily diluted, the Bitcoin connection lands much more cleanly.</p>
         </section>
       </aside>
     </section>
@@ -1415,11 +1778,11 @@ function endScreen() {
     <section class="card end-card stack-lg ${state.mode === 'presenter' ? 'projector-card' : ''}">
       <div class="eyebrow">Complete</div>
       <h1>${finalHeadline()}</h1>
-      <p class="lede">You walked a live market plaza, saw barter fail in concrete ways, moved into commodity money, through inflation, and into the Bitcoin bridge.</p>
+      <p class="lede">You moved from simple barter success to harder barter failure, through divisibility, commodity money, standardization, debasement, inflation, and finally the Bitcoin bridge.</p>
       <div class="end-stats">
         <div class="panel stat-panel">
           <strong>Score</strong>
-          <span>${state.score} / ${rounds.length + 1}</span>
+          <span>${state.score} / ${barterScenarios.length + rounds.length}</span>
         </div>
         <div class="panel stat-panel">
           <strong>Mode</strong>
