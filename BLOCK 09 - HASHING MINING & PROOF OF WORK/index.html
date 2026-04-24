@@ -5,31 +5,185 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Block 9 · Hashing, Mining &amp; Proof of Work</title>
   <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#07111f; color:#f6f8ff; }
-    main { width:min(980px,100%); margin:0 auto; padding:24px; }
-    a { color:inherit; }
-    .card { border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(13,24,43,.9); padding:22px; margin:14px 0; }
-    .eyebrow { color:#ffbe63; text-transform:uppercase; letter-spacing:.14em; font-size:.75rem; font-weight:900; }
-    h1 { font-size:clamp(2rem,7vw,4.5rem); line-height:1; margin:.2em 0; }
-    h2 { margin-top:0; }
-    p, li { color:#b8c3dc; line-height:1.6; }
-    .btn, .pill { display:inline-flex; padding:12px 16px; border-radius:14px; text-decoration:none; font-weight:900; border:1px solid rgba(255,255,255,.14); }
-    .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; }
-    code { color:#77e0ff; }
+    :root { color-scheme: dark; --bg:#07111f; --panel:rgba(13,24,43,.92); --text:#f6f8ff; --muted:#b8c3dc; --accent:#ffbe63; --accent2:#77e0ff; --border:rgba(255,255,255,.12); font-family:Inter,system-ui,sans-serif; }
+    * { box-sizing:border-box; } body { margin:0; background:radial-gradient(circle at top left,rgba(119,224,255,.16),transparent 28%),linear-gradient(180deg,#07111f,#091527 55%,#07111f); color:var(--text); }
+    main { width:min(1180px,100%); margin:0 auto; padding:18px; } a { color:inherit; }
+    .top { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .hero,.card,.lesson-section { border:1px solid var(--border); border-radius:26px; background:var(--panel); box-shadow:0 24px 70px rgba(0,0,0,.28); }
+    .hero { padding:clamp(22px,5vw,42px); margin-bottom:16px; } .card { padding:20px; margin:16px 0; } .lesson-section { padding:24px; margin:18px 0; }
+    .eyebrow,.source-path { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; font-weight:900; }
+    h1 { font-size:clamp(2.3rem,7vw,5rem); line-height:.96; margin:.15em 0; letter-spacing:-.045em; } h2 { font-size:clamp(1.45rem,4vw,2.5rem); } h2,h3,h4 { margin:1.1em 0 .45em; } p,li,td,th { color:var(--muted); line-height:1.65; } blockquote { border-left:4px solid var(--accent); margin:18px 0; padding:12px 18px; background:rgba(255,190,99,.08); border-radius:14px; }
+    .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
+    .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+    @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <a href="../">← EDK home</a>
-    <section class="card">
-      <div class="eyebrow">Block 9</div>
-      <h1>Hashing, Mining &amp; Proof of Work</h1>
-      <p><strong>Practical:</strong> hash race, nonce guessing, mining difficulty demo.</p>
-      <span class="pill">App not built yet</span>
-    </section>
-    <section class="card"><h2>Key concepts</h2><ul><li>Hashing</li><li>Cryptographic security</li><li>Nodes and miners</li><li>Mempool</li><li>Transactions in blocks</li><li>Proof of work and difficulty</li></ul></section>
-    <section class="card"><h2>Copied curriculum content</h2><ul><li><code>curriculum-content/8-how-bitcoin-works/0-introduction.md</code></li><li><code>curriculum-content/8-how-bitcoin-works/1-security-through-cryptography.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/0-introduction.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/1-bitcoin-nodes-and-miners.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li></ul></section>
-    <section class="card"><h2>Practical app thesis</h2><p>Hash race where learners adjust nonce and difficulty, build blocks from mempool transactions, and see proof-of-work cost.</p></section>
+    <nav class="top"><a class="btn" href="../">← EDK home</a><span class="pill">Practical app ready to build</span></nav>
+    <section class="hero"><div class="eyebrow">Block 9</div><h1>Hashing, Mining &amp; Proof of Work</h1><p><strong>Practical: hash race, nonce guessing, mining difficulty demo.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">8.0 Introduction</a><a href="#source-2">8.1 Security through Cryptography</a><a href="#source-3">9.0 Introduction</a><a href="#source-4">9.1 Bitcoin Nodes and Miners</a><a href="#source-5">9.2 What Is the Mempool?</a><a href="#source-6">9.3 How Transactions Work</a></div></section>
+    <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 9 — Hashing, Mining &amp; Proof of Work Content Plan</h2>
+<h3>Goal</h3>
+<p>Turn the relevant My First Bitcoin curriculum content in this block into a practical, interactive learning app.</p>
+<h3>Canonical practical direction</h3>
+<p>hash race, nonce guessing, mining difficulty demo.</p>
+<h3>Source curriculum copied into this block</h3>
+<ul><li><code>curriculum-content/8-how-bitcoin-works/0-introduction.md</code></li><li><code>curriculum-content/8-how-bitcoin-works/1-security-through-cryptography.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/0-introduction.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/1-bitcoin-nodes-and-miners.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li></ul>
+<h3>Key concepts to preserve</h3>
+<ul><li>Hashing</li><li>Cryptographic security</li><li>Nodes and miners</li><li>Mempool</li><li>Transactions in blocks</li><li>Proof of work and difficulty</li></ul>
+<h3>Practical app thesis</h3>
+<p>Hash race where learners adjust nonce and difficulty, build blocks from mempool transactions, and see proof-of-work cost.</p>
+<h3>Build-ready structure</h3>
+<p>Each block app should use this structure:</p>
+<ol><li><strong>Learn</strong> — short explanation adapted from the copied curriculum content.</li><li><strong>Try</strong> — the practical game/simulator for the block.</li><li><strong>Discuss</strong> — prompts for facilitators or groups.</li><li><strong>Apply</strong> — real-world scenario or decision.</li><li><strong>Build</strong> — printable/classroom extension.</li></ol>
+<h3>Attribution requirement</h3>
+<p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></article><article class="card"><h2>Practical app brief</h2><h2>Block 9 — Hashing, Mining &amp; Proof of Work Practical App Brief</h2>
+<h3>Working title</h3>
+<p>Hashing, Mining &amp; Proof of Work</p>
+<h3>User outcome</h3>
+<p>Learners should be able to explain the concept by doing something practical, not by memorizing a definition.</p>
+<h3>Practical game/app</h3>
+<p>Hash race where learners adjust nonce and difficulty, build blocks from mempool transactions, and see proof-of-work cost.</p>
+<h3>Core interactions</h3>
+<ul><li>Read a short setup scenario.</li><li>Make a decision, classification, tradeoff, or transaction.</li><li>See immediate feedback linked to the curriculum concept.</li><li>Replay with changed conditions.</li><li>End with a real-world application prompt.</li></ul>
+<h3>Curriculum content to use</h3>
+<p>See <code>CONTENT-PLAN.md</code> and the copied <code>curriculum-content/</code> folder inside this block.</p>
+<h3>Minimum viable app</h3>
+<ul><li>One static HTML/CSS/JS page.</li><li>No backend required.</li><li>Mobile-first.</li><li>Works as a standalone GitHub Pages path.</li><li>Includes attribution to My First Bitcoin.</li></ul></article></section>
+    <section class="card"><h2>Curriculum lesson content</h2><p>The source markdown has been rendered below as learner-readable HTML so the practical app can be built directly from the block page.</p></section>
+    <article class="lesson-section" id="source-1"><div class="source-path">curriculum-content/8-how-bitcoin-works/0-introduction.md</div><h2>8.0 Introduction</h2>
+<blockquote><p>Bitcoin is not &quot;unregulated;&quot; it is regulated by algorithm instead of being regulated by government bureaucracies. Uncorrupted.</p></blockquote>
+<p>_Andreas M. Antonopoulos_</p>
+<p>In this module, we take a closer look at the technical side of Bitcoin. We explain in simple terms the cryptography that secures the protocol and how transactions work. Some concepts may seem technical, but don’t worry. Many people use the internet every day without fully understanding how it works.</p>
+<p>Learning Bitcoin’s technical side is a long journey that not everyone needs to take. While we encourage continued learning, this module focuses on the key basics.</p>
+<p>The Bitcoin network is a shared record of transactions stored across many computers called nodes. This record, known as the Bitcoin ledger, is pseudonymous. It does not include personal details like names or ages, only transaction data and Bitcoin addresses. The ledger tracks every transaction since the blockchain began.</p>
+<blockquote><p><strong>Note – Mechanics of the Bitcoin Protocol</strong></p><p></p><p>* Proof-of-Work</p><p>* Cryptographic Time-Stamps</p><p>* Difficulty Adjustment</p><p>* Peer-to-Peer Network Architecture</p><p>* Hash Functions &amp; Merkle Trees</p><p>* Public Key Cryptography</p><p>* Block Subsidy Halving</p></blockquote></article><article class="lesson-section" id="source-2"><div class="source-path">curriculum-content/8-how-bitcoin-works/1-security-through-cryptography.md</div><h2>8.1 Security through Cryptography</h2>
+<blockquote><p>What Bitcoin gives us is a hard promise: the program will execute exactly as specified.</p></blockquote>
+<p>_Andreas M. Antonopoulos_</p>
+<h5>Public/Private Key Cryptography</h5>
+<blockquote><p><strong>Definition – Definition of Cryptography</strong></p><p></p><p><strong>Cryptography</strong> is the practice of turning information into a secret that only the right people can read.</p></blockquote>
+<ul><li><strong>Encryption</strong> is the process of turning information into a coded form so that only someone with the correct key can read it.</li><li><strong>Decryption</strong> is the process of turning that coded information back into something readable.</li></ul>
+<p>In traditional cryptography, two people who want to communicate privately must first share the same secret key, similar to a shared password. One person uses this key to encrypt the message before sending it, and the other person uses the same key to decrypt and read it.</p>
+<p>The problem with this system is that both people must already share the secret key. If someone else gets access to that key, they can read any intercepted messages.</p>
+<p>Bitcoin solves this problem using a different approach called public-key cryptography, where users do not need to share secret keys in advance.</p>
+<p>Public/private key cryptography solves the problem of sharing secrets. Instead of sharing a password, each person has two keys: a public key and a private key.</p>
+<ul><li>The <strong>public key</strong> can be shared with anyone.</li><li>The <strong>private key</strong> must always be kept secret.</li></ul>
+<p>If John wants to send something to Arel, he can use Arel’s public key. Only Arel can unlock it using his private key. Even if someone intercepts the message, they cannot read or use it without the private key.</p>
+<p>In Bitcoin, this system is used to create digital signatures. A digital signature proves that the owner of a private key approved a transaction, similar to signing your name on a document. This is what allows Bitcoin transactions to be secure and verifiable without trusting a third party.</p>
+<blockquote><p><strong>Info</strong></p><p></p><p>Each user has two keys: a <strong>private key</strong>, which is <strong>kept secret</strong>, and a <strong>public key</strong> that can be <strong>shared with others</strong>.</p><p></p><p>The <strong>private key</strong> serves as a form of identification and proof of ownership, confirming: “This address belongs to me and I have control over it.”</p><p></p><p><strong>Digital signatures</strong> are created to identify unique transactions.</p></blockquote>
+<p>Bitcoin transactions involve transferring the ownership of a certain amount of bitcoin from one address to another.</p>
+<p>Encryption is used to ensure that only the real holder of the bitcoin has the authority to send their money to someone else. It ensures their property is guarded against malicious actors.</p>
+<p>As an additional measure of protection, each Bitcoin transaction automatically gets a UNIQUE digital signature. This unique digital signature is powered by tamper-proof technology that helps the network verify that the real owner of the bitcoin, and not someone else, has sent them.</p>
+<h6>How a Bitcoin Transaction Works</h6>
+<ol><li><strong>Creating the Transaction</strong>: A user initiates a Bitcoin transaction by specifying details such as the recipient&#x27;s address and the amount of bitcoin to be sent.</li><li><strong>Digital Signature Generation</strong>: The sender generates a unique <strong>digital signature</strong> using their <strong>private key</strong>. This signature is a unique cryptographic code that verifies the transaction&#x27;s authenticity.</li><li><strong>Broadcasting the Transaction</strong>: The signed transaction is broadcast to the Bitcoin network, indicating the intent to transfer ownership of bitcoin from the sender to the recipient.</li><li><strong>Verification on the Network</strong>: Nodes on the Bitcoin network receive the transaction and use the recipient&#x27;s <strong>public key</strong> to verify the authenticity of the signature. of the transaction. Simultaneously, they use the sender&#x27;s <strong>public key</strong> to verify the <strong>digital signature</strong>.</li><li><strong>Confirmation on the Bitcoin network</strong>: If the verification is successful, the transaction will be added to the ledger, which serves as a secure, transparent record of all transactions. Once confirmed, the ownership of the bitcoin is oﬃcially transferred from the sender to the recipient.</li></ol>
+<blockquote><p><strong>Callout – Summary</strong></p><p></p><p>The <strong>digital signature</strong>, created with the sender’s <strong>private key</strong>, proves that the transaction was authorized by the owner of the bitcoin.</p><p></p><p>The Bitcoin network can then verify this proof and record the transaction.</p></blockquote>
+<h5>Hashing Explanation</h5>
+<p>Please don’t be intimidated by the technical terms and mathematical concepts ahead. We understand that not everyone is crazy about math, but you might surprise yourself and see that even the most complex ideas can be grasped with a little bit of effort.</p>
+<blockquote><p><strong>Definition – Definition of a function</strong></p><p></p><p>A <strong>function</strong> is like a machine that takes some information and turns it into something new. The information you give the function is called the <strong>input</strong>. The new information the function creates is called the <strong>output</strong>. Functions help computers do tasks and solve problems.</p></blockquote>
+<h6>What is a function?</h6>
+<p>A function is a set of instructions that takes an input and produces an output. You can think of it like a recipe: you follow the steps with certain ingredients, and you always end up with a predictable result.</p>
+<p>In Bitcoin, functions are used to process and verify transactions. When someone sends bitcoin, cryptographic functions help check that the transaction is valid, confirm that the sender has enough funds, and update the balances on the Bitcoin ledger. Once verified and added to a block, the transaction becomes part of the permanent record on the blockchain.</p>
+<h6>What is a one-way function?</h6>
+<p>A one-way function is a special type of function that is easy to compute in one direction but extremely difficult to reverse.</p>
+<p>For example, blending ingredients into a smoothie is easy, but you cannot separate the smoothie back into the original ingredients.</p>
+<p>Bitcoin security relies on one-way functions. They are used in public and private key cryptography, allowing people to share a public key while keeping their private key secret. Even though the public key is visible, it is nearly impossible to derive the private key from it. This is what makes Bitcoin transactions secure.</p>
+<h6>What is a hash function?</h6>
+<blockquote><p><strong>Definition – Definition of a hash function</strong></p><p></p><p>A <strong>hash function</strong> is like a secret code machine.</p><p></p><p>It takes in a <strong>message</strong> and turns it into a code.</p></blockquote>
+<h6>How Hashing Works in Bitcoin Transactions</h6>
+<p>In Bitcoin, every transaction is turned into a hash before it is added to the blockchain. A hash is a unique digital fingerprint of the transaction. If anyone tries to change even a small part of the transaction, the hash will change completely. This makes it easy for the network to detect tampering.</p>
+<h6>The Role of Hashing in Bitcoin Security</h6>
+<p>Hashing helps protect the Bitcoin network by making transactions easy to verify and impossible to quietly modify. Because each transaction has its own unique hash, the network can quickly detect if something has been altered.</p>
+<p>A hash function takes data and converts it into a fixed string of numbers and letters called a hash. The same input will always produce the same hash, but even a tiny change in the input will create a completely different result. This property allows computers to check that data has not been changed.</p>
+<blockquote><p><strong>Definition – Definition of Hashing</strong></p><p></p><p><strong>Hashing</strong> is like creating a fingerprint for digital data. It is the process of taking a digital message and turning it into a fixed length code, which serves as a unique identifier. Just like a fingerprint can identify a person, a hash can identify a digital message. Hashes are used in many applications, including Bitcoin transactions.</p></blockquote>
+<p>The <strong>output</strong>, or hash, is always the same length, no matter how long the original information was. Bitcoin uses a few specific types of hash function called <strong>SHA-256</strong> and <strong>RIPEMD160</strong>.</p>
+<p>A few examples are below:</p>
+<ul><li>SHA256 hash of the string <strong>hello world</strong></li><li><code>b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9</code></li><li>SHA256 hash of the string <strong>hello world.</strong></li><li><code>7ddb227315f423250fc67f3be69c544628dffe41752af91c50ae0a9c49faeb87</code></li><li>Notice that a small change in the input changes the output completely when compared to the first one</li><li>SHA256 hash of the downloadable iso file <strong>Ubuntu 18.10</strong></li><li><code>7b9f670c749f797a0f7481d619ce8807edac052c97e1a0df3b130c95efae4765</code></li><li>This input is a huge file yet the output is still the same fixed length</li></ul>
+<p>You can also think of hashing as a musical score that captures the essence of a piece of music. Just as a musical score is a unique representation of a tune, a hash value is a unique representation of a piece of data.</p>
+<p>By comparing the score of a piece of music with the actual performance, a musician can determine if the performance is accurate. Similarly, by comparing the hash value of received data with the original hash value, one can determine if the data has been altered during transmission.</p>
+<p>Just as a slight deviation in a musical performance can cause it to sound different, even the slightest change to the original data will result in a different hash value. This makes hashing a powerful tool for ensuring the integrity and authenticity of a Bitcoin transaction.</p>
+<p>The process of encoding the <strong>public key</strong> through hashing is used to improve the security of information by converting it into a fixed-length, unreadable format. Bitcoin uses the SHA-256 and RIPEMD160 algorithms to produce public addresses. The resulting output serves as a unique identifier for the <strong>public key</strong> and helps to ensure the integrity and security of transactions stored in the ledger. By encrypting the information in this way, it becomes more diﬃcult for unauthorized individuals to access and manipulate the data.</p>
+<h6>Properties of a hashing function</h6>
+<ul><li><strong>Deterministic</strong>: The same ingredients always produce the same smoothie. In the same way, the same data will always produce the same hash.</li><li><strong>Pre-image resistance</strong>: If you only have the smoothie, you cannot figure out the exact fruits that were used. Similarly, if you only have a hash, you cannot determine the original data.</li><li><strong>Avalanche effect</strong>: Changing even a tiny part of the ingredients creates a completely different smoothie. In hashing, a very small change in the data produces a completely different hash.</li><li><strong>Collision resistance</strong>: It is extremely difficult to find two different sets of ingredients that produce the exact same smoothie. In the same way, it is extremely unlikely that two different pieces of data will produce the same hash.</li><li><strong>Fast to verify</strong>: Making the smoothie is quick, and it is easy to check that the result is a smoothie. Hash functions are fast to compute and easy for anyone to verify.</li></ul>
+<h5>Activity: Generate SHA 256 Hash</h5>
+<p>https://tools.keycdn.com/sha256-online-generator</p>
+<p>Curious about how hashing works?</p>
+<p>Scan the QR code to instantly generate a SHA256 hash from any word, sentence, or input you choose.</p>
+<p>Hash functions are like digital fingerprints: they&#x27;re one-way, meaning once something is hashed, it can&#x27;t be reversed.</p>
+<p>Try it out and see for yourself!</p></article><article class="lesson-section" id="source-3"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/0-introduction.md</div><h2>9.0 Introduction</h2>
+<p>In this section, we’ll take a closer look at two very important parts (and participants) of the Bitcoin network that were first introduced in Module 5:</p>
+<ul><li><strong>Bitcoin Nodes</strong>: Gatekeepers of validation whose main job is to keep a copy of the Bitcoin ledger, and to make sure that all transactions are valid and that everyone follows the same rules. By distributing this job among many people worldwide, Bitcoin stays strong against potential fraud without relying on a centralized authority. Nodes help keep the system trustworthy and true to its decentralized ethos, where no one person or group has too much power over the rest.</li><li><strong>Bitcoin Miners</strong>: Architects of security who solve cryptographic puzzles by using powerful computers and electricity. They check and confirm transactions, making sure everything is secure. Their computational work helps make the ledger (or blockchain) resistant to any bad by making the alteration of the blockchain expensive in energy terms.</li></ul>
+<p>Together, Bitcoin nodes and miners work as a team to maintain a decentralized, secure, and strong system — a truly novel monetary system that people all around the world can rely on. Let&#x27;s explore these roles in more detail to understand how they contribute to the Bitcoin protocol.</p></article><article class="lesson-section" id="source-4"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/1-bitcoin-nodes-and-miners.md</div><h2>9.1 Bitcoin Nodes and Miners</h2>
+<p>Bitcoin nodes may sound technical, but they are simply software that keeps a copy of the Bitcoin blockchain on a computer. The blockchain is a shared record of all Bitcoin transactions.</p>
+<p>When you run your own node, you verify Bitcoin transactions yourself instead of trusting someone else. This gives you more independence and helps keep the Bitcoin network decentralized.</p>
+<p>You can think of a Bitcoin node as a digital traffic officer with a few important jobs.</p>
+<p>First, it keeps a copy of the blockchain, which is the history of all Bitcoin transactions.</p>
+<p>Second, nodes connect with other nodes around the world and share information. One example is the list of new transactions waiting to be confirmed, which is called the mempool.</p>
+<p>Third, nodes check that every transaction follows Bitcoin’s rules. If a transaction is invalid, the node rejects it.</p>
+<p>Nodes also help new nodes join the network by sharing the blockchain with them. However, every new node still checks all the rules independently.</p>
+<p>Anyone can run a node by installing software such as Bitcoin Core and downloading the blockchain. Once it is set up, the node continues to receive new blocks roughly every 10 minutes and verifies them before adding them to its copy of the blockchain.</p>
+<p>Running a node helps make the Bitcoin network more secure and decentralized, because more people are independently verifying the system.</p>
+<h5>What Is a Bitcoin Node?</h5>
+<blockquote><p>The purpose of mining is not the creation of new bitcoin; that’s the incentive system. Mining is the mechanism by which Bitcoin’s security is decentralized.</p></blockquote>
+<p>_Andreas M. Antonopoulos_</p>
+<blockquote><p><strong>Callout</strong></p><p></p><p>Miners collect unconfirmed transactions, form a block, and use energy to find a key that adds and secures the block.</p></blockquote>
+<p>Miners compete to add the next block of transactions to the blockchain. To do this, they must find a special number that creates a valid block hash. You can imagine it like searching for the right key among billions of possibilities. The first miner to find the correct hash wins the race and earns the right to add their block to the blockchain.</p>
+<p>When a miner finds a valid hash, they share their block with the network. Other miners quickly verify that the solution is correct. If it is, the block is added to the blockchain, helping keep Bitcoin’s public ledger secure.</p>
+<p>Miners earn bitcoin in two ways:</p>
+<ul><li><strong>Block rewards:</strong> New bitcoin are created and given to the miner who successfully adds a block to the blockchain.</li><li><strong>Transaction fees:</strong> When people send bitcoin, they include a small fee. The miner who adds the block receives the fees from the transactions included in that block.</li></ul>
+<h5>Bitcoin Halvings</h5>
+<div class="table-wrap"><table><thead><tr><th>2009</th><th>2012</th><th>2016</th><th>2020</th><th>2024</th></tr></thead><tbody><tr><td>50 BTC</td><td>25 BTC</td><td>12.5 BTC</td><td>6.25 BTC</td><td>3.125 BTC</td></tr></tbody></table></div>
+<blockquote><p><strong>Callout</strong></p><p></p><p>Miners’ rewards for completing one block halve every 210,000 blocks, about every four years.</p></blockquote>
+<p>Bitcoin has a fixed maximum supply of 21,000,000 bitcoin, but all of them were not created when Bitcoin started. Instead, new bitcoin are gradually introduced into circulation through <strong>mining</strong>.</p>
+<p>When miners successfully add a new block of transactions to the Bitcoin network, they receive a <strong>block reward</strong> in bitcoin. In the early days of Bitcoin, this reward was 50 bitcoin per block. This reward encouraged people to use computing power and electricity to help secure the network.</p>
+<p>About every 210,000 blocks (roughly every 4 years), the block reward is cut in half. This event is called the <strong>halving</strong>. The halving slows down the creation of new bitcoin and helps ensure that the total supply will never exceed 21 million. Over time, this makes bitcoin increasingly scarce.</p>
+<blockquote><p><strong>Definition – Circulating supply</strong></p><p></p><p><strong>Circulating supply</strong> refers to the total available amount of a currency. With Bitcoin, the total circulating supply is the number of coins that have been mined and are incirculation at any given time.</p></blockquote>
+<blockquote><p><strong>Definition – Bitcoin supply schedule</strong></p><p></p><p>The <strong>Bitcoin supply schedule</strong> is the predetermined and public plan for the release of new bitcoin into circulation, designed to maintain Bitcoin’s scarcity over time.</p></blockquote>
+<p><img alt=" Bitcoin Supply Schedule" src="https://cdn.sanity.io/images/vje9ehw2/staging/8184cb1c032cab6fd5219e903f8dddc20bdde779-292x200.svg" loading="lazy" /></p>
+<p>After each halving event, the bitcoin reward that miners receive for adding a block is cut in half. This reduces the rate at which new bitcoins are created.</p>
+<p>Miners still earn transaction fees from the transactions included in the block they mine. Over time, these fees are expected to become a larger part of miners’ income.</p>
+<p>Halvings are built into the Bitcoin protocol and happen automatically about every four years. Because of this, Bitcoin’s supply schedule is predictable and transparent.</p>
+<p>The table below shows upcoming halvings, including the approximate date, the block number when they occur, the new block reward, and the percentage of the total bitcoin supply that will have been mined.</p>
+<div class="table-wrap"><table><thead><tr><th>Event</th><th>Date</th><th>Block</th><th>Reward</th><th>Mined</th></tr></thead><tbody><tr><td>5th Halving</td><td>2028</td><td>1,050,000</td><td>1.5625 BTC</td><td>98.44 %</td></tr><tr><td>6th Halving</td><td>2032</td><td>1,260,000</td><td>0.78125 BTC</td><td>99.22 %</td></tr><tr><td>7th Halving</td><td>2036</td><td>1,470,000</td><td>0.390625 BTC</td><td>99.61 %</td></tr></tbody></table></div>
+<p>As more bitcoin are mined, the circulating supply keeps increasing until the maximum supply of 21,000,000 bitcoins is reached, which is expected around the year 2140. Because fewer new bitcoins are created over time, if demand increases, the price of Bitcoin can rise. This also encourages miners to keep securing the network by contributing their computing power.</p>
+<hr />
+<h5>What is a valid block hash in Bitcoin?</h5>
+<p>In Bitcoin, miners compete to find a special code called a <strong>block hash</strong>. This code identifies a block of transactions and allows it to be added to the blockchain.</p>
+<p>Each block contains information about recent transactions and also includes the hash of the previous block. This links every block together, forming a chain from the very first block (the Genesis Block) to the most recent one.</p>
+<p>A hash works like a <strong>digital fingerprint</strong> for the data in the block. If any information in the block were changed, the fingerprint would change as well. This makes it easy for anyone to verify that the blockchain’s transaction history has not been altered and helps keep the network secure.</p>
+<blockquote><p><strong>Callout</strong></p><p></p><p>Satoshi Nakamoto, the creator of Bitcoin, mined the Genesis Block, which unlocked a total of 50 bitcoin.</p></blockquote>
+<h5>The Race to Mine a Block</h5>
+<p>Miners compete to find a valid block hash. The first miner to find one gets to add the new block to the blockchain and receive a bitcoin reward.</p>
+<p>To be valid, the block’s hash must be lower than a number set by the network called the difficulty target. Because hashes are random, miners must keep trying different inputs until they find one that works.</p>
+<p>If too many miners are competing, blocks would be found too quickly. If too few miners are participating, blocks would take too long to find. To keep the system running smoothly, Bitcoin automatically adjusts the difficulty every 2,016 blocks (about every two weeks).</p>
+<p>This adjustment ensures that, on average, a new block is added to the blockchain about every 10 minutes.</p>
+<blockquote><p><strong>Definition – Definition of difficulty level</strong></p><p></p><p>The <strong>difficulty level</strong> in Bitcoin mining measures how hard it is to find a valid block hash. The network adjusts this difficulty every 2,016 blocks (about every two weeks) so that new blocks are added to the blockchain about every 10 minutes. The higher the difficulty, the harder it is for miners to find a valid block.</p></blockquote>
+<blockquote><p><strong>Info</strong></p><p></p><p>By finding a valid block hash, a miner proves they have done the work required to add a new block to the blockchain. This process is called Proof of Work (PoW). It is the security mechanism that allows Bitcoin to confirm transactions and add new blocks to the blockchain. The miner who finds the valid hash first earns a reward in bitcoin, which includes the block reward and the transaction fees from the transactions included in that block.</p></blockquote>
+<p>Proof of Work (PoW) helps keep Bitcoin secure by making it extremely expensive for anyone to try to cheat or take control of the network. Instead, it is far more profitable to follow the rules.</p>
+<p>Miners play four main roles:</p>
+<ol><li><strong>Collect transactions</strong>: Miners choose transactions that have been sent to the network and place them into a candidate block.</li><li><strong>Perform Proof of Work</strong>: Miners compete to solve a difficult mathematical puzzle by finding a valid block hash.</li><li><strong>Broadcast the block</strong>: The first miner to find a valid solution shares the new block with the network.</li><li><strong>Earn rewards</strong>: If the block is valid, it is added to the blockchain and the miner receives newly created bitcoin plus transaction fees.</li></ol>
+<p>Many miners around the world try to create the next block at the same time. When one miner finds a valid solution, the network checks the block. If everything is correct, it is added to the blockchain. Other competing blocks are discarded. This process keeps the network in agreement and prevents double-spending.</p>
+<ul><li>Miners are computers that help maintain and update Bitcoin’s ledger.</li><li>They collect transactions and group them into a block. Then they run the block’s data through a hashing algorithm to create a unique code called a hash.</li><li>Miners repeat this process many times, searching for a hash that meets Bitcoin’s rules. The first miner to find a valid hash gets newly created bitcoin as a reward, and their block is added to the blockchain.</li><li>Each block’s hash also connects it to the previous block. If someone tried to change a past transaction, the hashes would no longer match, and the network would reject the altered chain. This is what keeps Bitcoin’s ledger secure.</li></ul></article><article class="lesson-section" id="source-5"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</div><h2>9.2 What Is the Mempool?</h2>
+<p>The <strong>mempool</strong>, short for “memory pool,” is like a waiting room for Bitcoin transactions. When you send bitcoin, your transaction is first broadcast to the network and placed in the mempool.</p>
+<p>You can think of it like waiting in line at a restaurant. Your name goes on a list, and you wait until a table is available. In the same way, your transaction waits in the mempool until a miner includes it in a block.</p>
+<p>Bitcoin nodes check each new transaction to make sure it is valid and that the bitcoin being spent has not already been used. If the transaction is valid, it stays in the mempool until it is confirmed.</p>
+<p>Miners choose transactions from the mempool and include them in new blocks. Usually, transactions with higher fees are chosen first.</p>
+<p>Once a transaction is included in a block, it becomes confirmed and is permanently recorded on the Bitcoin blockchain.</p>
+<hr />
+<h5>Activity: Exploring the Mempool</h5>
+<p>https://qr.myfirstbitcoin.org/mempool.pdf</p>
+<p><strong>This activity exposes students to a free and open-source tool that does not require technical skills to use. It is useful for Bitcoiners at all levels, from beginner to experienced.</strong></p>
+<h6>Key Points</h6>
+<ol><li><strong>Mempool</strong> refers to the list of unconfirmed transactions maintained by each Bitcoin node, not a specific service or platform.</li><li>This is no single, universal mempool. Mempool.space is one of many.</li><li><a href="https://mempool.space">Mempool.space</a> is open-sourced and well known for being an easy-to-use visual block explorer. It provides real time data on unconfirmed transactions, fee rates, and other network activity.</li></ol>
+<h6>Student Tip</h6>
+<p>Mempool.space does much more than visualize blocks. Explore other parts of the Bitcoin ecosystem: e.g., Lightning, mining, the hash rate, pools, and block space &quot;goggles&quot;.</p></article><article class="lesson-section" id="source-6"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</div><h2>9.3 How Transactions Work</h2>
+<p>Now that you understand public and private keys, as well as the roles of nodes and miners, here’s how a Bitcoin transaction works from start to finish.</p>
+<ol><li>Adam wants to send bitcoin to Gerardo. He creates a transaction with Gerardo’s address, the amount to send, and a fee.</li><li>Adam signs the transaction with his private key to prove ownership.</li><li>He broadcasts the transaction to the Bitcoin network.</li><li>Nodes receive it and check that it follows the rules, including verifying the signature and that Adam has enough bitcoin.</li><li>If valid, the transaction is shared across the network and added to the mempool, where pending transactions wait.</li><li>Miners pick transactions from the mempool and include them in a block they try to mine.</li><li>When a miner successfully mines a block, it is shared with the network and checked by other nodes.</li><li>If valid, the block is added to the blockchain. Gerardo receives the bitcoin.</li><li>As more blocks are added, the transaction gains confirmations, making it more secure.</li></ol>
+<p>Once included in a block, the transaction is confirmed. Adam cannot spend that bitcoin again, and Gerardo can spend what he received in a new transaction.</p>
+<blockquote><p><strong>Note</strong></p><p></p><p>Transaction &amp; fee selected → Signed by wallet and sent → Distributed by nodes → Miner adds transaction to block template → Miner wins Proof-of-Work contest → New block is validated → New block is distributed by nodes</p></blockquote>
+<h6>Resources</h6>
+<p><a href="https://www.youtube.com/watch?v=xc_TxlByxeY">▶ YouTube</a></p></article>
   </main>
 </body>
 </html>

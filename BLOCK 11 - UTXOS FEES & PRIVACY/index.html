@@ -5,31 +5,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Block 11 · UTXOs, Fees &amp; Privacy</title>
   <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#07111f; color:#f6f8ff; }
-    main { width:min(980px,100%); margin:0 auto; padding:24px; }
-    a { color:inherit; }
-    .card { border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(13,24,43,.9); padding:22px; margin:14px 0; }
-    .eyebrow { color:#ffbe63; text-transform:uppercase; letter-spacing:.14em; font-size:.75rem; font-weight:900; }
-    h1 { font-size:clamp(2rem,7vw,4.5rem); line-height:1; margin:.2em 0; }
-    h2 { margin-top:0; }
-    p, li { color:#b8c3dc; line-height:1.6; }
-    .btn, .pill { display:inline-flex; padding:12px 16px; border-radius:14px; text-decoration:none; font-weight:900; border:1px solid rgba(255,255,255,.14); }
-    .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; }
-    code { color:#77e0ff; }
+    :root { color-scheme: dark; --bg:#07111f; --panel:rgba(13,24,43,.92); --text:#f6f8ff; --muted:#b8c3dc; --accent:#ffbe63; --accent2:#77e0ff; --border:rgba(255,255,255,.12); font-family:Inter,system-ui,sans-serif; }
+    * { box-sizing:border-box; } body { margin:0; background:radial-gradient(circle at top left,rgba(119,224,255,.16),transparent 28%),linear-gradient(180deg,#07111f,#091527 55%,#07111f); color:var(--text); }
+    main { width:min(1180px,100%); margin:0 auto; padding:18px; } a { color:inherit; }
+    .top { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .hero,.card,.lesson-section { border:1px solid var(--border); border-radius:26px; background:var(--panel); box-shadow:0 24px 70px rgba(0,0,0,.28); }
+    .hero { padding:clamp(22px,5vw,42px); margin-bottom:16px; } .card { padding:20px; margin:16px 0; } .lesson-section { padding:24px; margin:18px 0; }
+    .eyebrow,.source-path { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; font-weight:900; }
+    h1 { font-size:clamp(2.3rem,7vw,5rem); line-height:.96; margin:.15em 0; letter-spacing:-.045em; } h2 { font-size:clamp(1.45rem,4vw,2.5rem); } h2,h3,h4 { margin:1.1em 0 .45em; } p,li,td,th { color:var(--muted); line-height:1.65; } blockquote { border-left:4px solid var(--accent); margin:18px 0; padding:12px 18px; background:rgba(255,190,99,.08); border-radius:14px; }
+    .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
+    .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+    @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <a href="../">← EDK home</a>
-    <section class="card">
-      <div class="eyebrow">Block 11</div>
-      <h1>UTXOs, Fees &amp; Privacy</h1>
-      <p><strong>Practical:</strong> coin-selection puzzle, fee market simulator, privacy leak detector.</p>
-      <span class="pill">App not built yet</span>
-    </section>
-    <section class="card"><h2>Key concepts</h2><ul><li>UTXOs as spendable chunks</li><li>Inputs, outputs, and change</li><li>Coin selection</li><li>Fee market pressure</li><li>Privacy leaks</li><li>Consolidation timing</li></ul></section>
-    <section class="card"><h2>Copied curriculum content</h2><ul><li><code>curriculum-content/8-how-bitcoin-works/2-the-utxo-model.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li><li><code>curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</code></li></ul></section>
-    <section class="card"><h2>Practical app thesis</h2><p>Coin-selection and fee simulator where learners build transactions, choose inputs, see change outputs, and spot privacy leaks.</p></section>
+    <nav class="top"><a class="btn" href="../">← EDK home</a><span class="pill">Practical app ready to build</span></nav>
+    <section class="hero"><div class="eyebrow">Block 11</div><h1>UTXOs, Fees &amp; Privacy</h1><p><strong>Practical: coin-selection puzzle, fee market simulator, privacy leak detector.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">6.5 Don’t Trust, Verify</a><a href="#source-2">8.2 The UTXO Model</a><a href="#source-3">9.2 What Is the Mempool?</a><a href="#source-4">9.3 How Transactions Work</a></div></section>
+    <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 11 — UTXOs, Fees &amp; Privacy Content Plan</h2>
+<h3>Goal</h3>
+<p>Turn the relevant My First Bitcoin curriculum content in this block into a practical, interactive learning app.</p>
+<h3>Canonical practical direction</h3>
+<p>coin-selection puzzle, fee market simulator, privacy leak detector.</p>
+<h3>Source curriculum copied into this block</h3>
+<ul><li><code>curriculum-content/8-how-bitcoin-works/2-the-utxo-model.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li><li><code>curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</code></li></ul>
+<h3>Key concepts to preserve</h3>
+<ul><li>UTXOs as spendable chunks</li><li>Inputs, outputs, and change</li><li>Coin selection</li><li>Fee market pressure</li><li>Privacy leaks</li><li>Consolidation timing</li></ul>
+<h3>Practical app thesis</h3>
+<p>Coin-selection and fee simulator where learners build transactions, choose inputs, see change outputs, and spot privacy leaks.</p>
+<h3>Build-ready structure</h3>
+<p>Each block app should use this structure:</p>
+<ol><li><strong>Learn</strong> — short explanation adapted from the copied curriculum content.</li><li><strong>Try</strong> — the practical game/simulator for the block.</li><li><strong>Discuss</strong> — prompts for facilitators or groups.</li><li><strong>Apply</strong> — real-world scenario or decision.</li><li><strong>Build</strong> — printable/classroom extension.</li></ol>
+<h3>Attribution requirement</h3>
+<p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></article><article class="card"><h2>Practical app brief</h2><h2>Block 11 — UTXOs, Fees &amp; Privacy Practical App Brief</h2>
+<h3>Working title</h3>
+<p>UTXOs, Fees &amp; Privacy</p>
+<h3>User outcome</h3>
+<p>Learners should be able to explain the concept by doing something practical, not by memorizing a definition.</p>
+<h3>Practical game/app</h3>
+<p>Coin-selection and fee simulator where learners build transactions, choose inputs, see change outputs, and spot privacy leaks.</p>
+<h3>Core interactions</h3>
+<ul><li>Read a short setup scenario.</li><li>Make a decision, classification, tradeoff, or transaction.</li><li>See immediate feedback linked to the curriculum concept.</li><li>Replay with changed conditions.</li><li>End with a real-world application prompt.</li></ul>
+<h3>Curriculum content to use</h3>
+<p>See <code>CONTENT-PLAN.md</code> and the copied <code>curriculum-content/</code> folder inside this block.</p>
+<h3>Minimum viable app</h3>
+<ul><li>One static HTML/CSS/JS page.</li><li>No backend required.</li><li>Mobile-first.</li><li>Works as a standalone GitHub Pages path.</li><li>Includes attribution to My First Bitcoin.</li></ul></article></section>
+    <section class="card"><h2>Curriculum lesson content</h2><p>The source markdown has been rendered below as learner-readable HTML so the practical app can be built directly from the block page.</p></section>
+    <article class="lesson-section" id="source-1"><div class="source-path">curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</div><h2>6.5 Don’t Trust, Verify</h2>
+<p>Whatever you do in Bitcoin, remember this: “Don’t Trust, Verify.” There are no rulers in Bitcoin. You should never blindly follow someone’s claims; rather, you should always question what you’re being told and verify it for yourself. By following this mantra, you’ll protect yourself from losing your bitcoin. This goes for claims such as “the next Bitcoin” just like it does for “investment opportunities” or promises of “quick and easy profits.” This is why open-source projects should be favored. If you can&#x27;t verify the code yourself, you will have to trust the community who will do it for you; but it&#x27;s better to trust a decentralized and independent group of verifiers than the leader or group behind the project.</p></article><article class="lesson-section" id="source-2"><div class="source-path">curriculum-content/8-how-bitcoin-works/2-the-utxo-model.md</div><h2>8.2 The UTXO Model</h2>
+<h6>What are UTXOs?</h6>
+<p>Don’t be intimidated by the strange name. You can think of UTXOs as pieces of bitcoin, similar to the bills and coins in your wallet. For example, if you pay for a $6 item with a $10 bill, you receive $4 in change. Bitcoin works in a similar way.</p>
+<p>All the bitcoin you own is made up of different UTXOs. When you send bitcoin, your wallet uses one or more of these pieces to make the payment.</p>
+<p>If the piece you spend is larger than the amount you send, the remaining value comes back to you as change in the form of a new UTXO. At the same time, the recipient receives a new UTXO representing the bitcoin you sent.</p>
+<p>Your wallet balance is simply the total value of all the UTXOs you control.</p>
+<blockquote><p><strong>Callout – Privacy</strong></p><p></p><p>It is important to note that you should not make others aware of your UTXOs because when someone knows them, they can track your transactions and will ultimately know how much money you own.</p></blockquote>
+<h6>Example</h6>
+<ol><li>Alice wants to send Bob 5 BTC.</li><li>Her wallet uses two of her UTXOs that together are worth 6 BTC.</li><li>The transaction sends <strong>5 BTC to Bob</strong>, creating a new UTXO in Bob’s wallet.</li><li>The remaining <strong>0.99 BTC returns to Alice as change</strong>, after paying a <strong>0.01 BTC transaction fee</strong>.</li><li>Once the transaction is confirmed, it is added to Bitcoin’s ledger and the UTXOs used by Alice are marked as spent, so they cannot be used again.</li></ol>
+<h6>Resources</h6>
+<p><a href="https://www.youtube.com/watch?v=Lx9zgZCMqXE">▶ YouTube</a></p></article><article class="lesson-section" id="source-3"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/2-what-is-the-mempool.md</div><h2>9.2 What Is the Mempool?</h2>
+<p>The <strong>mempool</strong>, short for “memory pool,” is like a waiting room for Bitcoin transactions. When you send bitcoin, your transaction is first broadcast to the network and placed in the mempool.</p>
+<p>You can think of it like waiting in line at a restaurant. Your name goes on a list, and you wait until a table is available. In the same way, your transaction waits in the mempool until a miner includes it in a block.</p>
+<p>Bitcoin nodes check each new transaction to make sure it is valid and that the bitcoin being spent has not already been used. If the transaction is valid, it stays in the mempool until it is confirmed.</p>
+<p>Miners choose transactions from the mempool and include them in new blocks. Usually, transactions with higher fees are chosen first.</p>
+<p>Once a transaction is included in a block, it becomes confirmed and is permanently recorded on the Bitcoin blockchain.</p>
+<hr />
+<h5>Activity: Exploring the Mempool</h5>
+<p>https://qr.myfirstbitcoin.org/mempool.pdf</p>
+<p><strong>This activity exposes students to a free and open-source tool that does not require technical skills to use. It is useful for Bitcoiners at all levels, from beginner to experienced.</strong></p>
+<h6>Key Points</h6>
+<ol><li><strong>Mempool</strong> refers to the list of unconfirmed transactions maintained by each Bitcoin node, not a specific service or platform.</li><li>This is no single, universal mempool. Mempool.space is one of many.</li><li><a href="https://mempool.space">Mempool.space</a> is open-sourced and well known for being an easy-to-use visual block explorer. It provides real time data on unconfirmed transactions, fee rates, and other network activity.</li></ol>
+<h6>Student Tip</h6>
+<p>Mempool.space does much more than visualize blocks. Explore other parts of the Bitcoin ecosystem: e.g., Lightning, mining, the hash rate, pools, and block space &quot;goggles&quot;.</p></article><article class="lesson-section" id="source-4"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</div><h2>9.3 How Transactions Work</h2>
+<p>Now that you understand public and private keys, as well as the roles of nodes and miners, here’s how a Bitcoin transaction works from start to finish.</p>
+<ol><li>Adam wants to send bitcoin to Gerardo. He creates a transaction with Gerardo’s address, the amount to send, and a fee.</li><li>Adam signs the transaction with his private key to prove ownership.</li><li>He broadcasts the transaction to the Bitcoin network.</li><li>Nodes receive it and check that it follows the rules, including verifying the signature and that Adam has enough bitcoin.</li><li>If valid, the transaction is shared across the network and added to the mempool, where pending transactions wait.</li><li>Miners pick transactions from the mempool and include them in a block they try to mine.</li><li>When a miner successfully mines a block, it is shared with the network and checked by other nodes.</li><li>If valid, the block is added to the blockchain. Gerardo receives the bitcoin.</li><li>As more blocks are added, the transaction gains confirmations, making it more secure.</li></ol>
+<p>Once included in a block, the transaction is confirmed. Adam cannot spend that bitcoin again, and Gerardo can spend what he received in a new transaction.</p>
+<blockquote><p><strong>Note</strong></p><p></p><p>Transaction &amp; fee selected → Signed by wallet and sent → Distributed by nodes → Miner adds transaction to block template → Miner wins Proof-of-Work contest → New block is validated → New block is distributed by nodes</p></blockquote>
+<h6>Resources</h6>
+<p><a href="https://www.youtube.com/watch?v=xc_TxlByxeY">▶ YouTube</a></p></article>
   </main>
 </body>
 </html>

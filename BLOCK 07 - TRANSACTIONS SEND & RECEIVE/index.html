@@ -5,31 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Block 7 · Transactions: Send &amp; Receive</title>
   <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#07111f; color:#f6f8ff; }
-    main { width:min(980px,100%); margin:0 auto; padding:24px; }
-    a { color:inherit; }
-    .card { border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(13,24,43,.9); padding:22px; margin:14px 0; }
-    .eyebrow { color:#ffbe63; text-transform:uppercase; letter-spacing:.14em; font-size:.75rem; font-weight:900; }
-    h1 { font-size:clamp(2rem,7vw,4.5rem); line-height:1; margin:.2em 0; }
-    h2 { margin-top:0; }
-    p, li { color:#b8c3dc; line-height:1.6; }
-    .btn, .pill { display:inline-flex; padding:12px 16px; border-radius:14px; text-decoration:none; font-weight:900; border:1px solid rgba(255,255,255,.14); }
-    .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; }
-    code { color:#77e0ff; }
+    :root { color-scheme: dark; --bg:#07111f; --panel:rgba(13,24,43,.92); --text:#f6f8ff; --muted:#b8c3dc; --accent:#ffbe63; --accent2:#77e0ff; --border:rgba(255,255,255,.12); font-family:Inter,system-ui,sans-serif; }
+    * { box-sizing:border-box; } body { margin:0; background:radial-gradient(circle at top left,rgba(119,224,255,.16),transparent 28%),linear-gradient(180deg,#07111f,#091527 55%,#07111f); color:var(--text); }
+    main { width:min(1180px,100%); margin:0 auto; padding:18px; } a { color:inherit; }
+    .top { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .hero,.card,.lesson-section { border:1px solid var(--border); border-radius:26px; background:var(--panel); box-shadow:0 24px 70px rgba(0,0,0,.28); }
+    .hero { padding:clamp(22px,5vw,42px); margin-bottom:16px; } .card { padding:20px; margin:16px 0; } .lesson-section { padding:24px; margin:18px 0; }
+    .eyebrow,.source-path { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; font-weight:900; }
+    h1 { font-size:clamp(2.3rem,7vw,5rem); line-height:.96; margin:.15em 0; letter-spacing:-.045em; } h2 { font-size:clamp(1.45rem,4vw,2.5rem); } h2,h3,h4 { margin:1.1em 0 .45em; } p,li,td,th { color:var(--muted); line-height:1.65; } blockquote { border-left:4px solid var(--accent); margin:18px 0; padding:12px 18px; background:rgba(255,190,99,.08); border-radius:14px; }
+    .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
+    .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+    @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <a href="../">← EDK home</a>
-    <section class="card">
-      <div class="eyebrow">Block 7</div>
-      <h1>Transactions: Send &amp; Receive</h1>
-      <p><strong>Practical:</strong> QR invoice flow, address-checking, “spot the bad send” game.</p>
-      <span class="pill">App not built yet</span>
-    </section>
-    <section class="card"><h2>Key concepts</h2><ul><li>Receiving bitcoin</li><li>Sending bitcoin</li><li>Addresses and invoices</li><li>Transaction review</li><li>Confirmations</li><li>Verification habits</li></ul></section>
-    <section class="card"><h2>Copied curriculum content</h2><ul><li><code>curriculum-content/6-how-to-use-bitcoin/4-receiving-and-sending-transactions.md</code></li><li><code>curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li></ul></section>
-    <section class="card"><h2>Practical app thesis</h2><p>Guided send/receive simulator with QR and address checks, fee/confirmation display, and intentional mistake spotting.</p></section>
+    <nav class="top"><a class="btn" href="../">← EDK home</a><span class="pill">Practical app ready to build</span></nav>
+    <section class="hero"><div class="eyebrow">Block 7</div><h1>Transactions: Send &amp; Receive</h1><p><strong>Practical: QR invoice flow, address-checking, “spot the bad send” game.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">6.4 Receiving and Sending Transactions</a><a href="#source-2">6.5 Don’t Trust, Verify</a><a href="#source-3">7.4 Sending and Receiving Lightning Transactions</a><a href="#source-4">9.3 How Transactions Work</a></div></section>
+    <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 7 — Transactions: Send &amp; Receive Content Plan</h2>
+<h3>Goal</h3>
+<p>Turn the relevant My First Bitcoin curriculum content in this block into a practical, interactive learning app.</p>
+<h3>Canonical practical direction</h3>
+<p>QR invoice flow, address-checking, “spot the bad send” game.</p>
+<h3>Source curriculum copied into this block</h3>
+<ul><li><code>curriculum-content/6-how-to-use-bitcoin/4-receiving-and-sending-transactions.md</code></li><li><code>curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</code></li><li><code>curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</code></li></ul>
+<h3>Key concepts to preserve</h3>
+<ul><li>Receiving bitcoin</li><li>Sending bitcoin</li><li>Addresses and invoices</li><li>Transaction review</li><li>Confirmations</li><li>Verification habits</li></ul>
+<h3>Practical app thesis</h3>
+<p>Guided send/receive simulator with QR and address checks, fee/confirmation display, and intentional mistake spotting.</p>
+<h3>Build-ready structure</h3>
+<p>Each block app should use this structure:</p>
+<ol><li><strong>Learn</strong> — short explanation adapted from the copied curriculum content.</li><li><strong>Try</strong> — the practical game/simulator for the block.</li><li><strong>Discuss</strong> — prompts for facilitators or groups.</li><li><strong>Apply</strong> — real-world scenario or decision.</li><li><strong>Build</strong> — printable/classroom extension.</li></ol>
+<h3>Attribution requirement</h3>
+<p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></article><article class="card"><h2>Practical app brief</h2><h2>Block 7 — Transactions: Send &amp; Receive Practical App Brief</h2>
+<h3>Working title</h3>
+<p>Transactions: Send &amp; Receive</p>
+<h3>User outcome</h3>
+<p>Learners should be able to explain the concept by doing something practical, not by memorizing a definition.</p>
+<h3>Practical game/app</h3>
+<p>Guided send/receive simulator with QR and address checks, fee/confirmation display, and intentional mistake spotting.</p>
+<h3>Core interactions</h3>
+<ul><li>Read a short setup scenario.</li><li>Make a decision, classification, tradeoff, or transaction.</li><li>See immediate feedback linked to the curriculum concept.</li><li>Replay with changed conditions.</li><li>End with a real-world application prompt.</li></ul>
+<h3>Curriculum content to use</h3>
+<p>See <code>CONTENT-PLAN.md</code> and the copied <code>curriculum-content/</code> folder inside this block.</p>
+<h3>Minimum viable app</h3>
+<ul><li>One static HTML/CSS/JS page.</li><li>No backend required.</li><li>Mobile-first.</li><li>Works as a standalone GitHub Pages path.</li><li>Includes attribution to My First Bitcoin.</li></ul></article></section>
+    <section class="card"><h2>Curriculum lesson content</h2><p>The source markdown has been rendered below as learner-readable HTML so the practical app can be built directly from the block page.</p></section>
+    <article class="lesson-section" id="source-1"><div class="source-path">curriculum-content/6-how-to-use-bitcoin/4-receiving-and-sending-transactions.md</div><h2>6.4 Receiving and Sending Transactions</h2>
+<p>A Bitcoin transaction is a transfer of ownership of bitcoin to a new owner. Note that it is not the actual coins that are transferred, but ownership of them: in other words, the right to spend them. Every time a transaction is accepted into a block, all the nodes in the network update their local copy of the public ledger to reflect the change ownership. In this respect, a Bitcoin transaction is more akin to a real estate (or other property) transaction than to a cash transaction.</p>
+<p>To &quot;send&quot; bitcoin, the sender signs a message with their private key, signaling to the network that the rightful owner of the bitcoin has transferred its ownership to the recipient.</p>
+<p>The bitcoin will now be tied to the recipient&#x27;s address, giving them ownership of the bitcoin, so that only the new owner can spend them by using their private key.</p>
+<p>New Bitcoin transactions are initiated from wallets around the world, but there is no central payment processor. Instead, miners compete to record transactions in the ledger.</p>
+<p>Let’s say Jim owes Eliana 0.5 BTC and is ready to pay her back. Both have digital wallets.</p>
+<ol><li>Eliana shares her address with Jim.</li><li>Jim uses his wallet software to create the transaction, which includes Eliana’s address, the amount to be transferred (0.5 BTC), and a fee for the miner. Higher fees make it more likely that a miner will include the transaction in the next block.</li><li>After signing the transaction, it is broadcast to the network, where it is verified by nodes. They check whether Jim has enough funds and is the rightful owner of the coins he means to spend. If he does not, they reject the transaction immediately.</li><li>Once the transaction is verified, miners choose whether to add the transaction to the next block, usually based on the selected fee. Once the transaction makes it into a block, it is added to the blockchain and the funds are transferred to Eliana&#x27;s address.</li><li>Ownership has been transferred to Eliana. She can now use her private key to spend the received funds.</li></ol>
+<p>_It’s important to note that once the transaction is complete, it cannot be reversed._</p>
+<blockquote><p><strong>Note – How a Bitcoin Transaction Works</strong></p><p></p><p>1. Someone requests a transaction</p><p>1. Transaction broadcast to P2P computers (nodes)</p><p>1. Miners verify the transaction</p><p>1. Transactions combined to form a data block</p><p>1. New block added to the existing blockchain</p><p>1. The transaction is complete</p></blockquote>
+<blockquote><p><strong>Note – Receiving Bitcoin Transactions</strong></p><p></p><p>To receive bitcoin, you will need to provide the sender with a Bitcoin public address. This is a unique string of letters and numbers that represent your wallet and is used to identify it on the Bitcoin network.</p><p></p><p>You can find your public address by opening your Bitcoin wallet and looking for an option to “Receive” or “Deposit” bitcoin.</p><p></p><p>You can then share your Bitcoin address in one of several ways:</p><p></p><p>1. <strong>Copy and paste the address</strong>: You can copy the address by highlighting it and pressing &quot;Copy&quot;, then paste it into an email or message.</p><p>1. <strong>Share a link to your Bitcoin wallet</strong>: Some Bitcoin wallets allow you to create a link to your wallet that you can share with the sender. They can then click on the link to access your wallet and send bitcoin.</p><p>1. <strong>Share a QR code</strong>: If the sender has a smartphone with a Bitcoin wallet app installed, they can scan the QR code to get your Bitcoin address.</p></blockquote>
+<p>Once the sender has your address, they can send you bitcoin by entering your address and the amount they want to send. The bitcoin is then sent from their wallet to your wallet.</p>
+<p>The transaction is confirmed by the Bitcoin Network and usually takes about 10 minutes. For greater security, it is recommended to wait for two confirmations, which takes about 20 minutes.</p>
+<blockquote><p><strong>Note – Sending Bitcoin Transactions</strong></p><p></p><p>To send bitcoin, you will need a few things: a Bitcoin wallet, the recipient’s public address, and the amount of bitcoin you want to send.</p><p></p><p>1. Open your Bitcoin wallet.</p><p>1. Navigate to the “Send” button and paste the recipient&#x27;s address in the &quot;To&quot; field. Alternatively, you can also scan the QR code if the recipient provides one.</p><p>1. Enter the amount of bitcoin you want to send in the “Amount” field.</p><p>1. Double-check the recipient’s address and the amount to be sent. Remember transactions are irreversible!</p><p>1. Before clicking “Confirm and Send”, we recommend you double-check the transaction details one more time to ensure that you are sending the correct amount of bitcoin to the correct address.</p><p>1. Broadcast the transaction and wait for the network to confirm the transaction.</p><p></p><p>Now you know how to evaluate, select, and set up a self-custodial Bitcoin wallet. Sending and receiving bitcoin on the Bitcoin network are referred to as “on-chain” transactions. This is because the transactions occur on the main Bitcoin network and are recorder in the blockchain.</p><p></p><p>On-chain transactions are the safest way to transact with bitcoin because of the decentralized verification provided by the network.</p><p></p><p>However, on-chain transactions are slower and can be significantly more expensive than other options (which we will discuss in Module 7) due to the miner fee.</p></blockquote>
+<hr />
+<h5>Activity: Transactions In Action</h5>
+<p>https://qr.myfirstbitcoin.org/transactions.pdf</p>
+<p><strong>This is a cooperative exercise simplifying the basic roles of people involved in a Bitcoin transaction.</strong></p>
+<h6>Key Points</h6>
+<ol><li>There are four types of participants in every bitcoin transaction: the sender, the recipient, miners, and node operators.</li><li>The sender must approve (cryptographically sign) the <strong>amount of bitcoin</strong> to send AND the <strong>specific address</strong> to send to.</li><li>The recipient must provide a <strong>valid address</strong> to the sender AND verify the transaction was successfully confirmed on the blockchain.</li><li>Miners ensure all criteria are valid before adding transactions to future blocks.</li><li>Node operators verify mined blocks are valid before updating their version of the blockchain (the ledger).</li></ol>
+<h6>Student Tip</h6>
+<p>Rotate through all four roles to experience what each participant does.</p></article><article class="lesson-section" id="source-2"><div class="source-path">curriculum-content/6-how-to-use-bitcoin/5-don-t-trust-verify.md</div><h2>6.5 Don’t Trust, Verify</h2>
+<p>Whatever you do in Bitcoin, remember this: “Don’t Trust, Verify.” There are no rulers in Bitcoin. You should never blindly follow someone’s claims; rather, you should always question what you’re being told and verify it for yourself. By following this mantra, you’ll protect yourself from losing your bitcoin. This goes for claims such as “the next Bitcoin” just like it does for “investment opportunities” or promises of “quick and easy profits.” This is why open-source projects should be favored. If you can&#x27;t verify the code yourself, you will have to trust the community who will do it for you; but it&#x27;s better to trust a decentralized and independent group of verifiers than the leader or group behind the project.</p></article><article class="lesson-section" id="source-3"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</div><h2>7.4 Sending and Receiving Lightning Transactions</h2>
+<p>With a Lightning wallet, using Bitcoin is fast, cheap, and private, making transactions between two people easy. You can quickly send and receive bitcoin for everyday things like buying coffee or shopping.</p>
+<p>Let’s look at a few examples of the Lightning Network in action.</p>
+<h6>Example 1</h6>
+<p>Both Marcia and Eve have 5 units of currency. Marcia wants to send 2 units to Eve. The payment travels through Jeff, who helps pass the payment along the Lightning Network. After the payment is completed, Eve has 7 units and Marcia has 3.</p>
+<p>Jeff helps route the payment, but he cannot steal the funds. The Lightning Network uses cryptography to ensure that only the intended recipient can receive the payment. Jeff simply helps the payment move through the network.</p>
+<p>This shows a key advantage of the Lightning Network: people can send payments quickly without trusting intermediaries like banks.</p>
+<p>Node operators like Jeff can also earn small fees for helping route payments. By doing this, they help the network remain decentralized and efficient.</p>
+<p>Compared to regular Bitcoin transactions:</p>
+<ul><li><strong>On-chain transactions</strong> happen directly on the Bitcoin blockchain. They are very secure but can be slower and more expensive.</li><li><strong>Lightning transactions</strong> happen off-chain and allow payments to move much faster and at a much lower cost.</li></ul>
+<p>Because of this, Lightning is useful for small, everyday payments, while on-chain transactions are often used for larger transfers or long-term storage.</p>
+<h6>Example 2</h6>
+<p>Mina loves eating out and often stops by her favorite local café. With so many different payment options available, she isn’t sure which one is the best choice. Luckily, she has learned a little about Bitcoin and the Lightning Network. After reviewing her options, Mina realizes that using a Lightning payment method is the best option.</p>
+<p>Mina wants to buy a coffee, but paying with a regular Bitcoin transaction can sometimes take time and require higher fees. Instead, she decides to use the Lightning Network.</p>
+<p>The Lightning Network allows people to send bitcoin instantly and with very low fees. This makes it ideal for small, everyday purchases like coffee.</p>
+<p>To start using Lightning, Mina downloads a Lightning wallet on her phone. She then sends some bitcoin from her regular Bitcoin wallet to her Lightning wallet. This step uses a normal Bitcoin transaction on the blockchain. Once the funds are in her Lightning wallet, they can be used on the Lightning Network.</p>
+<p>Now Mina can pay the café instantly using Lightning. The payment happens off the main Bitcoin blockchain, which is why it is much faster and cheaper than a regular on-chain transaction.</p>
+<div class="table-wrap"><table><thead><tr><th>Benefits</th><th>Lightning Network</th><th>Traditional Banking System</th></tr></thead><tbody><tr><td>Speed</td><td>Fast</td><td>Slow</td></tr><tr><td>Transparency</td><td>Transparent</td><td>Opaque</td></tr><tr><td>Security</td><td>Secure</td><td>Vulnerable</td></tr><tr><td>Transaction fees</td><td>Low</td><td>High</td></tr><tr><td>Financial inclusion</td><td>High</td><td>Limited</td></tr><tr><td>Scability</td><td>High</td><td>Low</td></tr><tr><td>Privacy</td><td>High</td><td>Moderate</td></tr><tr><td>Interoperability</td><td>High</td><td>Low</td></tr><tr><td>Legal compliance</td><td>Moderate</td><td>High</td></tr><tr><td>Cost-effectiveness</td><td>High</td><td>Moderate</td></tr></tbody></table></div>
+<p>In simple terms, on-chain transactions happen directly on the Bitcoin blockchain and can take more time and fees. Lightning transactions happen off-chain, allowing fast and low-cost payments while still using bitcoin.</p>
+<div class="table-wrap"><table><thead><tr><th>Visa, Inc.</th><th>Bitcoin On-chain</th><th>Lightning Network</th></tr></thead><tbody><tr><td>Capacity of 65000 transactions per second.</td><td>Capacity of 7 transaction per second.</td><td>Capacity of millions transactions per second.</td></tr></tbody></table></div>
+<p><img alt="Lightning Network Map" src="https://cdn.sanity.io/images/vje9ehw2/staging/5a760247cf4c32074c62f40aea8dc21095882740-504x245.svg" loading="lazy" /></p>
+<p>https://mempool.space/graphs/lightning/nodes-channels-map</p>
+<p>This is a map of the entire Lightning Network. Thanks to thousands of Lightning node runners, you can send sats to any user with a Bitcoin Lightning wallet, wherever they are in the world. The payment will arrive in a few seconds and will only cost a few cents.</p>
+<p><strong>Check it out for yourself!</strong></p>
+<hr />
+<h5>Activity: Lightning Relay Race</h5>
+<p>https://qr.myfirstbitcoin.org/lightning.pdf</p>
+<p><strong>This is a hands-on exercise where students send and receive real sats using the Lightning Network.</strong></p>
+<h6>Key Points</h6>
+<ol><li>Using a Lightning wallet will build your confidence to receive and send real sats.</li><li>Pay attention to units. Some wallets allow users to send bitcoin OR sats (1/100,000,000 of a bitcoin).</li><li>Lightning payments can sometimes get hung up in routing, especially for larger payments. Although possible, this kind of user experience is becoming less common as the network matures.</li></ol>
+<h6>Student Tip</h6>
+<p>Verify with your instructor if/how current on-chain Bitcoin transaction fees will impact the specific Lightning wallet you use.</p></article><article class="lesson-section" id="source-4"><div class="source-path">curriculum-content/9-how-does-bitcoin-mining-work/3-how-transactions-work.md</div><h2>9.3 How Transactions Work</h2>
+<p>Now that you understand public and private keys, as well as the roles of nodes and miners, here’s how a Bitcoin transaction works from start to finish.</p>
+<ol><li>Adam wants to send bitcoin to Gerardo. He creates a transaction with Gerardo’s address, the amount to send, and a fee.</li><li>Adam signs the transaction with his private key to prove ownership.</li><li>He broadcasts the transaction to the Bitcoin network.</li><li>Nodes receive it and check that it follows the rules, including verifying the signature and that Adam has enough bitcoin.</li><li>If valid, the transaction is shared across the network and added to the mempool, where pending transactions wait.</li><li>Miners pick transactions from the mempool and include them in a block they try to mine.</li><li>When a miner successfully mines a block, it is shared with the network and checked by other nodes.</li><li>If valid, the block is added to the blockchain. Gerardo receives the bitcoin.</li><li>As more blocks are added, the transaction gains confirmations, making it more secure.</li></ol>
+<p>Once included in a block, the transaction is confirmed. Adam cannot spend that bitcoin again, and Gerardo can spend what he received in a new transaction.</p>
+<blockquote><p><strong>Note</strong></p><p></p><p>Transaction &amp; fee selected → Signed by wallet and sent → Distributed by nodes → Miner adds transaction to block template → Miner wins Proof-of-Work contest → New block is validated → New block is distributed by nodes</p></blockquote>
+<h6>Resources</h6>
+<p><a href="https://www.youtube.com/watch?v=xc_TxlByxeY">▶ YouTube</a></p></article>
   </main>
 </body>
 </html>

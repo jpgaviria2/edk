@@ -5,31 +5,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Block 8 · Lightning &amp; Daily Payments</title>
   <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#07111f; color:#f6f8ff; }
-    main { width:min(980px,100%); margin:0 auto; padding:24px; }
-    a { color:inherit; }
-    .card { border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(13,24,43,.9); padding:22px; margin:14px 0; }
-    .eyebrow { color:#ffbe63; text-transform:uppercase; letter-spacing:.14em; font-size:.75rem; font-weight:900; }
-    h1 { font-size:clamp(2rem,7vw,4.5rem); line-height:1; margin:.2em 0; }
-    h2 { margin-top:0; }
-    p, li { color:#b8c3dc; line-height:1.6; }
-    .btn, .pill { display:inline-flex; padding:12px 16px; border-radius:14px; text-decoration:none; font-weight:900; border:1px solid rgba(255,255,255,.14); }
-    .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; }
-    code { color:#77e0ff; }
+    :root { color-scheme: dark; --bg:#07111f; --panel:rgba(13,24,43,.92); --text:#f6f8ff; --muted:#b8c3dc; --accent:#ffbe63; --accent2:#77e0ff; --border:rgba(255,255,255,.12); font-family:Inter,system-ui,sans-serif; }
+    * { box-sizing:border-box; } body { margin:0; background:radial-gradient(circle at top left,rgba(119,224,255,.16),transparent 28%),linear-gradient(180deg,#07111f,#091527 55%,#07111f); color:var(--text); }
+    main { width:min(1180px,100%); margin:0 auto; padding:18px; } a { color:inherit; }
+    .top { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .hero,.card,.lesson-section { border:1px solid var(--border); border-radius:26px; background:var(--panel); box-shadow:0 24px 70px rgba(0,0,0,.28); }
+    .hero { padding:clamp(22px,5vw,42px); margin-bottom:16px; } .card { padding:20px; margin:16px 0; } .lesson-section { padding:24px; margin:18px 0; }
+    .eyebrow,.source-path { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; font-weight:900; }
+    h1 { font-size:clamp(2.3rem,7vw,5rem); line-height:.96; margin:.15em 0; letter-spacing:-.045em; } h2 { font-size:clamp(1.45rem,4vw,2.5rem); } h2,h3,h4 { margin:1.1em 0 .45em; } p,li,td,th { color:var(--muted); line-height:1.65; } blockquote { border-left:4px solid var(--accent); margin:18px 0; padding:12px 18px; background:rgba(255,190,99,.08); border-radius:14px; }
+    .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
+    .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+    @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <a href="../">← EDK home</a>
-    <section class="card">
-      <div class="eyebrow">Block 8</div>
-      <h1>Lightning &amp; Daily Payments</h1>
-      <p><strong>Practical:</strong> coffee payment simulator, routing puzzle, custodial vs non-custodial tradeoffs.</p>
-      <span class="pill">App not built yet</span>
-    </section>
-    <section class="card"><h2>Key concepts</h2><ul><li>Lightning Network</li><li>Lightning wallet types</li><li>Invoices</li><li>Sending and receiving Lightning payments</li><li>Coffee/grocery payments</li><li>Custodial vs non-custodial tradeoffs</li></ul></section>
-    <section class="card"><h2>Copied curriculum content</h2><ul><li><code>curriculum-content/7-using-bitcoin-in-daily-life/0-introduction.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/1-the-lightning-network.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/2-types-of-lightning-wallets.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/3-setting-up-a-bitcoin-lightning-wallet.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/5-buying-coffee-and-groceries-with-bitcoin.md</code></li></ul></section>
-    <section class="card"><h2>Practical app thesis</h2><p>Coffee checkout simulator with invoice creation/payment, routing puzzle, and wallet tradeoff decisions for daily spending.</p></section>
+    <nav class="top"><a class="btn" href="../">← EDK home</a><span class="pill">Practical app ready to build</span></nav>
+    <section class="hero"><div class="eyebrow">Block 8</div><h1>Lightning &amp; Daily Payments</h1><p><strong>Practical: coffee payment simulator, routing puzzle, custodial vs non-custodial tradeoffs.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">7.0 Introduction</a><a href="#source-2">7.1 The Lightning Network</a><a href="#source-3">7.2 Types of Lightning Wallets</a><a href="#source-4">7.3 Setting Up a Bitcoin Lightning Wallet</a><a href="#source-5">7.4 Sending and Receiving Lightning Transactions</a><a href="#source-6">7.5 Buying Coffee and Groceries with Bitcoin</a></div></section>
+    <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 8 — Lightning &amp; Daily Payments Content Plan</h2>
+<h3>Goal</h3>
+<p>Turn the relevant My First Bitcoin curriculum content in this block into a practical, interactive learning app.</p>
+<h3>Canonical practical direction</h3>
+<p>coffee payment simulator, routing puzzle, custodial vs non-custodial tradeoffs.</p>
+<h3>Source curriculum copied into this block</h3>
+<ul><li><code>curriculum-content/7-using-bitcoin-in-daily-life/0-introduction.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/1-the-lightning-network.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/2-types-of-lightning-wallets.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/3-setting-up-a-bitcoin-lightning-wallet.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</code></li><li><code>curriculum-content/7-using-bitcoin-in-daily-life/5-buying-coffee-and-groceries-with-bitcoin.md</code></li></ul>
+<h3>Key concepts to preserve</h3>
+<ul><li>Lightning Network</li><li>Lightning wallet types</li><li>Invoices</li><li>Sending and receiving Lightning payments</li><li>Coffee/grocery payments</li><li>Custodial vs non-custodial tradeoffs</li></ul>
+<h3>Practical app thesis</h3>
+<p>Coffee checkout simulator with invoice creation/payment, routing puzzle, and wallet tradeoff decisions for daily spending.</p>
+<h3>Build-ready structure</h3>
+<p>Each block app should use this structure:</p>
+<ol><li><strong>Learn</strong> — short explanation adapted from the copied curriculum content.</li><li><strong>Try</strong> — the practical game/simulator for the block.</li><li><strong>Discuss</strong> — prompts for facilitators or groups.</li><li><strong>Apply</strong> — real-world scenario or decision.</li><li><strong>Build</strong> — printable/classroom extension.</li></ol>
+<h3>Attribution requirement</h3>
+<p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></article><article class="card"><h2>Practical app brief</h2><h2>Block 8 — Lightning &amp; Daily Payments Practical App Brief</h2>
+<h3>Working title</h3>
+<p>Lightning &amp; Daily Payments</p>
+<h3>User outcome</h3>
+<p>Learners should be able to explain the concept by doing something practical, not by memorizing a definition.</p>
+<h3>Practical game/app</h3>
+<p>Coffee checkout simulator with invoice creation/payment, routing puzzle, and wallet tradeoff decisions for daily spending.</p>
+<h3>Core interactions</h3>
+<ul><li>Read a short setup scenario.</li><li>Make a decision, classification, tradeoff, or transaction.</li><li>See immediate feedback linked to the curriculum concept.</li><li>Replay with changed conditions.</li><li>End with a real-world application prompt.</li></ul>
+<h3>Curriculum content to use</h3>
+<p>See <code>CONTENT-PLAN.md</code> and the copied <code>curriculum-content/</code> folder inside this block.</p>
+<h3>Minimum viable app</h3>
+<ul><li>One static HTML/CSS/JS page.</li><li>No backend required.</li><li>Mobile-first.</li><li>Works as a standalone GitHub Pages path.</li><li>Includes attribution to My First Bitcoin.</li></ul></article></section>
+    <section class="card"><h2>Curriculum lesson content</h2><p>The source markdown has been rendered below as learner-readable HTML so the practical app can be built directly from the block page.</p></section>
+    <article class="lesson-section" id="source-1"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/0-introduction.md</div><h2>7.0 Introduction</h2>
+<blockquote><p>We’re building the Visa network for Bitcoin. But what I think is powerful is, unlike Visa, anybody can build on top of it.</p></blockquote>
+<p>_Elizabeth Stark_</p>
+<p>Technologies typically grow and expand in layers, like a stack. Think of your favorite website, email, or social media: they were built on top of the internet protocol, which was built on top of computers, which were built on top of electricity, and so on. These technologies started out with a very simple design and continued to improve over time.</p>
+<p>Bitcoin is no exception. As Andreas Antonopoulos famously put it, “Bitcoin is the internet of money.” It is the base layer of sound digital money, providing a solid foundation upon which new technology will be built.</p>
+<p>One of these layers is called the <strong>Lightning Network</strong>. It&#x27;s like a super-fast highway for Bitcoin, helping people send and receive bitcoin quickly and with very low fees. It allows users to make instant, small transactions on top of the regular Bitcoin network. This makes buying a coﬀee or paying a friend simple and fast! Of course, as with everything, this comes with trade-oﬀs.</p>
+<blockquote><p><strong>Info</strong></p><p></p><p>A satoshi is the smallest denomination of bitcoin. Just like a dollar can be broken into cents, one bitcoin can be split into smaller units called satoshis. One bitcoin equals 100 million satoshis, making satoshis the tiniest bits of value in the Bitcoin system. When we talk about sending bitcoin through the Lightning Network, we&#x27;ll call it “sending sats,” short for satoshis.</p></blockquote></article><article class="lesson-section" id="source-2"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/1-the-lightning-network.md</div><h2>7.1 The Lightning Network</h2>
+<p>The Lightning Network is a payment system that allows users to send and receive bitcoin quickly and inexpensively. It works by setting up a shared wallet where both parties store some of their bitcoin. They can then make unlimited transactions with each other without needing to record each one on the main blockchain. In doing so, they bypass the need to verify and include every single transaction in a block, which makes the process both fast and cost-eﬀective. The lower fees mean that the Lightning Network can be used for small payments which are not always viable on-chain. Once the parties decide to end their collaboration, only the final balance is recorded on the blockchain.</p>
+<p>Picture a day working in a café. Planning to stay a while, you open a tab and prepay instead of paying for each order. At the end of the day, you and the owner review the tab to settle the bill. If your deposit is more than what you spent, you get the difference back; if you spent more, you pay what you still owe.</p>
+<p>This scheme can scale to include more participants. For instance, on one of your visits to the café, you bring a friend who the bartender doesn’t know and can’t open a tab. You oﬀer your friends your existing tab to cover their expenses, and agree they will repay you privately. Now imagine thousands of people doing the same thing simultaneously, allowing others to use existing tabs to connect with even more individuals — that show the Lightning Network works!</p>
+<p>With Lightning, you can make payments to anyone on the network, not just the person you share a direct tab with — provided a route between the two parties can be found. Your payment can navigate through the network until it reaches its destination, even if you don&#x27;t have an open channel directly with the recipient.</p>
+<p>Let’s take a look at the difference between on-chain and off-chain transactions.</p>
+<h6>On-Chain Transactions</h6>
+<p>These are transactions that happen directly on the Bitcoin blockchain. They take about 10 minutes to confirm, and the fees depend on the size of the transaction in virtual bytes. They are more secure slower, since they require the consensus of the network.</p>
+<h6>Lightning Network Transactions</h6>
+<p>These transactions happen on a separate network built on top of the Bitcoin blockchain. They settle faster and with lower fees. They are commonly used where considerations like the speed and cost of transactions are more important. Compared to on-chain transactions, they are less secure.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th>Bitcoin Network</th><th>Lightning Network</th></tr></thead><tbody><tr><td>Definition</td><td>A decentralized digital network that uses cryptography to secure financial transactions.</td><td>A second layer payment protocol that operates on top of the Bitcoin blockchain, enabling faster and cheaper transactions.</td></tr><tr><td>Advantages</td><td>Decentralized and secure. No chargebacks or fraud. Can be used pseudonymously. Global acceptance.</td><td>Faster and cheaper transactions. Increased scalability. Off-chain transactions do not clog the blockchain.</td></tr><tr><td>Disadvantages</td><td>Slow transaction times. High fees for certain types of transactions. Complex for beginners.</td><td>Can require trust in the channel operators. Requires on-chain transaction to open and close channels.</td></tr></tbody></table></div></article><article class="lesson-section" id="source-3"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/2-types-of-lightning-wallets.md</div><h2>7.2 Types of Lightning Wallets</h2>
+<p>A Lightning wallet is similar to a Bitcoin wallet in that it lets you send and receive bitcoin. The key difference is that it works on the Lightning Network, a second layer built on top of Bitcoin. Like Bitcoin wallets, Lightning wallets have different features to consider before choosing one.</p>
+<h5>Self-Custodial vs Custodial</h5>
+<p>Lightning wallets can be grouped in many ways, but for simplicity, we divide them into two types: self-custodial and custodial. A self-custodial wallet means you control your keys. A custodial wallet means someone else controls them. With a custodial wallet, you can send and receive payments, but you rely on a third party and give up full control of your funds for convenience. This may be fine for small amounts, but using a self-custodial wallet is recommended once you understand how it works. For the rest of this section, we will focus only on self-custodial Lightning wallets.</p>
+<h5>Open Source vs Closed Source</h5>
+<p>Lightning wallets can also be open source or closed source. Open-source wallets are preferred because their code is public, can be reviewed by anyone, and can be improved by the community.</p></article><article class="lesson-section" id="source-4"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/3-setting-up-a-bitcoin-lightning-wallet.md</div><h2>7.3 Setting Up a Bitcoin Lightning Wallet</h2>
+<p>Setting up a self-custodial Bitcoin Lightning wallet is very similar to setting up a self-custodial on-chain Bitcoin wallet.</p>
+<blockquote><p><strong>Note – How to create and use a Lightning Wallet</strong></p><p></p><p>1. Search for the app in the App Store (iOS) or Google Play Store (Android).</p><p>1. Open the app and create a new wallet. You will be prompted to back up a list of 12 to 24 words: this is your recovery phrase (also called a seed phrase). <strong>Be sure to write it down and keep this in a safe place!</strong> This recovery phrase allows you to recover full access to your funds if needed. <strong>If you lose or forget this sequence of words, you will not be able to access your bitcoin if you lose access to your wallet.</strong></p><p>1. You must then confirm that you have saved your recovery phrase. To do this, enter the words of your seed phrase in the same order.</p><p>1. For extra security, some wallets let you set a PIN or password.</p><p>1. You can now start sending and receiving bitcoin on Lightning.</p></blockquote>
+<p>Note: If you are using a custodial wallet, you may not need to follow all of these steps. However, custodial wallets carry risk because you do not control your private key, meaning you do not fully control your money.</p></article><article class="lesson-section" id="source-5"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md</div><h2>7.4 Sending and Receiving Lightning Transactions</h2>
+<p>With a Lightning wallet, using Bitcoin is fast, cheap, and private, making transactions between two people easy. You can quickly send and receive bitcoin for everyday things like buying coffee or shopping.</p>
+<p>Let’s look at a few examples of the Lightning Network in action.</p>
+<h6>Example 1</h6>
+<p>Both Marcia and Eve have 5 units of currency. Marcia wants to send 2 units to Eve. The payment travels through Jeff, who helps pass the payment along the Lightning Network. After the payment is completed, Eve has 7 units and Marcia has 3.</p>
+<p>Jeff helps route the payment, but he cannot steal the funds. The Lightning Network uses cryptography to ensure that only the intended recipient can receive the payment. Jeff simply helps the payment move through the network.</p>
+<p>This shows a key advantage of the Lightning Network: people can send payments quickly without trusting intermediaries like banks.</p>
+<p>Node operators like Jeff can also earn small fees for helping route payments. By doing this, they help the network remain decentralized and efficient.</p>
+<p>Compared to regular Bitcoin transactions:</p>
+<ul><li><strong>On-chain transactions</strong> happen directly on the Bitcoin blockchain. They are very secure but can be slower and more expensive.</li><li><strong>Lightning transactions</strong> happen off-chain and allow payments to move much faster and at a much lower cost.</li></ul>
+<p>Because of this, Lightning is useful for small, everyday payments, while on-chain transactions are often used for larger transfers or long-term storage.</p>
+<h6>Example 2</h6>
+<p>Mina loves eating out and often stops by her favorite local café. With so many different payment options available, she isn’t sure which one is the best choice. Luckily, she has learned a little about Bitcoin and the Lightning Network. After reviewing her options, Mina realizes that using a Lightning payment method is the best option.</p>
+<p>Mina wants to buy a coffee, but paying with a regular Bitcoin transaction can sometimes take time and require higher fees. Instead, she decides to use the Lightning Network.</p>
+<p>The Lightning Network allows people to send bitcoin instantly and with very low fees. This makes it ideal for small, everyday purchases like coffee.</p>
+<p>To start using Lightning, Mina downloads a Lightning wallet on her phone. She then sends some bitcoin from her regular Bitcoin wallet to her Lightning wallet. This step uses a normal Bitcoin transaction on the blockchain. Once the funds are in her Lightning wallet, they can be used on the Lightning Network.</p>
+<p>Now Mina can pay the café instantly using Lightning. The payment happens off the main Bitcoin blockchain, which is why it is much faster and cheaper than a regular on-chain transaction.</p>
+<div class="table-wrap"><table><thead><tr><th>Benefits</th><th>Lightning Network</th><th>Traditional Banking System</th></tr></thead><tbody><tr><td>Speed</td><td>Fast</td><td>Slow</td></tr><tr><td>Transparency</td><td>Transparent</td><td>Opaque</td></tr><tr><td>Security</td><td>Secure</td><td>Vulnerable</td></tr><tr><td>Transaction fees</td><td>Low</td><td>High</td></tr><tr><td>Financial inclusion</td><td>High</td><td>Limited</td></tr><tr><td>Scability</td><td>High</td><td>Low</td></tr><tr><td>Privacy</td><td>High</td><td>Moderate</td></tr><tr><td>Interoperability</td><td>High</td><td>Low</td></tr><tr><td>Legal compliance</td><td>Moderate</td><td>High</td></tr><tr><td>Cost-effectiveness</td><td>High</td><td>Moderate</td></tr></tbody></table></div>
+<p>In simple terms, on-chain transactions happen directly on the Bitcoin blockchain and can take more time and fees. Lightning transactions happen off-chain, allowing fast and low-cost payments while still using bitcoin.</p>
+<div class="table-wrap"><table><thead><tr><th>Visa, Inc.</th><th>Bitcoin On-chain</th><th>Lightning Network</th></tr></thead><tbody><tr><td>Capacity of 65000 transactions per second.</td><td>Capacity of 7 transaction per second.</td><td>Capacity of millions transactions per second.</td></tr></tbody></table></div>
+<p><img alt="Lightning Network Map" src="https://cdn.sanity.io/images/vje9ehw2/staging/5a760247cf4c32074c62f40aea8dc21095882740-504x245.svg" loading="lazy" /></p>
+<p>https://mempool.space/graphs/lightning/nodes-channels-map</p>
+<p>This is a map of the entire Lightning Network. Thanks to thousands of Lightning node runners, you can send sats to any user with a Bitcoin Lightning wallet, wherever they are in the world. The payment will arrive in a few seconds and will only cost a few cents.</p>
+<p><strong>Check it out for yourself!</strong></p>
+<hr />
+<h5>Activity: Lightning Relay Race</h5>
+<p>https://qr.myfirstbitcoin.org/lightning.pdf</p>
+<p><strong>This is a hands-on exercise where students send and receive real sats using the Lightning Network.</strong></p>
+<h6>Key Points</h6>
+<ol><li>Using a Lightning wallet will build your confidence to receive and send real sats.</li><li>Pay attention to units. Some wallets allow users to send bitcoin OR sats (1/100,000,000 of a bitcoin).</li><li>Lightning payments can sometimes get hung up in routing, especially for larger payments. Although possible, this kind of user experience is becoming less common as the network matures.</li></ol>
+<h6>Student Tip</h6>
+<p>Verify with your instructor if/how current on-chain Bitcoin transaction fees will impact the specific Lightning wallet you use.</p></article><article class="lesson-section" id="source-6"><div class="source-path">curriculum-content/7-using-bitcoin-in-daily-life/5-buying-coffee-and-groceries-with-bitcoin.md</div><h2>7.5 Buying Coffee and Groceries with Bitcoin</h2>
+<p>Have you ever wondered if you could use bitcoin to buy your daily cup of coffee or stock up on groceries? Turns out you can! There are many options, both online and in person, that let you pay with bitcoin. We’ll explore some of those options as well as the tools that will help you find local stores so you can spend bitcoin.</p>
+<p>Even though paying with a credit card or an app can seem easy to understand for the person paying, the processing of the payment is actually very complex and involves many diﬀerent parties.</p>
+<blockquote><p><strong>Note – How Payment Processing Works</strong></p><p></p><p>Customer → Merchant → Payment Gateway → Processor → Card Network → Issuing Bank → Card Network → Merchant Bank → Merchant</p></blockquote>
+<p>Each intermediary charges a fee so, while it may seem easy, fast, and cheap, these fees can quickly add up for a small business owner — more than 3% of the price, which is a big amount for them.</p>
+<p>And that’s not to mention currency exchange fees!</p>
+<h6>Credit Card Processing Fees</h6>
+<div class="table-wrap"><table><thead><tr><th>Customers Pays</th><th>Issuing Bank</th><th>Card Network Processors</th><th>Payment Processors</th><th>Goes to merchant</th></tr></thead><tbody><tr><td>100</td><td>-1.75</td><td>-0.14</td><td>-0.30</td><td>97.81</td></tr></tbody></table></div>
+<p>With Bitcoin and the Lightning Network, businesses can receive instant payments from all over the world via an open, secure, internet-native, borderless, and censorship-resistant monetary system.</p>
+<p>Next, we will look at a few ways merchants can easily accept payments in bitcoin.</p>
+<h5>Online</h5>
+<p>BTCPay Server is an open-source payment processor that allows merchants to accept payments in bitcoin with little technical knowledge. It’s completely free and doesn’t charge any commission.</p>
+<p>Online businesses can integrate BTCPay Server seamlessly by adding the BTCPay plugin to their website.</p>
+<p>Because BTCPay Server is an open-source project, not a company, you can contribute to the project once you learn more about it and computer programming.</p>
+<p>Check out <a href="https://btcpayserver.org/">BTCPayServer.org</a> for more information on how to use this payment system for your in-person or online business.</p>
+<blockquote><p><strong>Info – BTCPay Server: How is it different?</strong></p><p></p><p>* <strong>Free and open-source</strong>: Made free to free. MIT License. No transaction, subscription or processing costs. Fully open-source. Payments are direct, peer to peer.</p><p>* <strong>Decentralized</strong>: Anyone can deploy a server. Become a self-hosted payment processor and receive payments directly to your wallet. Help your freinds or community and process payments for them. An unlimited amount of stores can be attached to a single BTCPay Server.</p><p>* <strong>Private, No middleman</strong>: Trusted third parties are security holes. BTCPay eliminates them. Payments are P2P, direct. Data is not shared. There is no KYC/ALM.</p><p>* <strong>Secure</strong>: Your private key is never required. Non-custodial. BTCPay only needs xpubkeys (publickey) to generate invoices. Code is open-source and can be inspected by security auditors and developers.</p><p>* <strong>Censorship-resistant</strong>: No central point of failure. Nobody is controlling it except for the user running it. You can run it on your own hardware.</p></blockquote>
+<h5>In Person</h5>
+<p>Brick and mortar shops can also use BTCPay Server to accept payments, or they can simply download a Bitcoin wallet and accept payments directly from their phone.</p>
+<p>To find a merchant that accepts bitcoin in your area, go to <a href="https://btcmap.org">BTCMap.org</a> and search for your region. BTCMap.org is an open-source map where merchants that accept Bitcoin can list their businesses. Plus, users can also add new merchants and even update the map to make sure the listed merchants are still accepting bitcoin. It’s a powerful tool for people who wish to spend their bitcoin.</p>
+<h5>Transitional Tools: Vouchers, Gift Cards, and Payment Cards</h5>
+<p>To purchase products or services from businesses that do not yet accept bitcoin, there is an intermediary tool you can use: gift cards.</p>
+<p>Some businesses focus on buying and selling gift cards in exchange for bitcoin. That means you can acquire a gift card for the store you’d like to shop at in exchange for bitcoin, and then spend the gift card directly at the store. Plane tickets, hotels, games, SIM cards… you can buy almost anything with bitcoin and gift cards!</p>
+<h5>Circular Economies</h5>
+<p><img alt=" " src="https://cdn.sanity.io/images/vje9ehw2/staging/b7074d4c1f4ba151124ba01f31db4eba6edac85e-190x58.svg" loading="lazy" /></p>
+<p>A <strong>circular economy</strong> is made up of participants who decide to support one another by trying to buy from and sell to each other as much as possible. For instance, a community of farmers exchanging their produce instead of going to the supermarket.</p>
+<p>When applied to Bitcoin, a circular economy is built by supporting local merchants and skilled workers who accept bitcoin, so that all participants can flourish together thanks to Bitcoin&#x27;s superior properties.</p>
+<blockquote><p><strong>Note</strong></p><p></p><p>The Lightning Network enables Bitcoin circular economies to appear and thrive all around the world thanks to near-instant and low-fee Bitcoin transactions.</p></blockquote>
+<p>The first Bitcoin circular economy ever created is located in Arnhem, Netherlands. It was created way before the Lightning Network existed — but back then, on-chain fees were really low!</p>
+<p><img alt="El Zonte" src="https://cdn.sanity.io/images/vje9ehw2/staging/dc4d0487cd415fcb6720ddb0c179da600cefe0f2-1931x2830.jpg" loading="lazy" /></p>
+<p>The second one was Bitcoin Beach, located in El Zonte, El Salvador. It was the first to leverage the power of the Lightning Network to provide the community, which was mostly unbanked, with instant digital payments directly with their smartphones!</p>
+<p>Today, hundreds of circular economies are being created all around the world, powered by Bitcoin, the Lightning Network, and educational resources.</p>
+<p>On <a href="https://btcmap.org/communities">BTCMap.org</a>, you can also look for Bitcoin communities where you will meet other Bitcoin users and find businesses that accept Bitcoin. Some of our teachers and students have actually added businesses and circular economies to BTCmap.org — and once you are ready, you can too!</p>
+<p>As we wrap up Module 7, you&#x27;ve gained insights into using Bitcoin in your daily life through the Lightning Network. The Lightning Network makes transactions quicker and more accessible, offering a preview of how Bitcoin will continue to change and evolve in layers.</p>
+<p>In Module 8, we will begin investigating the technical side of Bitcoin. From cryptography to nodes, miners, and more, get ready to take a closer look at how Bitcoin really works.</p>
+<h6>Resources</h6>
+<p><a href="https://youtu.be/yKdK-7AtAMQ">▶ YouTube</a></p></article>
   </main>
 </body>
 </html>
