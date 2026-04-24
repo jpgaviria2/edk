@@ -2,37 +2,143 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=./BLOCK%201%20-%20THE%20HISTORY%20OF%20MONEY/mini-app/" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#07111f" />
-    <title>History of Money</title>
+    <meta name="description" content="Educational Development Kit for interactive Bitcoin education." />
+    <title>EDK · Interactive Bitcoin Education</title>
     <style>
       :root {
         color-scheme: dark;
+        --bg: #07111f;
+        --panel: rgba(13, 24, 43, 0.9);
+        --text: #f6f8ff;
+        --muted: #b8c3dc;
+        --accent: #ffbe63;
+        --accent-2: #77e0ff;
+        --accent-3: #7de1a8;
+        --border: rgba(255, 255, 255, 0.12);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
+      * { box-sizing: border-box; }
       body {
         margin: 0;
         min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(119, 224, 255, 0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(255, 190, 99, 0.14), transparent 24%),
+          linear-gradient(180deg, #07111f 0%, #091527 58%, #07111f 100%);
+        color: var(--text);
+      }
+      a { color: inherit; }
+      .shell { width: min(1120px, 100%); margin: 0 auto; padding: 18px; }
+      .hero, .card, .topbar {
+        border: 1px solid var(--border);
+        border-radius: 30px;
+        background: var(--panel);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+      }
+      .brand { display: flex; flex-direction: column; gap: 2px; }
+      .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 900; }
+      h1, h2, h3, p { margin: 0; }
+      h1 { font-size: clamp(2.4rem, 8vw, 5.4rem); line-height: 0.96; letter-spacing: -0.05em; }
+      h2 { font-size: clamp(1.45rem, 4vw, 2.4rem); line-height: 1.04; }
+      p { color: var(--muted); line-height: 1.6; }
+      .hero {
+        padding: clamp(22px, 5vw, 42px);
         display: grid;
-        place-items: center;
-        background: radial-gradient(circle at top, rgba(96, 191, 255, 0.18), transparent 30%), linear-gradient(180deg, #07111f 0%, #0b1020 100%);
-        color: #eef2ff;
-        padding: 24px;
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+        gap: 24px;
+        align-items: center;
+        background:
+          linear-gradient(135deg, rgba(119, 224, 255, 0.12), transparent 42%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+          var(--panel);
       }
-      main {
-        max-width: 32rem;
-        text-align: center;
+      .hero-copy { display: flex; flex-direction: column; gap: 18px; }
+      .lede { color: #dbe5ff; font-size: clamp(1rem, 2vw, 1.18rem); }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      .btn {
+        display: inline-flex;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        padding: 13px 18px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        text-decoration: none;
+        font-weight: 900;
       }
-      a {
-        color: #7fe0ff;
+      .btn.primary { background: linear-gradient(135deg, #ffc875, #ff9758); color: #261400; border-color: transparent; }
+      .btn.secondary { background: rgba(119, 224, 255, 0.09); border-color: rgba(119, 224, 255, 0.32); }
+      .side-card { display: grid; gap: 12px; padding: 18px; border-radius: 24px; background: rgba(255,255,255,0.045); border: 1px solid var(--border); }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
+      .card { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+      .card.available { border-color: rgba(125, 225, 168, 0.28); }
+      .pill { width: fit-content; border-radius: 999px; padding: 6px 10px; background: rgba(119,224,255,0.12); color: var(--accent-2); font-size: 0.78rem; font-weight: 900; }
+      .pill.green { background: rgba(125,225,168,0.12); color: var(--accent-3); }
+      .footer-note { margin-top: 18px; text-align: center; font-size: 0.92rem; }
+      @media (max-width: 820px) {
+        .shell { padding: 12px; }
+        .topbar { align-items: flex-start; flex-direction: column; }
+        .hero, .grid { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>Opening History of Money…</h1>
-      <p>If you are not redirected automatically, <a href="./BLOCK%201%20-%20THE%20HISTORY%20OF%20MONEY/mini-app/">tap here</a>.</p>
+    <main class="shell">
+      <nav class="topbar">
+        <div class="brand">
+          <span class="eyebrow">EDK</span>
+          <strong>Educational Development Kit</strong>
+        </div>
+        <a class="btn secondary" href="https://github.com/jpgaviria2/edk">View GitHub</a>
+      </nav>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Interactive Bitcoin education</span>
+          <h1>Teach Bitcoin through practical, hands-on lessons.</h1>
+          <p class="lede">The EDK is a growing collection of classroom-ready lessons, activities, and interactive web tools for Bitcoin educators, meetup organizers, and community builders.</p>
+          <div class="actions">
+            <a class="btn primary" href="./BLOCK%201%20-%20THE%20HISTORY%20OF%20MONEY/mini-app/">Open History of Money</a>
+            <a class="btn secondary" href="./README.md">Read project overview</a>
+          </div>
+        </div>
+        <aside class="side-card">
+          <span class="pill green">Now live</span>
+          <h2>History of Money</h2>
+          <p>A website-first lesson with practical examples: barter failure, functions of money, good-money scoring, debasement, inflation, and the Bitcoin bridge.</p>
+        </aside>
+      </section>
+
+      <section class="grid" aria-label="EDK modules">
+        <article class="card available">
+          <span class="pill green">Available</span>
+          <h3>Block 1 · History of Money</h3>
+          <p>From barter to Bitcoin, with interactive practical examples.</p>
+          <a class="btn primary" href="./BLOCK%201%20-%20THE%20HISTORY%20OF%20MONEY/mini-app/">Launch lesson</a>
+        </article>
+        <article class="card">
+          <span class="pill">Coming next</span>
+          <h3>Block 2 · Hashing, Nodes & Mining</h3>
+          <p>Future interactive lesson for proof-of-work, nodes, and mining.</p>
+        </article>
+        <article class="card">
+          <span class="pill">Coming next</span>
+          <h3>Block 3 · Fees & Speed</h3>
+          <p>Future activity for transaction fees, scaling, and Lightning.</p>
+        </article>
+      </section>
+
+      <p class="footer-note">Open-source, static-site friendly, and designed for live classes or self-study.</p>
     </main>
   </body>
 </html>
