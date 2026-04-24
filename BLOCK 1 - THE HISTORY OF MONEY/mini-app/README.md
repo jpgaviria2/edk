@@ -7,9 +7,12 @@ A polished static mini app for the EDK `Block 1` lesson.
 - Cleaner landing page with clear entry points for:
   - **Solo mode**
   - **Presenter / conference mode**
-- A genuine **interactive barter market** as the opening experience
+- A cleaner **guided solo market** as the opening experience
   - player starts with a concrete item
   - player has a concrete target item to reach
+  - solo mode surfaces one trader/concept at a time instead of overwhelming the learner with a full market
+  - successful trades are recommended when they exist; failed trades explain coincidence-of-wants, quantity, and divisibility problems in plain language
+- Presenter mode still keeps the fuller market simulation
   - multiple visible trader cards with clear **HAVE** and **WANT** states
   - step-by-step market trading with a visible trade log and market inventory
 - Follow-up rounds for:

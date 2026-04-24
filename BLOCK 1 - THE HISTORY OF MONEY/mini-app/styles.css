@@ -233,6 +233,25 @@ p, li, ol { color: var(--muted); }
 .participant-tone-5 { border-left: 4px solid #c4a5ff; }
 .participant-tone-6 { border-left: 4px solid #86f1ea; }
 .projector-card { background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)), var(--panel-strong); }
+.solo-lesson-shell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.solo-stage-card { max-width: 920px; margin: 0 auto; width: 100%; }
+.solo-objective {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  margin: 16px 0;
+  padding: 14px;
+}
+.solo-objective-card { padding: 16px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(119, 224, 255, 0.18); }
+.solo-objective-card.target { border-color: rgba(255, 190, 99, 0.26); }
+.solo-big-good { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--text); font-size: clamp(1.05rem, 2.8vw, 1.35rem); }
+.solo-big-good span { font-size: 2.1rem; }
+.solo-path-arrow { display: grid; place-items: center; color: var(--accent); font-size: 1.7rem; font-weight: 900; }
+.solo-teaching-card { padding: 18px; }
+.solo-trade-explainer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.solo-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.solo-concept-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .mobile-cta {
   position: fixed;
   left: 12px;
@@ -260,7 +279,11 @@ p, li, ol { color: var(--muted); }
   .vote-row { grid-template-columns: 1fr; }
   .vote-cast { width: 100%; }
   .participant-mini-pairs { gap: 6px; }
+  .solo-objective { grid-template-columns: 1fr; }
+  .solo-path-arrow { transform: rotate(90deg); }
+  .solo-trade-explainer, .solo-actions { grid-template-columns: 1fr; }
 }
+
 
 @media (min-width: 700px) {
   .app-shell { padding: 20px 20px 32px; gap: 20px; }

@@ -189,7 +189,7 @@ function resetProgress() {
   state.marketRoundIndex = 0; state.roundIndex = 0; state.selectedChoice = null; state.score = 0; state.history = []; state.selectedProperties = []; state.presenterReveal = false; state.showVotePanel = false; state.lastActionText = 'Choose solo or presenter mode to begin.'; resetVotes(); resetMarketState(); resetConferenceParticipants();
 }
 function resetToLanding() { state.mode = 'solo'; state.screen = 'landing'; resetProgress(); setLastAction('Choose a mode. Solo is the priority mobile experience.'); render(); }
-function startSolo() { state.mode = 'solo'; resetProgress(); state.screen = 'market'; setLastAction('Inspect a trader first. When the panel says the path is open, trade.'); render(); }
+function startSolo() { state.mode = 'solo'; resetProgress(); state.screen = 'market'; setLastAction('Read the guided trade card. Make the trade if it works, or continue when the concept is clear.'); render(); }
 function startPresenter() { state.mode = 'presenter'; resetProgress(); state.screen = 'conferenceIntro'; setLastAction('Presenter mode is ready. Start the session when the room is set.'); render(); }
 function beginPresenterRun() { state.screen = 'market'; state.presenterReveal = false; setLastAction('Guide the room trader by trader. Inspect first, then decide whether to trade.'); render(); }
 function currentRound() { return rounds[state.roundIndex]; }
@@ -242,7 +242,11 @@ function tryTrade(personId) {
     appendMarketLog('success', `Success: you reached ${goodsPhrase(state.targetInventory)} after ${state.marketTradeCount} swaps. ${currentMarketScenario().lessonSummary}`);
     markMarketHistory(true);
     setLastAction(`Success. You reached ${goodsPhrase(state.targetInventory)}. Continue when ready.`);
-  } else setLastAction(`Trade complete. You now hold ${goodsPhrase(state.playerInventory)}. Inspect the next trader to keep moving.`);
+  } else {
+    const nextCleanTrade = state.marketPeople.find((entry) => evaluateTrade(entry).ok);
+    if (nextCleanTrade) state.inspectedPersonId = nextCleanTrade.id;
+    setLastAction(`Trade complete. You now hold ${goodsPhrase(state.playerInventory)}. The next clean trade is surfaced automatically.`);
+  }
   render();
 }
 function skipMarket() {
@@ -382,7 +386,92 @@ function marketFailureChips() {
   const all = [{ id: 'wants-mismatch', label: 'Wants mismatch' }, { id: 'scale-mismatch', label: 'Scale mismatch' }, { id: 'indivisibility', label: 'Indivisibility' }, { id: 'awkwardness', label: 'Awkward bulk' }];
   return all.map((entry) => `<span class="stat-chip ${state.failureBadgesSeen.includes(entry.id) ? 'chip-highlight' : 'chip-dim'}">${entry.label}</span>`).join('');
 }
+function soloMarketLessonLabel(reason) {
+  switch (reason) {
+    case 'wants-mismatch': return 'Concept: coincidence of wants';
+    case 'scale-mismatch': return 'Concept: unit size and pricing';
+    case 'indivisibility': return 'Concept: divisibility';
+    case 'awkwardness': return 'Concept: portability';
+    default: return 'Concept: barter friction';
+  }
+}
+function soloMarketTakeaway(scenario, evaluation) {
+  if (state.marketCompleted) return scenario.lessonSummary;
+  if (!evaluation) return scenario.prompt;
+  if (evaluation.ok) return 'This trade works because the other person wants exactly what you are holding right now. Barter can work, but only when wants and quantities line up.';
+  return evaluation.detail;
+}
+function soloCompleteMarketLesson() {
+  const scenario = currentMarketScenario();
+  if (!state.marketCompleted) {
+    const prior = state.history.find((entry) => entry.roundId === scenario.id);
+    if (!prior) {
+      state.history.push({ roundId: scenario.id, roundTitle: scenario.title, correct: true, choiceId: 'concept-understood', choice: `Understood: ${scenario.lessonSummary}` });
+      state.score += 1;
+    }
+    state.marketCompleted = true;
+    appendMarketLog('note', `Lesson complete: ${scenario.lessonSummary}`);
+  }
+  continueFromMarket();
+}
+function findSoloNextTrade() { return state.marketPeople.find((person) => evaluateTrade(person).ok); }
+function soloRoundIntent(scenario, nextTrade) {
+  if (state.marketCompleted) return 'You reached the target. Now connect the action to the concept before moving on.';
+  if (nextTrade) return 'There is one clean next trade. The app surfaces it so you can focus on why it works.';
+  return 'No clean trade is available from what you hold. That failure is the lesson: barter can break even when everyone has valuable goods.';
+}
+function guidedSoloMarketScreen() {
+  const scenario = currentMarketScenario();
+  const currentItem = item(state.playerInventory.itemId); const targetItem = item(state.targetInventory.itemId);
+  const nextTrade = state.marketCompleted ? null : findSoloNextTrade();
+  const inspectedPerson = getPerson(state.inspectedPersonId) || nextTrade || state.marketPeople[0]; const inspectedEvaluation = inspectedPerson ? evaluateTrade(inspectedPerson) : null;
+  const nextPersonId = nextInspectablePersonId(); const nextPerson = nextPersonId ? getPerson(nextPersonId) : null;
+  const lessonLabel = state.marketCompleted ? 'Concept learned' : soloMarketLessonLabel(inspectedEvaluation?.reason);
+  shell(`
+    <section class="solo-lesson-shell">
+      <section class="card stage-card solo-stage-card">
+        <div class="stage-header"><div><div class="eyebrow">${scenario.kicker}</div><h1>${scenario.title}</h1></div><div class="badge big-badge">Step ${state.marketRoundIndex + 1} / ${barterScenarios.length}</div></div>
+        <p class="prompt">${scenario.intro}</p>
+        <section class="solo-objective panel">
+          <div class="solo-objective-card"><span class="inventory-label">You have</span><div class="solo-big-good"><span>${currentItem.emoji}</span><strong>${quantityLabel(state.playerInventory)}</strong></div><p>${currentItem.description}</p></div>
+          <div class="solo-path-arrow">→</div>
+          <div class="solo-objective-card target"><span class="inventory-label">Goal</span><div class="solo-big-good"><span>${targetItem.emoji}</span><strong>${quantityLabel(state.targetInventory)}</strong></div><p>${targetItem.description}</p></div>
+        </section>
+        <section class="solo-intent-card feedback-card feedback-neutral">
+          <div class="result-tag">What this screen is teaching</div>
+          <h3>${soloRoundIntent(scenario, nextTrade)}</h3>
+          <p>${scenario.prompt}</p>
+        </section>
+        <section class="solo-teaching-card panel stack-lg">
+          <div class="row wrap-row"><div><div class="eyebrow">${nextTrade ? 'Recommended next trade' : 'Example trader'}</div><h2>${inspectedPerson.name}</h2><p class="small-copy">${inspectedPerson.role}</p></div><span class="result-tag ${inspectedEvaluation?.ok || state.marketCompleted ? '' : 'subtle'}">${state.marketCompleted ? 'Goal reached' : inspectedEvaluation?.ok ? 'Trade works' : marketFailureLabel(inspectedEvaluation?.reason)}</span></div>
+          <p class="lede">${inspectedPerson.greeting}</p>
+          <div class="solo-trade-explainer">
+            <article class="trade-pair"><span class="trade-label">They have</span><div class="trade-item">${goodsPhrase(inspectedPerson.offer)}</div></article>
+            <article class="trade-pair"><span class="trade-label">They want</span><div class="trade-item">${goodsPhrase(inspectedPerson.ask)}</div></article>
+          </div>
+          <section class="feedback-card ${state.marketCompleted || inspectedEvaluation?.ok ? 'feedback-good' : 'feedback-warn'}">
+            <div class="result-tag">${lessonLabel}</div>
+            <h3>${state.marketCompleted ? 'You reached the goal.' : inspectedEvaluation?.ok ? 'This is the next clean trade.' : inspectedEvaluation?.headline}</h3>
+            <p>${soloMarketTakeaway(scenario, inspectedEvaluation)}</p>
+          </section>
+          <div class="footer-actions solo-actions">
+            ${nextTrade && inspectedPerson.id !== nextTrade.id ? `<button class="btn ghost" data-inspect="${nextTrade.id}">Return to recommended trade</button>` : `<button class="btn ghost" data-action="inspect-next">${nextPerson ? `Show ${nextPerson.name.split(' ')[0]}` : 'Show another trader'}</button>`}
+            <button class="btn ${inspectedEvaluation?.ok && !state.marketCompleted ? 'primary' : 'secondary'}" data-trade="${inspectedPerson.id}" ${inspectedEvaluation?.ok && !state.marketCompleted ? '' : 'disabled'}>${inspectedEvaluation?.ok && !state.marketCompleted ? `Make this trade` : 'No clean trade from here'}</button>
+            <button class="btn primary" data-action="solo-complete-market" ${!state.marketCompleted && nextTrade ? 'disabled' : ''}>${state.marketCompleted ? (state.marketRoundIndex === barterScenarios.length - 1 ? 'Continue to money' : 'Next concept') : nextTrade ? 'Make the trade first' : 'I understand — continue'}</button>
+          </div>
+        </section>
+        <section class="solo-concept-strip">
+          <span class="stat-chip ${state.failureBadgesSeen.includes('wants-mismatch') || inspectedEvaluation?.reason === 'wants-mismatch' ? 'chip-highlight' : ''}">Coincidence of wants</span>
+          <span class="stat-chip ${state.failureBadgesSeen.includes('scale-mismatch') || inspectedEvaluation?.reason === 'scale-mismatch' ? 'chip-highlight' : ''}">Right quantity</span>
+          <span class="stat-chip ${state.failureBadgesSeen.includes('indivisibility') || inspectedEvaluation?.reason === 'indivisibility' ? 'chip-highlight' : ''}">Divisibility</span>
+          <span class="stat-chip ${state.marketTradeCount > 0 ? 'chip-highlight' : ''}">Medium of exchange</span>
+        </section>
+      </section>
+    </section>
+  `);
+}
 function marketScreen() {
+  if (state.mode === 'solo') { guidedSoloMarketScreen(); return; }
   const scenario = currentMarketScenario(); const currentItem = item(state.playerInventory.itemId); const targetItem = item(state.targetInventory.itemId); const inspectedPerson = getPerson(state.inspectedPersonId) || state.marketPeople[0]; const inspectedEvaluation = inspectedPerson ? evaluateTrade(inspectedPerson) : null; const activeParticipant = state.conferenceParticipants.find((entry) => entry.id === state.conferenceActiveParticipantId); const nextPersonId = nextInspectablePersonId(); const nextPerson = nextPersonId ? getPerson(nextPersonId) : null;
   shell(`
     <section class="experience-grid ${state.mode === 'presenter' ? 'presenter-grid market-grid' : 'market-grid'}">
@@ -477,7 +566,7 @@ function endScreen() {
 function render() { switch (state.screen) { case 'landing': landingScreen(); break; case 'conferenceIntro': conferenceIntroScreen(); break; case 'market': marketScreen(); break; case 'round': roundScreen(); break; case 'recap': recapScreen(); break; case 'bitcoin': bitcoinScreen(); break; case 'end': endScreen(); break; default: landingScreen(); } }
 function bind() {
   const on = (selector, handler) => { app.querySelectorAll(selector).forEach((el) => el.addEventListener('click', handler)); };
-  on('[data-action="home"]', resetToLanding); on('[data-action="start-solo"]', startSolo); on('[data-action="start-presenter"]', startPresenter); on('[data-action="begin-presenter"]', beginPresenterRun); on('[data-action="next"]', nextRound); on('[data-action="bridge"]', goToBitcoinBridge); on('[data-action="finish"]', finishExperience); on('[data-action="restart-mode"]', restartCurrentMode); on('[data-action="reset-round"]', resetCurrentRound); on('[data-action="skip-round"]', skipRound); on('[data-action="toggle-reveal"]', toggleReveal); on('[data-action="toggle-votes"]', toggleVotePanel); on('[data-action="reset-votes"]', resetRoundVotes); on('[data-action="reset-market"]', resetMarketRound); on('[data-action="continue-market"]', continueFromMarket); on('[data-action="skip-market"]', skipMarket); on('[data-action="inspect-next"]', () => { const nextId = nextInspectablePersonId(); if (!nextId) return; inspectPerson(nextId); });
+  on('[data-action="home"]', resetToLanding); on('[data-action="start-solo"]', startSolo); on('[data-action="start-presenter"]', startPresenter); on('[data-action="begin-presenter"]', beginPresenterRun); on('[data-action="next"]', nextRound); on('[data-action="bridge"]', goToBitcoinBridge); on('[data-action="finish"]', finishExperience); on('[data-action="restart-mode"]', restartCurrentMode); on('[data-action="reset-round"]', resetCurrentRound); on('[data-action="skip-round"]', skipRound); on('[data-action="toggle-reveal"]', toggleReveal); on('[data-action="toggle-votes"]', toggleVotePanel); on('[data-action="reset-votes"]', resetRoundVotes); on('[data-action="reset-market"]', resetMarketRound); on('[data-action="continue-market"]', continueFromMarket); on('[data-action="solo-complete-market"]', soloCompleteMarketLesson); on('[data-action="skip-market"]', skipMarket); on('[data-action="inspect-next"]', () => { const nextId = nextInspectablePersonId(); if (!nextId) return; inspectPerson(nextId); });
   app.querySelectorAll('[data-choice]').forEach((el) => el.addEventListener('click', () => selectChoice(el.getAttribute('data-choice'))));
   app.querySelectorAll('[data-property]').forEach((el) => el.addEventListener('click', () => toggleProperty(el.getAttribute('data-property'))));
   app.querySelectorAll('[data-vote]').forEach((el) => el.addEventListener('click', () => castVote(el.getAttribute('data-vote'))));
