@@ -84,7 +84,7 @@ This repo includes an attributed copy of the English **My First Bitcoin Bitcoin 
 Source: https://github.com/MyFirstBitcoin/curriculum
 License: CC BY-SA 4.0 unless otherwise stated upstream.
 
-See `CURRICULUM-MAP.md` and each block's `CURRICULUM.md` for source-to-game mapping.
+See `CURRICULUM-MAP.md`, `PRACTICAL-APP-BUILD-PLAN.md`, and each block's `CURRICULUM.md` / `CONTENT-PLAN.md` / `APP-BRIEF.md` for source-to-game mapping.
 
 ## Educational Philosophy
 

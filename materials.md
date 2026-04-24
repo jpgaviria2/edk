@@ -28,4 +28,4 @@ Each Activity Plan details which specific materials are required for that activi
 - 24x elastic bands
 - 64x coloured beads
 - 1x roll of washie tape
-- 
+-
