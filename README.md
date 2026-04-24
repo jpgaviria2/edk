@@ -61,15 +61,15 @@ Each module in the EDK includes:
 
 | Activity | Concept | Summary |
 |-----------|----------|---------|
-| **Block 1** | History of Money | Website-first lesson covering barter, money functions/properties, commodity money, debasement, inflation, and the Bitcoin bridge. |
-| **Block 2** | What Is Money? | Roadmapped for definition of money, psychology of money, types of money, and value measurement games. |
+| **Block 1** | What Is Money? | Roadmapped for money functions, properties, types, psychology, and value measurement games. |
+| **Block 2** | History of Money | Website-first lesson covering barter, commodity money, coinage, fiat transition, digital money, and the Bitcoin bridge. |
 | **Block 3** | Fiat, Inflation & Purchasing Power | Roadmapped for fiat systems, debt, prices, wages, and purchasing-power simulators. |
 | **Block 4** | Why Bitcoin? | Roadmapped for matching fiat/trust problems to Bitcoin design choices. |
-| **Block 5** | Wallets, Keys & Custody | Roadmapped for wallet types, seed phrases, self-custody, recovery habits, and safety scenarios. |
-| **Block 6** | Transactions: Send & Receive | Roadmapped for addresses, invoices, QR flows, transaction review, and verification habits. |
-| **Block 7** | Cold Storage | Roadmapped for cold storage, backups, threat models, and recovery planning. |
+| **Block 5** | What Is Bitcoin? | Roadmapped for Bitcoin origin, network basics, fixed supply, sound digital money, and misconceptions. |
+| **Block 6** | Wallets, Keys & Custody | Roadmapped for wallet types, keys, seed phrases, self-custody, recovery habits, and safety scenarios. |
+| **Block 7** | Transactions: Send & Receive | Roadmapped for addresses, invoices, QR flows, transaction review, and verification habits. |
 | **Block 8** | Lightning & Daily Payments | Roadmapped for Lightning invoices, routing, wallet tradeoffs, and merchant payment simulators. |
-| **Block 9** | Proof of Work & Mining | Roadmapped for hashing, nonces, mining difficulty, block creation, and mempool inclusion. |
+| **Block 9** | Hashing, Mining & Proof of Work | Roadmapped for hashing, nonces, mining difficulty, block creation, and proof-of-work games. |
 | **Block 10** | Nodes, Rules & Consensus | Roadmapped for node validation, invalid block rejection, decentralized rules, and Byzantine coordination. |
 | **Block 11** | UTXOs, Fees & Privacy | Roadmapped for UTXO puzzles, coin selection, fee sizing, change outputs, and privacy games. |
 | **Block 12** | Bitcoin Future & Philosophy | Roadmapped for CBDCs, censorship resistance, financial empowerment, sovereignty, and case studies. |
@@ -106,7 +106,7 @@ The **Learning Bitcoin EDK** is based on these key principles:
 ### Launching the EDK site
 
 - Open the repository root on GitHub Pages to access the **EDK homepage**.
-- The History of Money website lives in `BLOCK 1 - THE HISTORY OF MONEY/mini-app/`.
+- The History of Money website lives in `BLOCK 02 - HISTORY OF MONEY/mini-app/`.
 - Future blocks should add their own practical websites, games, or facilitator tools under their block folders.
 
 2. **Gather materials**

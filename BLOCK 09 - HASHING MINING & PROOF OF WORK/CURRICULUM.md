@@ -1,4 +1,4 @@
-# Block 9 — Proof of Work & Mining Curriculum Map
+# Block 9 — Hashing, Mining & Proof of Work Curriculum Map
 
 Source curriculum: `../curriculum/my-first-bitcoin/bitcoin-diploma/en/`
 
