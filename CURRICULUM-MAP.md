@@ -39,18 +39,18 @@ Each block should eventually include:
 
 | EDK Block | Main curriculum sources | Practical build direction |
 |---|---|---|
-| Block 1 — What Is Money? | `1-what-is-money` | Money function classifier, value comparison games, money properties, money psychology |
-| Block 2 — History of Money | `2-the-history-of-money`, `3-what-is-fiat-money/1-brief-history-of-fiat-money.md` | Barter, commodity money, coinage, paper receipts, fiat transition, digital money, Bitcoin bridge |
-| Block 3 — Fiat, Inflation & Purchasing Power | `3-what-is-fiat-money`, `4-how-problems-lead-to-solutions` | Fiat systems, money printing, debt, prices, wages, purchasing-power simulators |
-| Block 4 — Why Bitcoin? | `4-how-problems-lead-to-solutions`, `5-what-is-bitcoin` | Match fiat/trust problems to Bitcoin design choices |
-| Block 5 — What Is Bitcoin? | `5-what-is-bitcoin`, back matter | Bitcoin origin, network basics, fixed supply, sound digital money, misconceptions |
-| Block 6 — Wallets, Keys & Custody | `6-how-to-use-bitcoin`, back matter | Wallet types, keys, seed phrases, self-custody, recovery habits, safety scenarios |
-| Block 7 — Transactions: Send & Receive | `6-how-to-use-bitcoin/4-receiving-and-sending-transactions.md`, `7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md`, `9-how-does-bitcoin-mining-work/3-how-transactions-work.md` | Addresses, invoices, QR flow, transaction review, don't-trust-verify habits |
-| Block 8 — Lightning & Daily Payments | `7-using-bitcoin-in-daily-life` | Lightning invoices, routing, wallet tradeoffs, merchant/coffee payment simulator |
-| Block 9 — Hashing, Mining & Proof of Work | `8-how-bitcoin-works`, `9-how-does-bitcoin-mining-work` | Hashing, nonces, difficulty, mining races, block creation, mempool inclusion |
-| Block 10 — Nodes, Rules & Consensus | `4-how-problems-lead-to-solutions`, `5-what-is-bitcoin`, `9-how-does-bitcoin-mining-work/1-bitcoin-nodes-and-miners.md` | Node validation, invalid block rejection, decentralized rules, Byzantine coordination |
-| Block 11 — UTXOs, Fees & Privacy | `8-how-bitcoin-works/2-the-utxo-model.md`, `9-how-does-bitcoin-mining-work` | UTXO puzzles, coin selection, fee sizing, change outputs, privacy leaks |
-| Block 12 — Bitcoin Future & Philosophy | `10-what-future-can-bitcoin-build`, `11-back-matter/1-real-world-case-studies.md` | CBDCs, censorship resistance, financial empowerment, sovereignty, real-world cases |
+| Block 1 — What Is Money? | `1-what-is-money` | Practical: money function classifier, value comparison games. |
+| Block 2 — History of Money | `2-the-history-of-money`, `3-what-is-fiat-money/1-brief-history-of-fiat-money.md` | Already started. Barter → commodity money → fiat → Bitcoin. |
+| Block 3 — Fiat, Inflation & Purchasing Power | `3-what-is-fiat-money`, `4-how-problems-lead-to-solutions` | Practical: inflation simulator, wage vs prices game, central bank money printer model. |
+| Block 4 — Why Bitcoin? Problems → Solutions | `4-how-problems-lead-to-solutions`, `5-what-is-bitcoin` | Practical: match each fiat/debt/trust problem to Bitcoin design features. |
+| Block 5 — What Is Bitcoin? | `5-what-is-bitcoin`, back matter | Practical: “Bitcoin is not…” misconception game, sound money property comparison. |
+| Block 6 — Wallets, Keys & Custody | `6-how-to-use-bitcoin`, back matter | Practical: hot/cold wallet chooser, seed phrase safety scenarios. |
+| Block 7 — Transactions: Send & Receive | `6-how-to-use-bitcoin/4-receiving-and-sending-transactions.md`, `7-using-bitcoin-in-daily-life/4-sending-and-receiving-lightning-transactions.md`, `9-how-does-bitcoin-mining-work/3-how-transactions-work.md` | Practical: QR invoice flow, address-checking, “spot the bad send” game. |
+| Block 8 — Lightning & Daily Payments | `7-using-bitcoin-in-daily-life` | Practical: coffee payment simulator, routing puzzle, custodial vs non-custodial tradeoffs. |
+| Block 9 — Hashing, Mining & Proof of Work | `8-how-bitcoin-works`, `9-how-does-bitcoin-mining-work` | Practical: hash race, nonce guessing, mining difficulty demo. |
+| Block 10 — Nodes, Rules & Consensus | `4-how-problems-lead-to-solutions`, `5-what-is-bitcoin`, `9-how-does-bitcoin-mining-work/1-bitcoin-nodes-and-miners.md` | Practical: node validation game, Byzantine generals, invalid block rejection. |
+| Block 11 — UTXOs, Fees & Privacy | `8-how-bitcoin-works/2-the-utxo-model.md`, `9-how-does-bitcoin-mining-work` | Practical: coin-selection puzzle, fee market simulator, privacy leak detector. |
+| Block 12 — Bitcoin Future & Philosophy | `10-what-future-can-bitcoin-build`, `11-back-matter/1-real-world-case-studies.md` | Practical: CBDC vs Bitcoin comparison, censorship-resistance scenarios, financial empowerment case studies. |
 
 Each block folder has a `CURRICULUM.md` file with source links and practical game opportunities.
 
