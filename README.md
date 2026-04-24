@@ -62,12 +62,17 @@ Each module in the EDK includes:
 | Activity | Concept | Summary |
 |-----------|----------|---------|
 | **Block 1** | History of Money | Website-first lesson covering barter, money functions/properties, commodity money, debasement, inflation, and the Bitcoin bridge. |
-| **Block 2** | Hashing, Nodes & Mining | Curriculum mapped for hashing, blocks, nodes, miners, proof of work, and mempool game design. |
-| **Block 3** | Transaction Fees & Speed | Curriculum mapped for fee markets, confirmation time, Lightning, and everyday payment games. |
-| **Block 4** | Byzantine Generals | Curriculum mapped for decentralized coordination, validation, and consensus activities. |
-| **Block 5** | Transactions: Send & Receive | Curriculum mapped for wallets, invoices, addresses, send/receive flow, and verification habits. |
-| **Block 6** | Transaction Fees & UTXOs | Curriculum mapped for UTXOs, coin selection, change outputs, fee sizing, and privacy games. |
-| **Block 7** | Cold Storage | Curriculum mapped for custody, backups, threat models, and recovery planning. |
+| **Block 2** | What Is Money? | Roadmapped for definition of money, psychology of money, types of money, and value measurement games. |
+| **Block 3** | Fiat, Inflation & Purchasing Power | Roadmapped for fiat systems, debt, prices, wages, and purchasing-power simulators. |
+| **Block 4** | Why Bitcoin? | Roadmapped for matching fiat/trust problems to Bitcoin design choices. |
+| **Block 5** | Wallets, Keys & Custody | Roadmapped for wallet types, seed phrases, self-custody, recovery habits, and safety scenarios. |
+| **Block 6** | Transactions: Send & Receive | Roadmapped for addresses, invoices, QR flows, transaction review, and verification habits. |
+| **Block 7** | Cold Storage | Roadmapped for cold storage, backups, threat models, and recovery planning. |
+| **Block 8** | Lightning & Daily Payments | Roadmapped for Lightning invoices, routing, wallet tradeoffs, and merchant payment simulators. |
+| **Block 9** | Proof of Work & Mining | Roadmapped for hashing, nonces, mining difficulty, block creation, and mempool inclusion. |
+| **Block 10** | Nodes, Rules & Consensus | Roadmapped for node validation, invalid block rejection, decentralized rules, and Byzantine coordination. |
+| **Block 11** | UTXOs, Fees & Privacy | Roadmapped for UTXO puzzles, coin selection, fee sizing, change outputs, and privacy games. |
+| **Block 12** | Bitcoin Future & Philosophy | Roadmapped for CBDCs, censorship resistance, financial empowerment, sovereignty, and case studies. |
 ---
 
 ## Curriculum Source Layer
