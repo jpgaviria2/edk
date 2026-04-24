@@ -252,6 +252,10 @@ p, li, ol { color: var(--muted); }
 .solo-trade-explainer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .solo-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .solo-concept-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.curriculum-panel { border-color: rgba(125, 225, 168, 0.18); }
+.function-strip { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
+.function-chip { padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+.function-chip span { color: var(--muted); font-size: 0.9rem; }
 .mobile-cta {
   position: fixed;
   left: 12px;
@@ -292,7 +296,7 @@ p, li, ol { color: var(--muted); }
   .experience-grid { grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.78fr); align-items: start; }
   .footer-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .single-row, .market-inline-actions { grid-template-columns: repeat(2, minmax(0, max-content)); justify-content: flex-start; }
-  .choice-grid, .properties-grid, .bridge-grid, .inspection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .choice-grid, .properties-grid, .bridge-grid, .inspection-grid, .function-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .market-status-row { grid-template-columns: repeat(3, minmax(0, max-content)); }
   .failure-chip-row { flex-direction: row; }
   .plaza-people-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

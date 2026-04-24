@@ -131,20 +131,31 @@ const rounds = [
   ], summary: ['Bitcoin is best understood as part of the long search for better money.', 'Its pitch is not “digital because digital,” but strong monetary properties in networked form.', 'The connection lands only after learners feel what earlier money systems struggled with.'], audiencePrompt: 'Which old money problem does Bitcoin seem most designed to resist: barter friction, debasement, or arbitrary supply growth?' },
 ];
 
+const moneyFunctions = [
+  { title: 'Medium of exchange', description: 'Money lets you trade without finding someone who wants exactly what you have.' },
+  { title: 'Store of value', description: 'Money should help move today’s work into the future.' },
+  { title: 'Unit of account', description: 'Money gives prices a common measuring stick so people can compare choices.' },
+];
+
 const properties = [
   { id: 'durable', title: 'Durable', description: 'It should survive time without rotting, spoiling, or falling apart.' },
   { id: 'portable', title: 'Portable', description: 'It should move easily from one place to another.' },
   { id: 'divisible', title: 'Divisible', description: 'It should handle both small and large payments cleanly.' },
-  { id: 'verifiable', title: 'Verifiable', description: 'People should be able to check that it is real and trustworthy.' },
-  { id: 'scarce', title: 'Scarce', description: 'New supply should be hard to create on demand.' },
+  { id: 'fungible', title: 'Fungible / uniform', description: 'One unit should be interchangeable with another unit of the same value.' },
+  { id: 'scarce', title: 'Scarce', description: 'New supply should be difficult to create unexpectedly.' },
   { id: 'acceptable', title: 'Widely accepted', description: 'Other people should expect they can trade it onward too.' },
 ];
 
 const bridgePoints = [
-  'Bitcoin is digital, but it tries to preserve strong-money traits in a new form.',
-  'Its supply is predictable instead of being easy to expand suddenly.',
-  'It is highly divisible, easy to verify, and can move globally.',
+  'Bitcoin is digital, but it is best understood through old money questions: can it exchange value, store value, and measure value?',
+  'Its supply is predictable instead of being easy for a ruler, bank, or committee to expand suddenly.',
+  'It is highly divisible, portable across distance, and independently verifiable.',
   'That is why many people see Bitcoin as a new chapter in the history of money, not a story disconnected from it.',
+];
+
+const curriculumNotes = [
+  'Aligned with My First Bitcoin Diploma modules: What is Money, History of Money, functions of money, and properties of money.',
+  'The solo flow follows the Diploma idea that money emerges from market process: barter first, then the most saleable good, then better monetary tools.',
 ];
 
 const presenterTips = [
@@ -359,6 +370,10 @@ function landingScreen() {
           <span class="stat-chip">7. Bitcoin bridge</span>
         </div>
       </section>
+      <section class="mini-panel stack curriculum-panel">
+        <div class="eyebrow">Curriculum alignment</div>
+        ${curriculumNotes.map((note) => `<p class="small-copy">${note}</p>`).join('')}
+      </section>
     </section>
   `);
 }
@@ -461,8 +476,8 @@ function guidedSoloMarketScreen() {
           </div>
         </section>
         <section class="solo-concept-strip">
-          <span class="stat-chip ${state.failureBadgesSeen.includes('wants-mismatch') || inspectedEvaluation?.reason === 'wants-mismatch' ? 'chip-highlight' : ''}">Coincidence of wants</span>
-          <span class="stat-chip ${state.failureBadgesSeen.includes('scale-mismatch') || inspectedEvaluation?.reason === 'scale-mismatch' ? 'chip-highlight' : ''}">Right quantity</span>
+          <span class="stat-chip ${state.failureBadgesSeen.includes('wants-mismatch') || inspectedEvaluation?.reason === 'wants-mismatch' ? 'chip-highlight' : ''}">Double coincidence of wants</span>
+          <span class="stat-chip ${state.failureBadgesSeen.includes('scale-mismatch') || inspectedEvaluation?.reason === 'scale-mismatch' ? 'chip-highlight' : ''}">Unit of account</span>
           <span class="stat-chip ${state.failureBadgesSeen.includes('indivisibility') || inspectedEvaluation?.reason === 'indivisibility' ? 'chip-highlight' : ''}">Divisibility</span>
           <span class="stat-chip ${state.marketTradeCount > 0 ? 'chip-highlight' : ''}">Medium of exchange</span>
         </section>
@@ -529,12 +544,13 @@ function recapScreen() {
       <section class="card stage-card ${state.mode === 'presenter' ? 'projector-card' : ''}">
         <div class="stage-header"><div><div class="eyebrow">Recap</div><h1>What makes money strong?</h1></div><div class="badge big-badge">${state.score} / ${barterScenarios.length + rounds.length}</div></div>
         <p class="prompt">Choose at least three traits. By now, these should feel earned from the lesson, not memorized from a slide.</p>
+        <section class="feedback-card feedback-neutral market-guidance"><div class="result-tag">Three functions of money</div><h3>Money should help people exchange, save, and measure value.</h3><div class="function-strip">${moneyFunctions.map((entry) => `<article class="function-chip"><strong>${entry.title}</strong><span>${entry.description}</span></article>`).join('')}</div></section>
         <section class="feedback-card feedback-neutral market-guidance"><div class="result-tag">Next move</div><h3>${ready ? 'Bridge unlocked.' : 'Pick at least three traits.'}</h3><p>${state.lastActionText}</p></section>
         <div class="properties-grid ${state.mode === 'presenter' ? 'properties-grid-large' : ''}">${properties.map((entry) => `<button class="pill ${state.selectedProperties.includes(entry.id) ? 'selected' : ''}" data-property="${entry.id}"><span class="choice-title">${entry.title}</span><span class="choice-detail">${entry.description}</span></button>`).join('')}</div>
         <section class="recap-panel panel"><div class="row wrap-row"><h3>Run recap</h3><span class="badge">${state.history.length} rounds logged</span></div><div class="history-list">${state.history.map((entry) => `<article class="history-item ${entry.correct ? 'history-good' : 'history-warn'}"><div><strong>${entry.roundTitle}</strong><p>${entry.choice}</p></div><span class="status-dot">${entry.correct ? '✓' : '•'}</span></article>`).join('')}</div><div class="selected-summary ${selected.length ? '' : 'empty-summary'}">${selected.length ? selected.map((entry) => `<span class="stat-chip">${entry.title}</span>`).join('') : '<span class="small-copy">Pick at least three traits to unlock the Bitcoin bridge.</span>'}</div></section>
         <div class="footer-actions ${state.mode === 'presenter' ? 'presenter-actions' : ''}"><button class="btn ghost" data-action="restart-mode">${state.mode === 'presenter' ? 'Restart session' : 'Replay'}</button><button class="btn primary" data-action="bridge" ${ready ? '' : 'disabled'}>Bitcoin bridge</button></div>
       </section>
-      <aside class="stack sidebar"><section class="card panel stack"><div class="eyebrow">Teaching prompt</div><h3>Ask before you bridge</h3><p class="small-copy">Which property mattered most in the earlier rounds: divisibility, verifiability, scarcity, or broad acceptance?</p></section></aside>
+      <aside class="stack sidebar"><section class="card panel stack"><div class="eyebrow">Teaching prompt</div><h3>Ask before you bridge</h3><p class="small-copy">Which property mattered most in the earlier rounds: divisibility, portability, scarcity, fungibility, or broad acceptance?</p></section></aside>
     </section>
   `, { projector: state.mode === 'presenter' });
 }

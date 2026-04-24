@@ -4,6 +4,10 @@ A polished static mini app for the EDK `Block 1` lesson.
 
 ## What it now includes
 
+- My First Bitcoin Diploma alignment for:
+  - money emerging from barter and market process
+  - medium of exchange, store of value, and unit of account
+  - durability, portability, divisibility, fungibility/uniformity, scarcity, and acceptability
 - Cleaner landing page with clear entry points for:
   - **Solo mode**
   - **Presenter / conference mode**
