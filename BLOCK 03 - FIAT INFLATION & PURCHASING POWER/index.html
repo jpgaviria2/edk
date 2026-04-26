@@ -16,6 +16,22 @@
     .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
     .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+
+    .experience{border:1px solid rgba(255,255,255,.12);border-radius:28px;background:linear-gradient(180deg,rgba(255,190,99,.08),rgba(255,255,255,.035)),rgba(13,24,43,.92);box-shadow:0 24px 70px rgba(0,0,0,.25);padding:24px;margin:18px 0;}
+    .experience-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;}
+    .experience-card{border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.045);padding:16px;}
+    .experience-card strong{display:block;color:#f6f8ff;margin-bottom:6px;}
+    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px;}
+    .flow-step{border:1px solid rgba(119,224,255,.22);background:rgba(119,224,255,.08);border-radius:18px;padding:13px;color:#dce9ff;}
+    .flow-step b{display:block;color:#77e0ff;margin-bottom:4px;}
+    .mini-game{margin-top:16px;border:1px solid rgba(125,225,168,.26);background:rgba(125,225,168,.08);border-radius:22px;padding:16px;}
+    .choice-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .choice{cursor:pointer;background:rgba(255,255,255,.06);color:#f6f8ff;}
+    .choice.correct{border-color:rgba(125,225,168,.75);background:rgba(125,225,168,.18);}
+    .choice.wrong{border-color:rgba(255,139,139,.75);background:rgba(255,139,139,.13);}
+    .feedback{min-height:28px;margin-top:10px;font-weight:800;color:#7de1a8;}
+    .printable-note{margin-top:14px;padding:13px;border-radius:18px;border:1px dashed rgba(255,190,99,.5);background:rgba(255,190,99,.08);}
+    @media(max-width:800px){.experience-grid,.flow{grid-template-columns:1fr;}}
     @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -23,6 +39,15 @@
   <main>
     <nav class="top"><a class="btn" href="../">← EDK home</a><span class="pill">Practical app ready to build</span></nav>
     <section class="hero"><div class="eyebrow">Block 3</div><h1>Fiat, Inflation &amp; Purchasing Power</h1><p><strong>Practical: inflation simulator, wage vs prices game, central bank money printer model.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="experience" id="learning-kit">
+      <div class="eyebrow">Beginner funnel · Block 3</div>
+      <h2>Make purchasing-power loss visible.</h2>
+      <p>This block turns fiat, inflation, and debt into a hands-on simulation: the number of dollars rises, the goods do not, prices adjust, and learners feel why wages can rise while life still gets harder.</p>
+      <div class="flow"><div class="flow-step"><b>Learn</b>Fiat is money by decree, managed by central authorities.</div><div class="flow-step"><b>Play</b>Run a money-supply auction with the same goods.</div><div class="flow-step"><b>Teach</b>Separate monetary inflation from price inflation.</div><div class="flow-step"><b>Print</b>Give groups yearly budget and price cards.</div><div class="flow-step"><b>Apply</b>Calculate how many more hours are needed to buy the same basket.</div></div>
+      <div class="experience-grid"><article class="experience-card"><strong>Inflation simulator</strong><p>Adjust money supply, wages, and goods supply to see purchasing power change.</p></article><article class="experience-card"><strong>Wage treadmill</strong><p>Show learners how nominal wages can rise while real buying power falls.</p></article><article class="experience-card"><strong>Money printer map</strong><p>Track who receives new money first and who faces higher prices later.</p></article></div>
+      <div class="mini-game" data-game="inflation"><h3>Quick check: three people have $3 total for one bottle. Then they receive $3 more, but there is still one bottle. What usually happens?</h3><div class="choice-row"><button class="btn choice" data-answer="wrong">The bottle becomes easier to buy</button><button class="btn choice" data-answer="correct">The price is bid up</button><button class="btn choice" data-answer="wrong">Scarcity disappears</button></div><p class="feedback" aria-live="polite"></p></div>
+      <p class="printable-note">Facilitator move: auction the same item twice — once before and once after new money is handed out — then ask who benefited first.</p>
+    </section>
     <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">3.0 Introduction</a><a href="#source-2">3.1 Brief History of Fiat Money</a><a href="#source-3">3.2 The Fiat System</a><a href="#source-4">3.3 Central Bank Digital Currencies</a><a href="#source-5">4.1 Money Buys Less</a><a href="#source-6">4.2 The Global Debt Burden and Social Inequality</a></div></section>
     <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 3 — Fiat, Inflation &amp; Purchasing Power Content Plan</h2>
 <h3>Goal</h3>
@@ -203,5 +228,19 @@
 <h5>Discussion: Consequences of the Fiat System</h5>
 <ol><li>Are there any other consequences that individuals and society as a whole experience as a result of the fiat system?</li><li>What are the consequences of the fiat system in your country? What has happened throughout history? How did that affect the people in your country?</li><li>Personal examples: interactive session</li></ol></article>
   </main>
+
+  <script>
+    document.querySelectorAll('.mini-game').forEach((game) => {
+      const feedback = game.querySelector('.feedback');
+      game.querySelectorAll('.choice').forEach((button) => {
+        button.addEventListener('click', () => {
+          game.querySelectorAll('.choice').forEach((b) => b.classList.remove('correct', 'wrong'));
+          const ok = button.dataset.answer === 'correct';
+          button.classList.add(ok ? 'correct' : 'wrong');
+          feedback.textContent = ok ? 'Correct — that is the concept this activity is designed to make intuitive.' : 'Not quite. Try the answer that explains the tradeoff the learner is experiencing.';
+        });
+      });
+    });
+  </script>
 </body>
 </html>

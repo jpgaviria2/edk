@@ -16,6 +16,22 @@
     .btn,.pill,.toc a { display:inline-flex; padding:11px 14px; border-radius:14px; border:1px solid var(--border); text-decoration:none; font-weight:900; margin:4px; } .primary { background:linear-gradient(135deg,#ffc875,#ff9758); color:#261400; border:0; } .pill,.toc a { color:var(--accent2); background:rgba(119,224,255,.1); }
     .toc { display:flex; flex-wrap:wrap; gap:6px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     img { max-width:100%; height:auto; } .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; margin:16px 0; } th,td { border:1px solid var(--border); padding:10px; text-align:left; } th { color:var(--text); background:rgba(255,255,255,.06); } code { color:var(--accent2); } hr { border:0; border-top:1px solid var(--border); margin:24px 0; }
+
+    .experience{border:1px solid rgba(255,255,255,.12);border-radius:28px;background:linear-gradient(180deg,rgba(255,190,99,.08),rgba(255,255,255,.035)),rgba(13,24,43,.92);box-shadow:0 24px 70px rgba(0,0,0,.25);padding:24px;margin:18px 0;}
+    .experience-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;}
+    .experience-card{border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.045);padding:16px;}
+    .experience-card strong{display:block;color:#f6f8ff;margin-bottom:6px;}
+    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px;}
+    .flow-step{border:1px solid rgba(119,224,255,.22);background:rgba(119,224,255,.08);border-radius:18px;padding:13px;color:#dce9ff;}
+    .flow-step b{display:block;color:#77e0ff;margin-bottom:4px;}
+    .mini-game{margin-top:16px;border:1px solid rgba(125,225,168,.26);background:rgba(125,225,168,.08);border-radius:22px;padding:16px;}
+    .choice-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .choice{cursor:pointer;background:rgba(255,255,255,.06);color:#f6f8ff;}
+    .choice.correct{border-color:rgba(125,225,168,.75);background:rgba(125,225,168,.18);}
+    .choice.wrong{border-color:rgba(255,139,139,.75);background:rgba(255,139,139,.13);}
+    .feedback{min-height:28px;margin-top:10px;font-weight:800;color:#7de1a8;}
+    .printable-note{margin-top:14px;padding:13px;border-radius:18px;border:1px dashed rgba(255,190,99,.5);background:rgba(255,190,99,.08);}
+    @media(max-width:800px){.experience-grid,.flow{grid-template-columns:1fr;}}
     @media(max-width:800px) { main { padding:12px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -23,6 +39,15 @@
   <main>
     <nav class="top"><a class="btn" href="../">← EDK home</a><a class="btn primary" href="./mini-app/">Open current practical app</a></nav>
     <section class="hero"><div class="eyebrow">Block 2</div><h1>History of Money</h1><p><strong>Already started. Barter → commodity money → fiat → Bitcoin.</strong></p><p>Curriculum source adapted from My First Bitcoin Bitcoin Diploma, licensed CC BY-SA 4.0.</p></section>
+    <section class="experience" id="flagship-experience">
+      <div class="eyebrow">Flagship experience · Block 2</div>
+      <h2>The market plaza: feel why money emerges.</h2>
+      <p>This is the showcase lesson for the EDK. Learners become people in a market, try to satisfy wants through barter, discover the most saleable good, then watch money evolve into commodity money, receipts, fiat, digital money, and Bitcoin.</p><p><strong>Learn / Play / Teach / Print / Apply:</strong> the flagship block works as a solo lesson, a group activity, and a conference-ready facilitation flow.</p>
+      <div class="flow"><div class="flow-step"><b>1 · Barter</b>Double coincidence of wants creates deadlocks.</div><div class="flow-step"><b>2 · Commodity</b>A widely accepted good reduces trade friction.</div><div class="flow-step"><b>3 · Receipts</b>Paper claims improve portability but require trust.</div><div class="flow-step"><b>4 · Fiat</b>Claims detach from backing; purchasing power becomes political.</div><div class="flow-step"><b>5 · Bitcoin</b>Digital scarcity creates a new comparison point.</div></div>
+      <div class="experience-grid"><article class="experience-card"><strong>Solo learner mode</strong><p>Interactive market cards show what each person has, wants, and will accept. The learner finds trade chains and sees why barter fails.</p></article><article class="experience-card"><strong>Facilitator mode</strong><p>Assign people/roles to participants, project the market state, pause at each monetary evolution, and ask groups to explain the tradeoff.</p></article><article class="experience-card"><strong>Conference mode</strong><p>Map audience volunteers to market characters. Run one quick barter round, then scale complexity until money becomes obvious.</p></article></div>
+      <div class="mini-game" data-game="history"><h3>Market plaza prompt</h3><p><strong>Joseph has bananas but wants coconut. Yael has coconut but wants mango. Tammy has mango but wants papaya. What problem appears?</strong></p><div class="choice-row"><button class="btn choice" data-answer="correct">Double coincidence of wants</button><button class="btn choice" data-answer="wrong">Proof of work</button><button class="btn choice" data-answer="wrong">Legal tender law</button></div><p class="feedback" aria-live="polite"></p></div>
+      <p class="printable-note">Reference app: <a href="./mini-app/">open the current History of Money practical app</a>. This block should remain the quality bar for every future EDK module.</p>
+    </section>
     <section class="card"><h2>Lesson contents</h2><div class="toc"><a href="#source-1">2.0 Introduction</a><a href="#source-2">2.1 From Barter to Modern Currency</a><a href="#source-3">2.2 Digital Currency</a><a href="#source-4">3.1 Brief History of Fiat Money</a></div></section>
     <section class="grid"><article class="card"><h2>Content plan</h2><h2>Block 2 — History of Money Content Plan</h2>
 <h3>Goal</h3>
@@ -120,5 +145,19 @@
 <p>Since then, most countries use fiat money.</p>
 <blockquote><p><strong>Definition – Definition of Fiat Money</strong></p><p></p><p><strong>Fiat money</strong> is currency that is not backed by a physical commodity like gold. Instead, it has value because governments declare it legal tender and people trust and accept it for payments.</p></blockquote></article>
   </main>
+
+  <script>
+    document.querySelectorAll('.mini-game').forEach((game) => {
+      const feedback = game.querySelector('.feedback');
+      game.querySelectorAll('.choice').forEach((button) => {
+        button.addEventListener('click', () => {
+          game.querySelectorAll('.choice').forEach((b) => b.classList.remove('correct', 'wrong'));
+          const ok = button.dataset.answer === 'correct';
+          button.classList.add(ok ? 'correct' : 'wrong');
+          feedback.textContent = ok ? 'Correct — that is the concept this activity is designed to make intuitive.' : 'Not quite. Try the answer that explains the tradeoff the learner is experiencing.';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
