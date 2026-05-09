@@ -11,27 +11,27 @@
     { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
     { name: 'Banana Path', type: 'trade', icon: '🍌', color: '#8B4513', trader: 'Fruit seller', offers: ['mangoes'] },
     { name: 'Spoilage Tax', type: 'trade', icon: '🧾', trader: 'Tax collector', offers: ['shelter'], color: '#ffffff' },
-    { name: 'Trade Route', type: 'trade', icon: '🛤️', color: '#ffffff' },
+    { name: 'Trade Route', type: 'trade', icon: '🛤️', color: '#ffffff', trader: 'Route broker', offers: ['water', 'fish'] },
     { name: 'River Well', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Water keeper', offers: ['water'] },
     { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
     { name: 'Spring Water', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Water keeper', offers: ['water'] },
     { name: 'Rain Barrel', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Rain collector', offers: ['water'] },
     { name: 'Just Visiting', type: 'corner', icon: '🧱', color: '#ffffff' },
     { name: 'Small Hut', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Builder', offers: ['shelter'] },
-    { name: 'Tool Maker', type: 'trade', icon: '🛠️', color: '#ffffff' },
+    { name: 'Tool Maker', type: 'trade', icon: '🛠️', color: '#ffffff', trader: 'Tool maker', offers: ['shelter', 'cows'] },
     { name: 'Wood Shelter', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Builder', offers: ['shelter'] },
     { name: 'Stone Shelter', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Stone mason', offers: ['shelter'] },
-    { name: 'Cattle Trail', type: 'trade', icon: '🐄', color: '#ffffff' },
+    { name: 'Cattle Trail', type: 'trade', icon: '🐄', color: '#ffffff', trader: 'Trail herder', offers: ['cows'] },
     { name: 'Pasture', type: 'trade', icon: '🐄', color: '#FFA500', trader: 'Cattle herder', offers: ['cows'] },
     { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
     { name: 'Dairy Herd', type: 'trade', icon: '🐄', color: '#FFA500', trader: 'Cattle herder', offers: ['cows'] },
-    { name: 'Open Market', type: 'trade', icon: '🧺', color: '#FFA500' },
+    { name: 'Open Market', type: 'trade', icon: '🧺', color: '#FFA500', trader: 'Market vendor', offers: ['mangoes', 'fish', 'water', 'shelter'] },
     { name: 'Free Trade', type: 'corner', icon: '🅿️', color: '#ffffff' },
-    { name: 'Fishing Camp', type: 'trade', icon: '🐟', color: '#FF0000', trader: 'Fishing camp', offers: ['mangoes', 'water'] },
+    { name: 'Fishing Camp', type: 'trade', icon: '🐟', color: '#FF0000', trader: 'Fishing camp', offers: ['fish'] },
     { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
     { name: 'Grain Field', type: 'trade', icon: '🌾', color: '#FF0000', trader: 'Grain farmer', offers: ['mangoes'] },
     { name: 'Hunting Ground', type: 'trade', icon: '🏹', color: '#FF0000', trader: 'Hunter', offers: ['cows'] },
-    { name: 'River Port', type: 'trade', icon: '⛵', color: '#ffffff' },
+    { name: 'River Port', type: 'trade', icon: '⛵', color: '#ffffff', trader: 'River porter', offers: ['water', 'fish'] },
     { name: 'Clay Bricks', type: 'trade', icon: '🧱', color: '#FFFF00', trader: 'Brick maker', offers: ['shelter'] },
     { name: 'Timber Lot', type: 'trade', icon: '🪵', color: '#FFFF00', trader: 'Timber seller', offers: ['shelter'] },
     { name: 'Water Works', type: 'trade', icon: '🚰', color: '#ffffff', trader: 'Water works', offers: ['water'] },
@@ -41,11 +41,11 @@
     { name: 'Mountain Shelter', type: 'trade', icon: '🏠', color: '#008000', trader: 'Mountain builder', offers: ['shelter'] },
     { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
     { name: 'Stone House', type: 'trade', icon: '🏠', color: '#008000', trader: 'Stone house builder', offers: ['shelter'] },
-    { name: 'Caravan', type: 'trade', icon: '🐪', color: '#ffffff' },
+    { name: 'Caravan', type: 'trade', icon: '🐪', color: '#ffffff', trader: 'Caravan merchant', offers: ['cows', 'water', 'shelter'] },
     { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
     { name: 'Big Mango Farm', type: 'trade', icon: '🥭', color: '#0000FF', trader: 'Big mango farm', offers: ['mangoes'] },
     { name: 'Scarcity Shock', type: 'trade', icon: '⚠️', trader: 'Scarcity trader', offers: ['water', 'cows'], color: '#ffffff' },
-    { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF' }
+    { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF', trader: 'Prime merchant', offers: ['fish', 'water', 'shelter', 'cows'] }
   ];
 
   const state = {
@@ -57,7 +57,8 @@
     players: [],
     lastEventIndex: -1,
     lastRoll: [1, 1],
-    currentOffer: null
+    currentOffer: null,
+    proposedOffer: null
   };
 
   function init() {
@@ -76,6 +77,7 @@
     on('[data-action="suggest-trade"]', 'click', suggestTrade);
     on('[data-action="trade"]', 'click', attemptManualTrade);
     on('[data-action="trade-here"]', 'click', tradeHere);
+    on('[data-action="accept-offer"]', 'click', acceptOffer);
     on('[data-action="skip-trade"]', 'click', skipTrade);
     on('[data-action="preview-commodity"]', 'click', previewCommodity);
     on('[data-action="open-rules"]', 'click', () => {
@@ -95,6 +97,7 @@
     state.lastEventIndex = -1;
     state.lastRoll = [1, 1];
     state.currentOffer = null;
+    state.proposedOffer = null;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
@@ -197,34 +200,71 @@
 
   function setLandingAction(space) {
     state.currentOffer = space || null;
+    state.proposedOffer = null;
     const title = $('[data-landing-title]');
     const copy = $('[data-landing-copy]');
     const offer = $('[data-landing-offer]');
-    const tradeButton = $('[data-action="trade-here"]');
+    const acceptButton = $('[data-action="accept-offer"]');
     const skipButton = $('[data-action="skip-trade"]');
     if (!space?.offers?.length) {
       title.textContent = 'No trader here';
       copy.textContent = 'Roll again when you are ready to visit the next trading space.';
-      offer.innerHTML = '<span class="offer-chip muted">No trade offer</span>';
-      tradeButton.disabled = true;
+      offer.innerHTML = '<span class="offer-chip muted">No offer on this space</span>';
+      acceptButton.disabled = true;
       skipButton.disabled = true;
       return;
     }
+
+    const proposal = makeProposal(space);
+    state.proposedOffer = proposal;
     title.textContent = `${space.icon} ${space.trader || space.name}`;
-    copy.textContent = `You landed at ${space.name}. Choose what you want from this trader, then offer one of your goods.`;
-    offer.innerHTML = space.offers.map((resource) => `<button class="offer-chip" data-offer-resource="${resource}">${data.resources[resource].icon} Buy ${label(resource)}</button>`).join('');
-    offer.querySelectorAll('[data-offer-resource]').forEach((button) => {
-      button.addEventListener('click', () => {
-        $('[data-give-b]').value = button.dataset.offerResource;
-        offer.querySelectorAll('.offer-chip').forEach((chip) => chip.classList.remove('selected'));
-        button.classList.add('selected');
-        syncTradeResourceAvailability();
-      });
-    });
-    $('[data-give-b]').value = space.offers[0];
-    offer.querySelector('.offer-chip')?.classList.add('selected');
-    tradeButton.disabled = false;
+    copy.textContent = `You landed at ${space.name}. This trader makes one offer. Accept it or skip and roll again.`;
+    offer.innerHTML = `<div class="deal-card">
+      <span class="eyebrow">Proposed trade</span>
+      <h3>${space.trader || space.name} offers</h3>
+      <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
+      <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
+    </div>`;
+    $('[data-give-a]').value = proposal.pay;
+    $('[data-give-b]').value = proposal.receive;
+    acceptButton.disabled = false;
     skipButton.disabled = false;
+  }
+
+  function makeProposal(space) {
+    const player = human();
+    const receive = space.offers[(state.round + state.tradeAttempts) % space.offers.length];
+    const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
+    const pay = payable.includes('mangoes') ? 'mangoes' : (payable[0] || 'mangoes');
+    const available = Math.max(1, player.inventory[pay] || 0);
+    const scarcity = receive === 'fish' || receive === 'shelter' ? 2 : 1;
+    const payQty = Math.min(available, Math.max(1, ((state.round * 3 + state.tradeAttempts + receive.length) % 8) + scarcity));
+    const receiveQty = Math.max(1, ((state.round + receive.length) % 2) + 1);
+    const goodDeal = missingNeeds(player).includes(receive) || receive === 'fish';
+    return { receive, receiveQty, pay, payQty, goodDeal };
+  }
+
+  function acceptOffer() {
+    const proposal = state.proposedOffer;
+    if (!proposal) return;
+    const player = human();
+    const feedback = $('[data-trade-feedback]');
+    state.tradeAttempts += 1;
+    if ((player.inventory[proposal.pay] || 0) < proposal.payQty) {
+      state.failedTrades += 1;
+      feedback.textContent = `You do not have enough ${label(proposal.pay)} for this offer.`;
+      maybeTriggerTradeEvent();
+      renderAll();
+      return;
+    }
+    player.inventory[proposal.pay] -= proposal.payQty;
+    player.inventory[proposal.receive] = (player.inventory[proposal.receive] || 0) + proposal.receiveQty;
+    state.successfulTrades += 1;
+    feedback.textContent = `Accepted: you traded ${proposal.payQty} ${label(proposal.pay)} for ${proposal.receiveQty} ${label(proposal.receive)}.`;
+    setCard('Offer accepted', 'A barter deal worked because you accepted the exact terms from this trader.', false);
+    setLandingAction(null);
+    maybeTriggerTradeEvent();
+    renderAll();
   }
 
   function tradeHere() {
@@ -453,7 +493,7 @@
   }
 
   function updateControls(enabled) {
-    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="skip-trade"]').forEach((button) => { button.disabled = !enabled; });
+    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="accept-offer"], [data-action="skip-trade"]').forEach((button) => { button.disabled = !enabled; });
   }
 
   function missingNeeds(player) {

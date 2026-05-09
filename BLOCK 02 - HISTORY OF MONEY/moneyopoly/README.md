@@ -11,7 +11,7 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - 4 player roles: Mango Farmer, Cattle Herder, Water Keeper, Builder
 - 4 resources: mangoes, cows, water, shelter
 - 12 rounds
-- Every board space is a trading destination with a contextual Trade here / Skip trade choice
+- Every board space is a trading destination with a contextual proposed offer, e.g. 1 fish for 8 mangoes, plus Accept offer / Skip trade
 - Players start with a balance of goods instead of gaining/losing goods every roll
 - Every 3 trade attempts, an event changes the market
 - Direct barter only
