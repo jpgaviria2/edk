@@ -140,7 +140,8 @@
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
-    toggleCommodityButton(false);
+    toggleCommodityButton(true);
+    updateBoardDescription();
     setCard('Welcome to Barter Market', 'There is no money yet. Roll dice to visit traders, then barter from your starting balance into water and shelter.', false);
     setLandingAction(null);
     $('[data-turn-copy]').textContent = 'Roll dice to visit the next trader.';
@@ -169,8 +170,9 @@
     });
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
-    toggleCommodityButton(false);
-    setCard('Commodity Money unlocked: Shells', 'Shells are now widely accepted. Traders prefer shells, so you can buy goods without needing the exact barter match.', false);
+    toggleCommodityButton(true);
+    updateBoardDescription();
+    setCard('Commodity Money: Shells', 'Shells are now widely accepted. Traders prefer shells, so you can buy goods without needing the exact barter match.', false);
     setLandingAction(null);
     $('[data-turn-copy]').textContent = 'Level 2: roll dice and use shells as basic commodity money.';
     updateControls(true);
@@ -559,11 +561,27 @@
     $('[data-trade-feedback]').textContent = 'New level unlocked: Play Commodity Money with shells.';
   }
 
-  function toggleCommodityButton(show) {
+  function toggleCommodityButton(show = true) {
     $$('[data-action="start-commodity"]').forEach((button) => {
-      button.hidden = !show;
-      button.disabled = !show;
+      button.hidden = false;
+      button.disabled = false;
     });
+  }
+
+  function updateBoardDescription() {
+    const mode = $('[data-board-mode]');
+    const title = $('[data-board-title]');
+    const copy = $('[data-board-copy]');
+    if (!mode || !title || !copy) return;
+    if (state.mode === 'commodity') {
+      mode.textContent = 'Commodity money edition';
+      title.textContent = 'Trade with shells';
+      copy.textContent = 'Shells are broadly accepted. Sell goods into shells, buy what you need, and watch crises change shell prices.';
+    } else {
+      mode.textContent = 'Barter edition';
+      title.textContent = 'Survive without money';
+      copy.textContent = 'Move from trader to trader. Save mangoes, accept or skip offers, and feel why direct barter is hard.';
+    }
   }
 
   function finishGame() {
