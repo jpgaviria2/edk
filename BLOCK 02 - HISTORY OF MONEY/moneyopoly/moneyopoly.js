@@ -447,11 +447,24 @@
     const shellsRaised = Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells);
     human().inventory[resource] -= units;
     human().inventory.shells = (human().inventory.shells || 0) + shellsRaised;
-    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You can now accept the offer if you have enough shells.`;
     state.proposedOffer.canAfford = (human().inventory.shells || 0) >= proposal.payQty;
+    $('[data-trade-feedback]').textContent = state.proposedOffer.canAfford
+      ? `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You now have enough shells — accept the current offer when ready.`
+      : `Sold ${units} ${label(resource)} for ${shellsRaised} Shells, but you still need more shells for this offer.`;
     $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
-    renderAll();
+    renderHumanPanel();
+    syncTradeResourceAvailability();
     renderShellExchange(state.proposedOffer);
+    refreshAffordabilityLine(state.proposedOffer);
+  }
+
+  function refreshAffordabilityLine(proposal) {
+    const line = document.querySelector('.cannot-afford-line, .afford-line');
+    if (!line || !proposal) return;
+    line.className = proposal.canAfford ? 'afford-line' : 'cannot-afford-line';
+    line.textContent = proposal.canAfford
+      ? 'You can afford this trade now.'
+      : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`;
   }
 
   function acceptOffer() {
