@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0c6f3d" />
   <title>Moneyopoly · Barter Edition</title>
   <link rel="stylesheet" href="../../assets/edk.css" />
-  <link rel="stylesheet" href="./moneyopoly.css?v=6" />
+  <link rel="stylesheet" href="./moneyopoly.css?v=7" />
 </head>
 <body>
   <main class="moneyopoly-app">
@@ -68,15 +68,21 @@
         </div>
 
         <div class="monopoly-card trade-card">
-          <span class="eyebrow">Barter table</span>
-          <h2>Make a deal</h2>
-          <p>Offer one of your goods to the trader at your current space and ask for something you need.</p>
+          <span class="eyebrow">Landing action</span>
+          <h2 data-landing-title>Choose your move</h2>
+          <p data-landing-copy>Roll dice to arrive at a trader. When you land somewhere, you can trade there or skip.</p>
+          <div class="landing-offer" data-landing-offer></div>
           <div class="solo-trade-builder">
             <label>You give <select data-give-a></select></label>
             <label>Ask <select data-trader-b></select></label>
             <label>for <select data-give-b></select></label>
-            <button class="btn primary" data-action="trade">Propose trade</button>
+            <button class="btn primary" data-action="trade-here">Trade here</button>
+            <button class="btn ghost" data-action="skip-trade">Skip trade</button>
           </div>
+          <details class="manual-table">
+            <summary>Advanced barter table</summary>
+            <button class="btn green" data-action="trade">Try selected barter</button>
+          </details>
           <p class="trade-feedback" data-trade-feedback>The market is open. Land on spaces, make trades, and watch events after every 3 trades.</p>
         </div>
 
@@ -119,7 +125,7 @@
   </main>
 
   <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=6"></script>
-  <script src="./moneyopoly.js?v=6"></script>
+  <script src="./game-data.js?v=7"></script>
+  <script src="./moneyopoly.js?v=7"></script>
 </body>
 </html>

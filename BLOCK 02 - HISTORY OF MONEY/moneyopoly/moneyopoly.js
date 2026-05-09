@@ -56,7 +56,8 @@
     tradeAttempts: 0,
     players: [],
     lastEventIndex: -1,
-    lastRoll: [1, 1]
+    lastRoll: [1, 1],
+    currentOffer: null
   };
 
   function init() {
@@ -74,6 +75,8 @@
     on('[data-action="next-round"]', 'click', nextRound);
     on('[data-action="suggest-trade"]', 'click', suggestTrade);
     on('[data-action="trade"]', 'click', attemptManualTrade);
+    on('[data-action="trade-here"]', 'click', tradeHere);
+    on('[data-action="skip-trade"]', 'click', skipTrade);
     on('[data-action="preview-commodity"]', 'click', previewCommodity);
     on('[data-action="open-rules"]', 'click', () => {
       const modal = $('[data-rules-modal]');
@@ -91,10 +94,12 @@
     state.tradeAttempts = 0;
     state.lastEventIndex = -1;
     state.lastRoll = [1, 1];
+    state.currentOffer = null;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
     setCard('Welcome to Barter Market', 'There is no money yet. Roll dice to visit traders, then barter from your starting balance into water and shelter.', false);
+    setLandingAction(null);
     $('[data-turn-copy]').textContent = 'Roll dice to visit the next trader.';
     updateControls(true);
     renderAll();
@@ -140,18 +145,21 @@
     if (space.type === 'start') {
       if (!quiet && player.id === human().id) {
         setCard('🏘️ GO', 'You passed the village. Your balances stay intact — now find someone willing to trade.', false);
+        setLandingAction(null);
       }
       return;
     }
     if (space.type === 'corner') {
       if (!quiet && player.id === human().id) {
         setCard(`${space.icon} ${space.name}`, 'Corner space. No automatic gain or loss — your next deal still depends on barter.', false);
+        setLandingAction(null);
       }
       return;
     }
     if (!quiet && player.id === human().id) {
       const offers = (space.offers || Object.keys(data.resources)).map(label).join(', ');
-      setCard(`${space.icon} ${space.trader || space.name}`, `You arrived at ${space.name}. This trader can offer: ${offers}. Make a barter proposal from your balance.`, false);
+      setCard(`${space.icon} ${space.trader || space.name}`, `You arrived at ${space.name}. This trader can offer: ${offers}. Trade here or skip and roll again.`, false);
+      setLandingAction(space);
       syncTradePartnerForSpace(space);
     }
   }
@@ -185,6 +193,54 @@
     });
     const effectText = event.effects.map((effect) => `${data.resources[effect.resource].label} ${effect.delta}`).join(', ');
     setCard(`${event.icon} ${event.title}`, `${event.description} Market effect: ${effectText}.`, true);
+  }
+
+  function setLandingAction(space) {
+    state.currentOffer = space || null;
+    const title = $('[data-landing-title]');
+    const copy = $('[data-landing-copy]');
+    const offer = $('[data-landing-offer]');
+    const tradeButton = $('[data-action="trade-here"]');
+    const skipButton = $('[data-action="skip-trade"]');
+    if (!space?.offers?.length) {
+      title.textContent = 'No trader here';
+      copy.textContent = 'Roll again when you are ready to visit the next trading space.';
+      offer.innerHTML = '<span class="offer-chip muted">No trade offer</span>';
+      tradeButton.disabled = true;
+      skipButton.disabled = true;
+      return;
+    }
+    title.textContent = `${space.icon} ${space.trader || space.name}`;
+    copy.textContent = `You landed at ${space.name}. Choose what you want from this trader, then offer one of your goods.`;
+    offer.innerHTML = space.offers.map((resource) => `<button class="offer-chip" data-offer-resource="${resource}">${data.resources[resource].icon} Buy ${label(resource)}</button>`).join('');
+    offer.querySelectorAll('[data-offer-resource]').forEach((button) => {
+      button.addEventListener('click', () => {
+        $('[data-give-b]').value = button.dataset.offerResource;
+        offer.querySelectorAll('.offer-chip').forEach((chip) => chip.classList.remove('selected'));
+        button.classList.add('selected');
+        syncTradeResourceAvailability();
+      });
+    });
+    $('[data-give-b]').value = space.offers[0];
+    offer.querySelector('.offer-chip')?.classList.add('selected');
+    tradeButton.disabled = false;
+    skipButton.disabled = false;
+  }
+
+  function tradeHere() {
+    if (!state.currentOffer) return;
+    const requested = $('[data-give-b]').value;
+    if (!state.currentOffer.offers.includes(requested)) {
+      $('[data-trade-feedback]').textContent = `This space does not offer ${label(requested)}. Pick one of the highlighted offers.`;
+      return;
+    }
+    attemptManualTrade();
+  }
+
+  function skipTrade() {
+    $('[data-trade-feedback]').textContent = 'You skipped this trade. Roll again when ready.';
+    setCard('Trade skipped', 'Sometimes the best barter move is no deal. Without money, waiting for the right counterparty matters.', false);
+    setLandingAction(null);
   }
 
   function attemptManualTrade() {
@@ -397,7 +453,7 @@
   }
 
   function updateControls(enabled) {
-    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"]').forEach((button) => { button.disabled = !enabled; });
+    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="skip-trade"]').forEach((button) => { button.disabled = !enabled; });
   }
 
   function missingNeeds(player) {
