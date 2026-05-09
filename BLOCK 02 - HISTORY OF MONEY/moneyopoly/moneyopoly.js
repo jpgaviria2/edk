@@ -448,14 +448,25 @@
     human().inventory[resource] -= units;
     human().inventory.shells = (human().inventory.shells || 0) + shellsRaised;
     state.proposedOffer.canAfford = (human().inventory.shells || 0) >= proposal.payQty;
-    $('[data-trade-feedback]').textContent = state.proposedOffer.canAfford
-      ? `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You now have enough shells — accept the current offer when ready.`
+    const canAffordNow = state.proposedOffer.canAfford;
+    $('[data-trade-feedback]').textContent = canAffordNow
+      ? `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You now have enough shells — accept the current offer.`
       : `Sold ${units} ${label(resource)} for ${shellsRaised} Shells, but you still need more shells for this offer.`;
-    $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
+    const accept = $('[data-action="accept-offer"]');
+    accept.disabled = !canAffordNow;
+    accept.removeAttribute('disabled');
+    if (!canAffordNow) accept.disabled = true;
     renderHumanPanel();
     syncTradeResourceAvailability();
-    renderShellExchange(state.proposedOffer);
     refreshAffordabilityLine(state.proposedOffer);
+    const box = $('[data-shell-exchange]');
+    const copy = $('[data-shell-exchange-copy]');
+    if (box && copy) {
+      box.classList.remove('hidden');
+      copy.textContent = canAffordNow
+        ? `Ready: you have ${human().inventory.shells || 0} Shells and this offer costs ${proposal.payQty} Shells. Press Accept offer to complete the purchase.`
+        : copy.textContent;
+    }
   }
 
   function refreshAffordabilityLine(proposal) {
