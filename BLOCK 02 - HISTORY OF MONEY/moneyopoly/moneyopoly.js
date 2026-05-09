@@ -48,6 +48,25 @@
     { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF', trader: 'Prime merchant', offers: ['fish', 'water', 'shelter', 'cows'] }
   ];
 
+  const crisisEvents = [
+    {
+      title: 'Drought', icon: '☀️', scarce: 'water', multiplier: 3,
+      description: 'The river is low. Water sellers demand much more for every bucket.'
+    },
+    {
+      title: 'Fire', icon: '🔥', scarce: 'shelter', multiplier: 3,
+      description: 'Several homes burned. Builders raise prices because everyone needs shelter.'
+    },
+    {
+      title: 'Flood', icon: '🌊', scarce: 'mangoes', multiplier: 2,
+      description: 'Fields are underwater. Food is harder to find, so food offers get expensive.'
+    },
+    {
+      title: 'Pest outbreak', icon: '🐛', scarce: 'fish', multiplier: 2,
+      description: 'Stored food spoiled. Preserved fish becomes more valuable in trade.'
+    }
+  ];
+
   const state = {
     started: false,
     round: 0,
@@ -58,7 +77,9 @@
     lastEventIndex: -1,
     lastRoll: [1, 1],
     currentOffer: null,
-    proposedOffer: null
+    proposedOffer: null,
+    marketShock: null,
+    mangoHarvest: 0
   };
 
   function init() {
@@ -98,6 +119,8 @@
     state.lastRoll = [1, 1];
     state.currentOffer = null;
     state.proposedOffer = null;
+    state.marketShock = null;
+    state.mangoHarvest = 0;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
@@ -111,6 +134,7 @@
   function nextRound() {
     if (!state.started) return;
     state.round += 1;
+    harvestMangoes();
     rollDice();
     moveHuman();
     moveNeighbours();
@@ -118,6 +142,12 @@
     consumeSurvivalNeeds();
     renderAll();
     if (state.round >= 15) finishGame();
+  }
+
+  function harvestMangoes() {
+    const amount = Math.floor(Math.random() * 3) + 1;
+    state.mangoHarvest = amount;
+    human().inventory.mangoes = (human().inventory.mangoes || 0) + amount;
   }
 
   function rollDice() {
@@ -132,7 +162,7 @@
     const player = human();
     const roll = state.lastRoll[0] + state.lastRoll[1];
     player.position = (player.position + roll) % boardSpaces.length;
-    $('[data-turn-copy]').textContent = `You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
+    $('[data-turn-copy]').textContent = `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
   }
 
   function moveNeighbours() {
@@ -154,7 +184,11 @@
     }
     if (space.type === 'corner') {
       if (!quiet && player.id === human().id) {
-        setCard(`${space.icon} ${space.name}`, 'Corner space. No automatic gain or loss — your next deal still depends on barter.', false);
+        if (space.name === 'Go To Crisis') {
+          triggerEvent('crisis');
+        } else {
+          setCard(`${space.icon} ${space.name}`, 'Corner space. No automatic trade here. Roll again when ready.', false);
+        }
         setLandingAction(null);
       }
       return;
@@ -186,16 +220,32 @@
     });
   }
 
-  function triggerEvent() {
-    state.lastEventIndex = (state.lastEventIndex + 1) % data.events.length;
-    const event = data.events[state.lastEventIndex];
-    event.effects.forEach((effect) => {
-      state.players.forEach((player) => {
-        player.inventory[effect.resource] = Math.max(0, (player.inventory[effect.resource] || 0) + effect.delta);
-      });
-    });
-    const effectText = event.effects.map((effect) => `${data.resources[effect.resource].label} ${effect.delta}`).join(', ');
-    setCard(`${event.icon} ${event.title}`, `${event.description} Market effect: ${effectText}.`, true);
+  function triggerEvent(reason = 'trade') {
+    state.lastEventIndex = (state.lastEventIndex + 1) % crisisEvents.length;
+    const event = crisisEvents[state.lastEventIndex];
+    state.marketShock = { ...event, remainingTrades: 3 };
+    const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
+    setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} For the next 3 trade offers, ${label(event.scarce)} costs about ${event.multiplier}× more.`, true);
+    $('[data-trade-feedback]').textContent = `${event.title}: ${label(event.scarce)} is now much more expensive for the next 3 offers.`;
+  }
+
+  function priceMultiplier(resource) {
+    return state.marketShock?.scarce === resource ? state.marketShock.multiplier : 1;
+  }
+
+  function shockLine(resource) {
+    if (state.marketShock?.scarce !== resource) return '';
+    return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} is ${state.marketShock.multiplier}× more expensive for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
+  }
+
+  function countShockOffer() {
+    if (!state.marketShock) return;
+    state.marketShock.remainingTrades -= 1;
+    if (state.marketShock.remainingTrades <= 0) {
+      const ended = state.marketShock.title;
+      state.marketShock = null;
+      $('[data-trade-feedback]').textContent = `${ended} pressure eased. Prices are back to normal.`;
+    }
   }
 
   function setLandingAction(space) {
@@ -224,6 +274,7 @@
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
+      ${shockLine(proposal.receive)}
     </div>`;
     $('[data-give-a]').value = proposal.pay;
     $('[data-give-b]').value = proposal.receive;
@@ -238,7 +289,8 @@
     const pay = payable.includes('mangoes') ? 'mangoes' : (payable[0] || 'mangoes');
     const available = Math.max(1, player.inventory[pay] || 0);
     const scarcity = receive === 'fish' || receive === 'shelter' ? 2 : 1;
-    const payQty = Math.min(available, Math.max(1, ((state.round * 3 + state.tradeAttempts + receive.length) % 8) + scarcity));
+    const basePrice = Math.max(1, ((state.round * 3 + state.tradeAttempts + receive.length) % 5) + scarcity);
+    const payQty = Math.min(available, Math.max(1, basePrice * priceMultiplier(receive)));
     const receiveQty = Math.max(1, ((state.round + receive.length) % 2) + 1);
     const goodDeal = missingNeeds(player).includes(receive) || receive === 'fish';
     return { receive, receiveQty, pay, payQty, goodDeal };
@@ -250,6 +302,7 @@
     const player = human();
     const feedback = $('[data-trade-feedback]');
     state.tradeAttempts += 1;
+    countShockOffer();
     if ((player.inventory[proposal.pay] || 0) < proposal.payQty) {
       state.failedTrades += 1;
       feedback.textContent = `You do not have enough ${label(proposal.pay)} for this offer.`;
@@ -292,6 +345,7 @@
     const feedback = $('[data-trade-feedback]');
 
     state.tradeAttempts += 1;
+    countShockOffer();
 
     if (!b || a.id === b.id) {
       feedback.textContent = 'Pick a neighbour to trade with.';

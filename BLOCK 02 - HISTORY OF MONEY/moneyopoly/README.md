@@ -13,7 +13,8 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - 12 rounds
 - Every board space is a trading destination with a contextual proposed offer, e.g. 1 fish for 8 mangoes, plus Accept offer / Skip trade
 - Players start with a balance of goods instead of gaining/losing goods every roll
-- Every 3 trade attempts, an event changes the market
+- Every 3 trade attempts, or on a crisis space, an event changes market prices for subsequent offers
+- Maya harvests 1–3 new mangoes each round to keep the mango producer supplied
 - Direct barter only
 - Failed trades are counted as the main learning signal
 - End-game debrief introduces double coincidence of wants and the reason money emerges
