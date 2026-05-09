@@ -27,6 +27,8 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - Commodity Money unlocks after a full lap / completed barter round.
 - Shells are added as basic commodity money.
 - Traders prefer shells when they are sufficient, making offers easier to execute and compare.
+- At each trade, the player can sell inventory into shells to afford the shell purchase.
+- Pest crisis cuts mangoes by 50%; Shell Rush crisis doubles shell-denominated prices temporarily.
 
 ## Next eras
 

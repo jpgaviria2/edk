@@ -73,6 +73,12 @@
           <h2 data-landing-title>Choose your move</h2>
           <p data-landing-copy>Roll dice to arrive at a trader. When you land somewhere, you can trade there or skip.</p>
           <div class="landing-offer" data-landing-offer></div>
+          <div class="shell-exchange hidden" data-shell-exchange>
+            <span class="eyebrow">Need shells?</span>
+            <label>Sell for shells <select data-sell-resource></select></label>
+            <button class="btn green" data-action="sell-for-shells">Sell enough for this purchase</button>
+            <p data-shell-exchange-copy></p>
+          </div>
           <div class="offer-actions">
             <button class="btn primary" data-action="accept-offer">Accept offer</button>
             <button class="btn ghost" data-action="skip-trade">Skip trade</button>
@@ -130,7 +136,7 @@
   </main>
 
   <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=12"></script>
-  <script src="./moneyopoly.js?v=12"></script>
+  <script src="./game-data.js?v=14"></script>
+  <script src="./moneyopoly.js?v=14"></script>
 </body>
 </html>

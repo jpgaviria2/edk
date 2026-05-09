@@ -4,7 +4,7 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  const baseMangoPrices = { mangoes: 1, shells: 2, water: 2, fish: 4, cows: 10, shelter: 20 };
+  const baseMangoPrices = { mangoes: 1, shells: 0.5, water: 2, fish: 4, cows: 10, shelter: 20 };
 
   const boardSpaces = [
     { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
@@ -63,8 +63,12 @@
       description: 'Fields are underwater. Food is harder to find, so food costs 50% more.'
     },
     {
-      title: 'Pest outbreak', icon: '🐛', scarce: 'fish', multiplier: 1.5,
-      description: 'Stored food spoiled. Preserved fish costs 50% more in trade.'
+      title: 'Pest outbreak', icon: '🐛', scarce: 'fish', multiplier: 1.5, damage: 'mangoes',
+      description: 'Pests hit the mango crop. Your mango stock is cut in half, and preserved fish costs 50% more in trade.'
+    },
+    {
+      title: 'Shell rush', icon: '🐚', scarce: 'shells', multiplier: 2, shellInflation: true,
+      description: 'A foreigner arrives with piles of shells. Shell money is diluted, so goods priced in shells cost twice as much.'
     }
   ];
 
@@ -80,6 +84,7 @@
     currentOffer: null,
     proposedOffer: null,
     marketShock: null,
+    shellInflation: null,
     mangoHarvest: 0,
     shellsEarned: 0,
     mode: 'barter',
@@ -104,7 +109,8 @@
     on('[data-action="trade"]', 'click', attemptManualTrade);
     on('[data-action="trade-here"]', 'click', tradeHere);
     on('[data-action="accept-offer"]', 'click', acceptOffer);
-    on('[data-action="skip-trade"]', 'click', skipTrade);
+    on('[data-action="sell-for-shells"]', 'click', sellForShells);
+    on('[data-action="skip-trade"], [data-action="sell-for-shells"]', 'click', skipTrade);
     on('[data-action="preview-commodity"]', 'click', previewCommodity);
     on('[data-action="open-rules"]', 'click', () => {
       const modal = $('[data-rules-modal]');
@@ -112,6 +118,7 @@
       else alert('Roll dice to move. Collect goods. Barter for water and shelter. Every 3 rounds, an event changes the market.');
     });
     on('[data-trader-b]', 'change', syncTradeResourceAvailability);
+    on('[data-sell-resource]', 'change', updateShellExchange);
   }
 
   function startGame() {
@@ -127,6 +134,7 @@
     state.currentOffer = null;
     state.proposedOffer = null;
     state.marketShock = null;
+    state.shellInflation = null;
     state.mangoHarvest = 0;
     state.shellsEarned = 0;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
@@ -152,6 +160,7 @@
     state.currentOffer = null;
     state.proposedOffer = null;
     state.marketShock = null;
+    state.shellInflation = null;
     state.mangoHarvest = 0;
     state.shellsEarned = 0;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
@@ -270,21 +279,33 @@
     state.lastEventIndex = (state.lastEventIndex + 1) % crisisEvents.length;
     const event = crisisEvents[state.lastEventIndex];
     state.marketShock = { ...event, remainingTrades: 3 };
+    if (event.damage === 'mangoes') {
+      human().inventory.mangoes = Math.floor((human().inventory.mangoes || 0) / 2);
+    }
+    if (event.shellInflation) {
+      state.shellInflation = { remainingTrades: 3, multiplier: 2 };
+    }
     const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
-    setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} For the next 3 trade offers, ${label(event.scarce)} costs 50% more.`, true);
-    $('[data-trade-feedback]').textContent = `${event.title}: ${label(event.scarce)} now costs 50% more for the next 3 offers.`;
+    setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} ${event.shellInflation ? 'For the next 3 offers, goods priced in shells cost 2× more.' : `For the next 3 trade offers, ${label(event.scarce)} costs 50% more.`}`, true);
+    $('[data-trade-feedback]').textContent = event.shellInflation ? `${event.title}: shell prices doubled for the next 3 offers.` : `${event.title}: ${label(event.scarce)} now costs 50% more for the next 3 offers.`;
   }
 
-  function priceMultiplier(resource) {
-    return state.marketShock?.scarce === resource ? state.marketShock.multiplier : 1;
+  function priceMultiplier(resource, pay = null) {
+    if (pay === 'shells' && resource !== 'shells' && state.shellInflation) return state.shellInflation.multiplier;
+    return state.marketShock?.scarce === resource && !state.marketShock.shellInflation ? state.marketShock.multiplier : 1;
   }
 
-  function shockLine(resource) {
-    if (state.marketShock?.scarce !== resource) return '';
+  function shockLine(resource, pay = null) {
+    if (pay === 'shells' && state.shellInflation) return `<p class="shock-line">🐚 Shell rush: goods priced in shells cost 2× more for ${state.shellInflation.remainingTrades} more offer${state.shellInflation.remainingTrades === 1 ? '' : 's'}.</p>`;
+    if (state.marketShock?.scarce !== resource || state.marketShock?.shellInflation) return '';
     return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} costs 50% more for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
   }
 
   function countShockOffer() {
+    if (state.shellInflation) {
+      state.shellInflation.remainingTrades -= 1;
+      if (state.shellInflation.remainingTrades <= 0) state.shellInflation = null;
+    }
     if (!state.marketShock) return;
     state.marketShock.remainingTrades -= 1;
     if (state.marketShock.remainingTrades <= 0) {
@@ -301,13 +322,14 @@
     const copy = $('[data-landing-copy]');
     const offer = $('[data-landing-offer]');
     const acceptButton = $('[data-action="accept-offer"]');
-    const skipButton = $('[data-action="skip-trade"]');
+    const skipButton = $('[data-action="skip-trade"], [data-action="sell-for-shells"]');
     if (!space?.offers?.length) {
       title.textContent = 'No trader here';
       copy.textContent = 'Roll again when you are ready to visit the next trading space.';
       offer.innerHTML = '<span class="offer-chip muted">No offer on this space</span>';
       acceptButton.disabled = true;
       skipButton.disabled = true;
+      renderShellExchange(null);
       return;
     }
 
@@ -322,12 +344,13 @@
       <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then +50% crisis pricing' : ''}.</p>
       <p class="${proposal.canAfford ? 'afford-line' : 'cannot-afford-line'}">${proposal.canAfford ? 'You can afford this trade.' : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`}</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
-      ${shockLine(proposal.receive)}
+      ${shockLine(proposal.receive, proposal.pay)}
     </div>`;
     $('[data-give-a]').value = proposal.pay;
     $('[data-give-b]').value = proposal.receive;
     acceptButton.disabled = !proposal.canAfford;
     skipButton.disabled = false;
+    renderShellExchange(proposal);
   }
 
   function makeProposal(space) {
@@ -335,21 +358,20 @@
     const receive = space.offers[(state.round + state.tradeAttempts) % space.offers.length];
     const receiveQty = proposedReceiveQty(receive);
     const discount = 0.9 + (Math.random() * 0.1); // market offers are 0–10% below base
-    const crisis = priceMultiplier(receive);
-    const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * crisis;
     const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
     if (state.mode === 'commodity' && receive !== 'shells' && !payable.includes('shells')) payable.unshift('shells');
     const candidates = payable.map((resource) => {
+      const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * priceMultiplier(receive, resource);
       const payQty = Math.max(1, Math.round(costInMangoes / baseMangoPrices[resource]));
       const inventory = player.inventory[resource] || 0;
       return { resource, payQty, inventory, sufficient: inventory >= payQty, notAll: inventory > payQty };
     });
-    const choice = (state.mode === 'commodity' ? candidates.find((candidate) => candidate.resource === 'shells' && candidate.sufficient) : null)
+    const choice = (state.mode === 'commodity' ? candidates.find((candidate) => candidate.resource === 'shells') : null)
       || candidates.find((candidate) => candidate.sufficient && candidate.notAll)
       || candidates.find((candidate) => candidate.sufficient)
       || candidates.find((candidate) => candidate.resource === 'mangoes')
       || candidates[0]
-      || { resource: 'mangoes', payQty: Math.max(1, Math.round(costInMangoes)), inventory: 0, sufficient: false };
+      || { resource: 'mangoes', payQty: Math.max(1, Math.round(baseMangoPrices[receive] * receiveQty)), inventory: 0, sufficient: false };
     const goodDeal = missingNeeds(player).includes(receive) || receive === 'fish';
     const baseText = basePriceText(receive, receiveQty, choice.resource);
     const discountPercent = Math.round((1 - discount) * 100);
@@ -362,7 +384,7 @@
       goodDeal,
       baseText,
       discountPercent,
-      crisisApplied: crisis > 1
+      crisisApplied: priceMultiplier(receive, choice.resource) > 1
     };
   }
 
@@ -378,6 +400,56 @@
     const payUnits = receiveValue / baseMangoPrices[pay];
     const formattedPay = Number.isInteger(payUnits) ? payUnits : payUnits.toFixed(1);
     return `${receiveQty} ${label(receive)} ≈ ${formattedPay} ${label(pay)}`;
+  }
+
+  function renderShellExchange(proposal) {
+    const box = $('[data-shell-exchange]');
+    if (!box) return;
+    if (state.mode !== 'commodity' || !proposal || proposal.pay !== 'shells' || proposal.canAfford) {
+      box.classList.add('hidden');
+      return;
+    }
+    box.classList.remove('hidden');
+    const select = $('[data-sell-resource]');
+    select.innerHTML = Object.entries(human().inventory)
+      .filter(([resource, amount]) => resource !== 'shells' && amount > 0)
+      .map(([resource, amount]) => `<option value="${resource}">${data.resources[resource].icon} ${label(resource)} (${amount})</option>`).join('');
+    updateShellExchange();
+  }
+
+  function updateShellExchange() {
+    const proposal = state.proposedOffer;
+    const copy = $('[data-shell-exchange-copy]');
+    if (!proposal || !copy) return;
+    const resource = $('[data-sell-resource]')?.value;
+    if (!resource) {
+      copy.textContent = 'You have nothing available to sell for shells.';
+      return;
+    }
+    const neededShells = Math.max(0, proposal.payQty - (human().inventory.shells || 0));
+    const units = Math.ceil((neededShells * baseMangoPrices.shells) / baseMangoPrices[resource]);
+    const shellsRaised = Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells);
+    copy.textContent = `Sell ${units} ${label(resource)} for about ${shellsRaised} Shells, then buy ${proposal.receiveQty} ${label(proposal.receive)} for ${proposal.payQty} Shells.`;
+  }
+
+  function sellForShells() {
+    const proposal = state.proposedOffer;
+    const resource = $('[data-sell-resource]')?.value;
+    if (!proposal || !resource) return;
+    const neededShells = Math.max(0, proposal.payQty - (human().inventory.shells || 0));
+    const units = Math.ceil((neededShells * baseMangoPrices.shells) / baseMangoPrices[resource]);
+    if ((human().inventory[resource] || 0) < units) {
+      $('[data-trade-feedback]').textContent = `You do not have enough ${label(resource)} to raise the needed shells.`;
+      return;
+    }
+    const shellsRaised = Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells);
+    human().inventory[resource] -= units;
+    human().inventory.shells = (human().inventory.shells || 0) + shellsRaised;
+    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You can now accept the offer if you have enough shells.`;
+    state.proposedOffer.canAfford = (human().inventory.shells || 0) >= proposal.payQty;
+    $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
+    renderAll();
+    renderShellExchange(state.proposedOffer);
   }
 
   function acceptOffer() {
@@ -653,7 +725,7 @@
   }
 
   function updateControls(enabled) {
-    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="accept-offer"], [data-action="skip-trade"]').forEach((button) => { button.disabled = !enabled; });
+    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="accept-offer"], [data-action="skip-trade"], [data-action="sell-for-shells"]').forEach((button) => { button.disabled = !enabled; });
   }
 
   function missingNeeds(player) {
