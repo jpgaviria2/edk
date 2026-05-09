@@ -275,12 +275,13 @@
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
       <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then +50% crisis pricing' : ''}.</p>
+      <p class="${proposal.canAfford ? 'afford-line' : 'cannot-afford-line'}">${proposal.canAfford ? 'You can afford this trade.' : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`}</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
       ${shockLine(proposal.receive)}
     </div>`;
     $('[data-give-a]').value = proposal.pay;
     $('[data-give-b]').value = proposal.receive;
-    acceptButton.disabled = false;
+    acceptButton.disabled = !proposal.canAfford;
     skipButton.disabled = false;
   }
 
@@ -310,6 +311,7 @@
       receiveQty,
       pay: choice.resource,
       payQty: choice.payQty,
+      canAfford: (player.inventory[choice.resource] || 0) >= choice.payQty,
       goodDeal,
       baseText,
       discountPercent,
@@ -336,15 +338,13 @@
     if (!proposal) return;
     const player = human();
     const feedback = $('[data-trade-feedback]');
-    state.tradeAttempts += 1;
-    countShockOffer();
     if ((player.inventory[proposal.pay] || 0) < proposal.payQty) {
-      state.failedTrades += 1;
-      feedback.textContent = `You do not have enough ${label(proposal.pay)} for this offer.`;
-      maybeTriggerTradeEvent();
+      feedback.textContent = `You cannot afford this yet. Keep harvesting mangoes and save for a later trade.`;
       renderAll();
       return;
     }
+    state.tradeAttempts += 1;
+    countShockOffer();
     player.inventory[proposal.pay] -= proposal.payQty;
     player.inventory[proposal.receive] = (player.inventory[proposal.receive] || 0) + proposal.receiveQty;
     state.successfulTrades += 1;

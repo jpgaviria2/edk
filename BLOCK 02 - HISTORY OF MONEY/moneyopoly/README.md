@@ -17,6 +17,7 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - Maya harvests 1–3 new mangoes each round to keep the mango producer supplied
 - Base prices: 1 cow = 10 mangoes, 1 shelter = 2 cows, 1L water = 2 mangoes
 - Offers price 0–10% below base; crisis scarce goods cost 50% more
+- Unaffordable offers cannot be accepted; the player keeps harvesting mangoes and saving until they can afford a trade
 - Direct barter only
 - Failed trades are counted as the main learning signal
 - End-game debrief introduces double coincidence of wants and the reason money emerges
