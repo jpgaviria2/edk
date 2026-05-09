@@ -6,22 +6,46 @@
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
   const boardSpaces = [
-    { name: 'Village Start', type: 'start', icon: '🏘️', gain: { mangoes: 1 } },
-    { name: 'Mango Grove', type: 'resource', icon: '🥭', gain: { mangoes: 2 } },
-    { name: 'Water Well', type: 'resource', icon: '💧', gain: { water: 1 } },
-    { name: 'Market Square', type: 'trade', icon: '🤝' },
-    { name: 'Builder Yard', type: 'resource', icon: '🏠', gain: { shelter: 1 } },
-    { name: 'Event Card', type: 'event', icon: '❓' },
-    { name: 'Pasture', type: 'resource', icon: '🐄', gain: { cows: 1 } },
-    { name: 'Crowded Bazaar', type: 'trade', icon: '🧺' },
-    { name: 'Dry River', type: 'event', icon: '☀️' },
-    { name: 'Fruit Stand', type: 'resource', icon: '🥭', gain: { mangoes: 1 } },
-    { name: 'Carpenter', type: 'resource', icon: '🪚', gain: { shelter: 1 } },
-    { name: 'Trade Booth', type: 'trade', icon: '⚖️' },
-    { name: 'Storm Clouds', type: 'event', icon: '🌧️' },
-    { name: 'Spring', type: 'resource', icon: '💧', gain: { water: 2 } },
-    { name: 'Cattle Pen', type: 'resource', icon: '🐄', gain: { cows: 1 } },
-    { name: 'Night Market', type: 'trade', icon: '🏮' }
+    { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff', gain: { mangoes: 2 } },
+    { name: 'Mango Grove', type: 'resource', icon: '🥭', color: '#8B4513', gain: { mangoes: 2 } },
+    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
+    { name: 'Banana Path', type: 'resource', icon: '🍌', color: '#8B4513', gain: { mangoes: 1 } },
+    { name: 'Spoilage Tax', type: 'event', icon: '🧾', color: '#ffffff' },
+    { name: 'Trade Route', type: 'trade', icon: '🛤️', color: '#ffffff' },
+    { name: 'River Well', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 1 } },
+    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
+    { name: 'Spring Water', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 1 } },
+    { name: 'Rain Barrel', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 2 } },
+    { name: 'Just Visiting', type: 'corner', icon: '🧱', color: '#ffffff' },
+    { name: 'Small Hut', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 1 } },
+    { name: 'Tool Maker', type: 'trade', icon: '🛠️', color: '#ffffff' },
+    { name: 'Wood Shelter', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 1 } },
+    { name: 'Stone Shelter', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 2 } },
+    { name: 'Cattle Trail', type: 'trade', icon: '🐄', color: '#ffffff' },
+    { name: 'Pasture', type: 'resource', icon: '🐄', color: '#FFA500', gain: { cows: 1 } },
+    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
+    { name: 'Dairy Herd', type: 'resource', icon: '🐄', color: '#FFA500', gain: { cows: 1 } },
+    { name: 'Open Market', type: 'trade', icon: '🧺', color: '#FFA500' },
+    { name: 'Free Trade', type: 'corner', icon: '🅿️', color: '#ffffff' },
+    { name: 'Fishing Camp', type: 'resource', icon: '🐟', color: '#FF0000', gain: { mangoes: 1, water: 1 } },
+    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
+    { name: 'Grain Field', type: 'resource', icon: '🌾', color: '#FF0000', gain: { mangoes: 2 } },
+    { name: 'Hunting Ground', type: 'resource', icon: '🏹', color: '#FF0000', gain: { cows: 1 } },
+    { name: 'River Port', type: 'trade', icon: '⛵', color: '#ffffff' },
+    { name: 'Clay Bricks', type: 'resource', icon: '🧱', color: '#FFFF00', gain: { shelter: 1 } },
+    { name: 'Timber Lot', type: 'resource', icon: '🪵', color: '#FFFF00', gain: { shelter: 1 } },
+    { name: 'Water Works', type: 'resource', icon: '🚰', color: '#ffffff', gain: { water: 2 } },
+    { name: 'Granary', type: 'resource', icon: '🏚️', color: '#FFFF00', gain: { mangoes: 1, shelter: 1 } },
+    { name: 'Go To Crisis', type: 'corner', icon: '🚨', color: '#ffffff' },
+    { name: 'Highland Well', type: 'resource', icon: '💧', color: '#008000', gain: { water: 1 } },
+    { name: 'Mountain Shelter', type: 'resource', icon: '🏠', color: '#008000', gain: { shelter: 1 } },
+    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
+    { name: 'Stone House', type: 'resource', icon: '🏠', color: '#008000', gain: { shelter: 2 } },
+    { name: 'Caravan', type: 'trade', icon: '🐪', color: '#ffffff' },
+    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
+    { name: 'Big Mango Farm', type: 'resource', icon: '🥭', color: '#0000FF', gain: { mangoes: 3 } },
+    { name: 'Scarcity Shock', type: 'event', icon: '⚠️', color: '#ffffff' },
+    { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF' }
   ];
 
   const state = {
@@ -65,7 +89,7 @@
     state.successfulTrades = 0;
     state.lastEventIndex = -1;
     state.lastRoll = [1, 1];
-    state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 4 }));
+    state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
     setCard('Welcome to Barter Market', 'There is no money yet. Roll dice, collect goods, and try to barter for water and shelter.', false);
@@ -252,13 +276,31 @@
     board.innerHTML = center + boardSpaces.map((space, index) => {
       const tokens = state.players.filter((player) => player.position === index)
         .map((player) => `<span class="token ${player.id === human().id ? 'human-token' : ''}" title="${player.name}">${player.icon}</span>`).join('');
-      return `<button class="board-space space-${index} ${space.type} ${tokens ? 'active' : ''}" title="${space.name}">
+      const pos = boardPosition(index);
+      const colorBar = space.color && space.color !== '#ffffff' ? `<span class="color-bar" style="background:${space.color}"></span>` : '';
+      return `<button class="board-space ${pos.side} ${space.type} ${tokens ? 'active' : ''}" style="grid-column:${pos.col};grid-row:${pos.row}" title="${space.name}">
+        ${colorBar}
         <span class="space-icon">${space.icon}</span>
         <strong>${space.name}</strong>
-        <small>${space.type === 'resource' ? 'Collect' : space.type === 'trade' ? 'Barter' : space.type === 'event' ? 'Event' : 'Start'}</small>
+        <small>${spaceLabel(space)}</small>
         <span class="tokens">${tokens}</span>
       </button>`;
     }).join('');
+  }
+
+  function boardPosition(index) {
+    if (index <= 10) return { col: 11 - index, row: 11, side: index === 0 || index === 10 ? 'corner' : 'bottom' };
+    if (index <= 20) return { col: 1, row: 21 - index, side: index === 20 ? 'corner' : 'left' };
+    if (index <= 30) return { col: index - 19, row: 1, side: index === 30 ? 'corner' : 'top' };
+    return { col: 11, row: index - 29, side: index === 39 ? 'right' : 'right' };
+  }
+
+  function spaceLabel(space) {
+    if (space.type === 'resource') return 'Collect good';
+    if (space.type === 'trade') return 'Barter';
+    if (space.type === 'event') return 'Draw card';
+    if (space.type === 'start') return 'Collect mangoes';
+    return 'Corner';
   }
 
   function renderHumanPanel() {
