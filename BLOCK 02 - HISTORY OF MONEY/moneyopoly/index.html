@@ -3,174 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07111f" />
-  <title>Moneyopoly · Barter Market MVP</title>
+  <meta name="theme-color" content="#0c6f3d" />
+  <title>Moneyopoly · Barter Edition</title>
   <link rel="stylesheet" href="../../assets/edk.css" />
   <link rel="stylesheet" href="./moneyopoly.css" />
 </head>
 <body>
-  <main class="app-shell moneyopoly-shell">
-    <header class="app-header">
-      <a class="brand" href="../../"><span class="logo">₿</span><span>EDK</span></a>
-      <nav class="nav-links">
-        <a class="btn ghost" href="../../learn/">Learn</a>
-        <a class="btn ghost" href="../../host/">Host</a>
-        <a class="btn ghost" href="../">Block 02</a>
-        <a class="btn blue" href="https://github.com/jpgaviria2/edk">GitHub</a>
-      </nav>
-      <button class="btn hamburger" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">☰ Menu</button>
+  <main class="moneyopoly-app">
+    <header class="money-topbar">
+      <a class="money-brand" href="../"><span class="money-logo">M</span><span>Moneyopoly</span></a>
+      <div class="money-top-actions">
+        <button class="btn ghost" data-action="open-rules">How to play</button>
+        <button class="btn blue" data-action="start">New game</button>
+      </div>
     </header>
 
-    <nav class="mobile-menu" id="mobile-menu">
-      <a class="btn" href="../../learn/">Learn mode</a>
-      <a class="btn" href="../../host/">Host mode</a>
-      <a class="btn" href="../">Back to Block 02</a>
-      <a class="btn" href="https://github.com/jpgaviria2/edk">GitHub</a>
-    </nav>
-
-    <section class="hero moneyopoly-hero">
-      <div class="hero-copy">
-        <span class="eyebrow">Block 02 flagship game · prototype 1</span>
-        <h1>Moneyopoly: Barter Market</h1>
-        <p class="lede">Play a tiny survival market before money exists. Every player has something valuable, but trade only works when wants line up.</p>
-        <div class="actions">
-          <button class="btn primary" data-action="start">New game</button>
-          <button class="btn green" data-action="demo">Auto-play demo</button>
-          <a class="btn ghost" href="#facilitator">Facilitator notes</a>
+    <section class="tabletop">
+      <aside class="player-dashboard">
+        <div class="card-stack player-wallet">
+          <span class="eyebrow">You are playing as</span>
+          <div class="avatar-token">🥭</div>
+          <h1>Maya the Mango Farmer</h1>
+          <p>Your farm has mangoes, but you still need water and shelter to survive the market.</p>
         </div>
-      </div>
-      <aside class="side-card rule-card">
-        <span class="pill gold">Lesson objective</span>
-        <h2>Feel the friction first.</h2>
-        <p>Players need food, water, and shelter. They can only barter directly. Every 3 rounds, an event changes the market.</p>
-        <ul class="compact-list">
-          <li>No money yet</li>
-          <li>Direct trades only</li>
-          <li>Goods can spoil or get hit by events</li>
-          <li>Win by surviving with useful surplus</li>
-        </ul>
+
+        <div class="monopoly-card inventory-card">
+          <div class="card-title-row"><h2>Your goods</h2><span class="round-badge">Round <b data-round>0</b>/12</span></div>
+          <div class="inventory money-inventory" data-human-inventory></div>
+          <div class="needs" data-human-needs></div>
+        </div>
+
+        <div class="monopoly-card dice-card">
+          <span class="eyebrow">Your turn</span>
+          <div class="dice-row" aria-label="Dice roll">
+            <span class="die" data-die-one>⚀</span>
+            <span class="die" data-die-two>⚀</span>
+          </div>
+          <button class="roll-button" data-action="next-round">Roll dice</button>
+          <button class="btn green" data-action="suggest-trade">Ask the market for a trade</button>
+          <p class="turn-copy" data-turn-copy>Roll to move around the market board.</p>
+        </div>
       </aside>
-    </section>
 
-    <section class="section game-grid" aria-live="polite">
-      <article class="panel board-panel">
-        <div class="game-topline">
-          <div>
-            <span class="eyebrow">Market board</span>
-            <h2>Round <span data-round>0</span> / 12</h2>
+      <section class="board-wrap" aria-live="polite">
+        <div class="moneyopoly-board" data-track>
+          <div class="board-center">
+            <span class="eyebrow">Barter edition</span>
+            <h2>Survive without money</h2>
+            <p>Move, collect goods, barter with neighbours, and feel why a common money emerges.</p>
+            <div class="score-strip">
+              <span>Failed trades <b data-failed-trades>0</b></span>
+              <span>Successful trades <b data-successful-trades>0</b></span>
+            </div>
           </div>
-          <div class="score-pill" title="Measures how many trades fail because wants do not line up.">
-            <span>Failed trades</span>
-            <strong data-failed-trades>0</strong>
+        </div>
+      </section>
+
+      <aside class="market-dashboard">
+        <div class="monopoly-card event-card" data-event-card>
+          <span class="eyebrow">Market card</span>
+          <h2 data-event-title>Welcome to Barter Market</h2>
+          <p data-event-copy>There is no money yet. Everyone has useful goods, but trades only work when both people want what the other offers.</p>
+        </div>
+
+        <div class="monopoly-card trade-card">
+          <span class="eyebrow">Barter table</span>
+          <h2>Make a deal</h2>
+          <p>Offer one of your goods and ask another trader for something you need.</p>
+          <div class="solo-trade-builder">
+            <label>You give <select data-give-a></select></label>
+            <label>Ask <select data-trader-b></select></label>
+            <label>for <select data-give-b></select></label>
+            <button class="btn primary" data-action="trade">Propose trade</button>
           </div>
+          <p class="trade-feedback" data-trade-feedback>The market is open. Try to get water and shelter.</p>
         </div>
 
-        <div class="track" data-track></div>
-
-        <div class="event-banner" data-event-banner>
-          Game is ready. Press Next round to play, or Restart game to reset the market.
-        </div>
-
-        <div class="actions game-actions">
-          <button class="btn primary" data-action="next-round" disabled>Next round</button>
-          <button class="btn blue" data-action="start">Restart game</button>
-          <button class="btn green" data-action="suggest-trade" disabled>Suggest trade</button>
-          <button class="btn ghost" data-action="reset">Reset</button>
-        </div>
-      </article>
-
-      <aside class="panel lesson-panel">
-        <span class="pill">What the game is teaching</span>
-        <h2 data-lesson-title>Before money, trade is fragile.</h2>
-        <p data-lesson-copy>In barter, having value is not enough. You need someone who wants exactly what you have and has exactly what you need.</p>
-        <div class="insight-meter">
-          <label for="friction-meter">Barter friction</label>
-          <progress id="friction-meter" data-friction-meter max="12" value="0"></progress>
-          <small data-friction-label>Low so far</small>
-        </div>
-        <div class="mini-card">
-          <strong>Vocabulary unlocked</strong>
-          <p><b>Double coincidence of wants:</b> a trade requires both sides to want what the other side offers at the same time.</p>
+        <div class="monopoly-card neighbours-card">
+          <span class="eyebrow">Other traders</span>
+          <div class="neighbour-list" data-players></div>
         </div>
       </aside>
     </section>
 
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">Players</span>
-          <h2>Everyone has wealth. Not everyone has what they need.</h2>
-        </div>
-      </div>
-      <div class="players-grid" data-players></div>
-    </section>
-
-    <section class="section trade-section">
-      <article class="panel">
-        <div class="section-head inline-head">
-          <div>
-            <span class="eyebrow">Manual trade table</span>
-            <h2>Try to make a direct barter trade.</h2>
-          </div>
-        </div>
-        <div class="trade-builder">
-          <label>Trader A <select data-trader-a></select></label>
-          <label>gives <select data-give-a></select></label>
-          <label>Trader B <select data-trader-b></select></label>
-          <label>gives <select data-give-b></select></label>
-          <button class="btn primary" data-action="trade" disabled>Attempt trade</button>
-        </div>
-        <p class="trade-feedback" data-trade-feedback>The market is live — try a trade or press Next round.</p>
-      </article>
-    </section>
-
-    <section class="section two-column-results hidden" data-results>
-      <article class="panel result-card">
-        <span class="pill green">Debrief</span>
+    <section class="debrief-drawer hidden" data-results>
+      <article class="monopoly-card result-card">
+        <span class="pill green">Game over</span>
         <h2>What happened?</h2>
         <p data-result-summary></p>
         <ul class="compact-list" data-result-lessons></ul>
-      </article>
-      <article class="panel next-era-card">
-        <span class="pill gold">Next prototype</span>
-        <h2>Commodity Moneyopoly</h2>
-        <p>After players feel barter friction, the next era introduces one widely accepted good. Trade becomes easier because people can accept a good for resale, not just direct use.</p>
-        <button class="btn green" data-action="preview-commodity">Preview next rule</button>
+        <div class="actions">
+          <button class="btn primary" data-action="start">Play again</button>
+          <button class="btn green" data-action="preview-commodity">Preview Commodity Moneyopoly</button>
+        </div>
         <p class="trade-feedback" data-commodity-preview></p>
       </article>
     </section>
 
-    <section class="section" id="facilitator">
-      <div class="grid two">
-        <article class="panel">
-          <span class="eyebrow">Facilitator mode</span>
-          <h2>How to run this physically</h2>
-          <ol class="compact-list ordered">
-            <li>Give each learner one role card: Mango Farmer, Cattle Herder, Water Keeper, Builder.</li>
-            <li>Give each player surplus of their own good and shortage in another survival need.</li>
-            <li>Let them trade for 3 minutes with no money and no central exchange.</li>
-            <li>Trigger an event card: flood, drought, pests, spoiled food.</li>
-            <li>Debrief the pain: “Who had value but still could not trade?”</li>
-          </ol>
-        </article>
-        <article class="panel">
-          <span class="eyebrow">Implementation roadmap</span>
-          <h2>Moneyopoly eras</h2>
-          <p>This prototype is the reusable base. Future versions swap the money rule while keeping survival needs, events, and trade scoring.</p>
-          <div class="era-list">
-            <span>Barter</span><span>Commodity</span><span>Shells</span><span>Coins</span><span>Receipts</span><span>Fiat</span><span>Digital banks</span><span>Bitcoin</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <p class="small">Moneyopoly is part of EDK Block 02: History of Money. Prototype 1 focuses on barter friction before introducing money.</p>
-      <div class="footer-links">
-        <a class="btn ghost" href="../">Block 02</a>
-        <a class="btn ghost" href="../../learn/">Learn</a>
-      </div>
-    </footer>
+    <dialog class="rules-modal" data-rules-modal>
+      <form method="dialog" class="monopoly-card rules-card">
+        <span class="eyebrow">How to play</span>
+        <h2>Barter Moneyopoly</h2>
+        <ol class="compact-list ordered">
+          <li>You play as Maya, the mango farmer.</li>
+          <li>Roll dice to move around the board and collect goods.</li>
+          <li>You need food, water, and shelter to survive.</li>
+          <li>There is no money, so every trade must be direct barter.</li>
+          <li>Every 3 rounds, an event card changes the market.</li>
+          <li>If trades fail, that is the lesson: barter needs a double coincidence of wants.</li>
+        </ol>
+        <button class="btn primary">Got it</button>
+      </form>
+    </dialog>
   </main>
 
   <script src="../../assets/edk.js"></script>
