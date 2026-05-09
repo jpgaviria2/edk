@@ -10,7 +10,7 @@ Learners should be able to explain the concept by doing something practical, not
 
 ## Practical game/app
 
-Website-first lesson with barter chain, good-money scoring, shell inflation, coin debasement, and Bitcoin bridge examples.
+Moneyopoly website-first game. Prototype 1 is a playable barter survival market with mangoes, cows, water, shelter, 12 rounds, failed-trade scoring, and events every 3 rounds. Future eras: commodity money, shells, coins, paper receipts, fiat, digital bank money, Bitcoin.
 
 ## Core interactions
 
@@ -27,6 +27,7 @@ See `CONTENT-PLAN.md` and the copied `curriculum-content/` folder inside this bl
 ## Minimum viable app
 
 - One static HTML/CSS/JS page.
+- Barter Moneyopoly prototype under `moneyopoly/`.
 - No backend required.
 - Mobile-first.
 - Works as a standalone GitHub Pages path.

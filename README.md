@@ -62,7 +62,7 @@ Each module in the EDK includes:
 | Activity | Concept | Summary |
 |-----------|----------|---------|
 | **Block 1** | What Is Money? | Practical: money function classifier, value comparison games. |
-| **Block 2** | History of Money | Already started. Barter → commodity money → fiat → Bitcoin. |
+| **Block 2** | History of Money | Moneyopoly MVP added: playable barter survival market → commodity money → fiat → Bitcoin. |
 | **Block 3** | Fiat, Inflation & Purchasing Power | Practical: inflation simulator, wage vs prices game, central bank money printer model. |
 | **Block 4** | Why Bitcoin? Problems → Solutions | Practical: match each fiat/debt/trust problem to Bitcoin design features. |
 | **Block 5** | What Is Bitcoin? | Practical: “Bitcoin is not…” misconception game, sound money property comparison. |
