@@ -15,6 +15,8 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - Players start with a balance of goods instead of gaining/losing goods every roll
 - Every 3 trade attempts, or on a crisis space, an event changes market prices for subsequent offers
 - Maya harvests 1–3 new mangoes each round to keep the mango producer supplied
+- Base prices: 1 cow = 10 mangoes, 1 shelter = 2 cows, 1L water = 2 mangoes
+- Offers price 0–10% below base; crisis scarce goods cost 50% more
 - Direct barter only
 - Failed trades are counted as the main learning signal
 - End-game debrief introduces double coincidence of wants and the reason money emerges

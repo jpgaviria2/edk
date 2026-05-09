@@ -4,6 +4,7 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  const baseMangoPrices = { mangoes: 1, water: 2, fish: 4, cows: 10, shelter: 20 };
 
   const boardSpaces = [
     { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
@@ -50,20 +51,20 @@
 
   const crisisEvents = [
     {
-      title: 'Drought', icon: '☀️', scarce: 'water', multiplier: 3,
-      description: 'The river is low. Water sellers demand much more for every bucket.'
+      title: 'Drought', icon: '☀️', scarce: 'water', multiplier: 1.5,
+      description: 'The river is low. Water sellers charge 50% more for every litre.'
     },
     {
-      title: 'Fire', icon: '🔥', scarce: 'shelter', multiplier: 3,
-      description: 'Several homes burned. Builders raise prices because everyone needs shelter.'
+      title: 'Fire', icon: '🔥', scarce: 'shelter', multiplier: 1.5,
+      description: 'Several homes burned. Builders charge 50% more because everyone needs shelter.'
     },
     {
-      title: 'Flood', icon: '🌊', scarce: 'mangoes', multiplier: 2,
-      description: 'Fields are underwater. Food is harder to find, so food offers get expensive.'
+      title: 'Flood', icon: '🌊', scarce: 'mangoes', multiplier: 1.5,
+      description: 'Fields are underwater. Food is harder to find, so food costs 50% more.'
     },
     {
-      title: 'Pest outbreak', icon: '🐛', scarce: 'fish', multiplier: 2,
-      description: 'Stored food spoiled. Preserved fish becomes more valuable in trade.'
+      title: 'Pest outbreak', icon: '🐛', scarce: 'fish', multiplier: 1.5,
+      description: 'Stored food spoiled. Preserved fish costs 50% more in trade.'
     }
   ];
 
@@ -225,8 +226,8 @@
     const event = crisisEvents[state.lastEventIndex];
     state.marketShock = { ...event, remainingTrades: 3 };
     const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
-    setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} For the next 3 trade offers, ${label(event.scarce)} costs about ${event.multiplier}× more.`, true);
-    $('[data-trade-feedback]').textContent = `${event.title}: ${label(event.scarce)} is now much more expensive for the next 3 offers.`;
+    setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} For the next 3 trade offers, ${label(event.scarce)} costs 50% more.`, true);
+    $('[data-trade-feedback]').textContent = `${event.title}: ${label(event.scarce)} now costs 50% more for the next 3 offers.`;
   }
 
   function priceMultiplier(resource) {
@@ -235,7 +236,7 @@
 
   function shockLine(resource) {
     if (state.marketShock?.scarce !== resource) return '';
-    return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} is ${state.marketShock.multiplier}× more expensive for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
+    return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} costs 50% more for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
   }
 
   function countShockOffer() {
@@ -273,6 +274,7 @@
       <span class="eyebrow">Proposed trade</span>
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
+      <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then +50% crisis pricing' : ''}.</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
       ${shockLine(proposal.receive)}
     </div>`;
@@ -285,15 +287,48 @@
   function makeProposal(space) {
     const player = human();
     const receive = space.offers[(state.round + state.tradeAttempts) % space.offers.length];
+    const receiveQty = proposedReceiveQty(receive);
+    const discount = 0.9 + (Math.random() * 0.1); // market offers are 0–10% below base
+    const crisis = priceMultiplier(receive);
+    const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * crisis;
     const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
-    const pay = payable.includes('mangoes') ? 'mangoes' : (payable[0] || 'mangoes');
-    const available = Math.max(1, player.inventory[pay] || 0);
-    const scarcity = receive === 'fish' || receive === 'shelter' ? 2 : 1;
-    const basePrice = Math.max(1, ((state.round * 3 + state.tradeAttempts + receive.length) % 5) + scarcity);
-    const payQty = Math.min(available, Math.max(1, basePrice * priceMultiplier(receive)));
-    const receiveQty = Math.max(1, ((state.round + receive.length) % 2) + 1);
+    const candidates = payable.map((resource) => {
+      const payQty = Math.max(1, Math.round(costInMangoes / baseMangoPrices[resource]));
+      const inventory = player.inventory[resource] || 0;
+      return { resource, payQty, inventory, sufficient: inventory >= payQty, notAll: inventory > payQty };
+    });
+    const choice = candidates.find((candidate) => candidate.sufficient && candidate.notAll)
+      || candidates.find((candidate) => candidate.sufficient)
+      || candidates.find((candidate) => candidate.resource === 'mangoes')
+      || candidates[0]
+      || { resource: 'mangoes', payQty: Math.max(1, Math.round(costInMangoes)), inventory: 0, sufficient: false };
     const goodDeal = missingNeeds(player).includes(receive) || receive === 'fish';
-    return { receive, receiveQty, pay, payQty, goodDeal };
+    const baseText = basePriceText(receive, receiveQty, choice.resource);
+    const discountPercent = Math.round((1 - discount) * 100);
+    return {
+      receive,
+      receiveQty,
+      pay: choice.resource,
+      payQty: choice.payQty,
+      goodDeal,
+      baseText,
+      discountPercent,
+      crisisApplied: crisis > 1
+    };
+  }
+
+  function proposedReceiveQty(resource) {
+    if (resource === 'water') return Math.floor(Math.random() * 3) + 1;
+    if (resource === 'fish') return Math.floor(Math.random() * 3) + 1;
+    if (resource === 'mangoes') return Math.floor(Math.random() * 5) + 1;
+    return 1;
+  }
+
+  function basePriceText(receive, receiveQty, pay) {
+    const receiveValue = baseMangoPrices[receive] * receiveQty;
+    const payUnits = receiveValue / baseMangoPrices[pay];
+    const formattedPay = Number.isInteger(payUnits) ? payUnits : payUnits.toFixed(1);
+    return `${receiveQty} ${label(receive)} ≈ ${formattedPay} ${label(pay)}`;
   }
 
   function acceptOffer() {
