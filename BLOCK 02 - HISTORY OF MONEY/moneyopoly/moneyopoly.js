@@ -40,14 +40,22 @@
     startGame();
   }
 
+  function on(selector, event, handler) {
+    $$(selector).forEach((element) => element.addEventListener(event, handler));
+  }
+
   function bindActions() {
-    $$('[data-action="start"]').forEach((button) => button.addEventListener('click', startGame));
-    $('[data-action="next-round"]').addEventListener('click', nextRound);
-    $('[data-action="suggest-trade"]').addEventListener('click', suggestTrade);
-    $('[data-action="trade"]').addEventListener('click', attemptManualTrade);
-    $('[data-action="preview-commodity"]').addEventListener('click', previewCommodity);
-    $('[data-action="open-rules"]').addEventListener('click', () => $('[data-rules-modal]').showModal());
-    $('[data-trader-b]').addEventListener('change', syncTradeResourceAvailability);
+    on('[data-action="start"]', 'click', startGame);
+    on('[data-action="next-round"]', 'click', nextRound);
+    on('[data-action="suggest-trade"]', 'click', suggestTrade);
+    on('[data-action="trade"]', 'click', attemptManualTrade);
+    on('[data-action="preview-commodity"]', 'click', previewCommodity);
+    on('[data-action="open-rules"]', 'click', () => {
+      const modal = $('[data-rules-modal]');
+      if (modal?.showModal) modal.showModal();
+      else alert('Roll dice to move. Collect goods. Barter for water and shelter. Every 3 rounds, an event changes the market.');
+    });
+    on('[data-trader-b]', 'change', syncTradeResourceAvailability);
   }
 
   function startGame() {
