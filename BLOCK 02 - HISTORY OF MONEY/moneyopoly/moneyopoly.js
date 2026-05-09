@@ -110,7 +110,7 @@
     on('[data-action="trade-here"]', 'click', tradeHere);
     on('[data-action="accept-offer"]', 'click', acceptOffer);
     on('[data-action="sell-for-shells"]', 'click', sellForShells);
-    on('[data-action="skip-trade"], [data-action="sell-for-shells"]', 'click', skipTrade);
+    on('[data-action="skip-trade"]', 'click', skipTrade);
     on('[data-action="preview-commodity"]', 'click', previewCommodity);
     on('[data-action="open-rules"]', 'click', () => {
       const modal = $('[data-rules-modal]');
@@ -327,7 +327,7 @@
     const copy = $('[data-landing-copy]');
     const offer = $('[data-landing-offer]');
     const acceptButton = $('[data-action="accept-offer"]');
-    const skipButton = $('[data-action="skip-trade"], [data-action="sell-for-shells"]');
+    const skipButton = $('[data-action="skip-trade"]');
     if (!space?.offers?.length) {
       title.textContent = 'No trader here';
       copy.textContent = 'Roll again when you are ready to visit the next trading space.';
@@ -443,7 +443,7 @@
     const extra = proposal?.pay === 'shells'
       ? ` Current offer costs ${proposal.payQty} Shells; you have ${human().inventory.shells || 0}.`
       : '';
-    copy.textContent = `Sell ${units} ${label(resource)} for ${shellsRaised} Shells.${extra}`;
+    copy.textContent = `Sell ${units} ${label(resource)} for ${shellsRaised} Shells. This is separate from the landing offer.${extra}`;
   }
 
   function shellsFor(resource, units) {
@@ -472,6 +472,16 @@
     renderHumanPanel();
     syncTradeResourceAvailability();
     renderShellExchange(state.proposedOffer);
+  }
+
+  function refreshAffordabilityLine(proposal) {
+    const line = document.querySelector('.cannot-afford-line, .afford-line');
+    if (!line || !proposal) return;
+    proposal.canAfford = (human().inventory[proposal.pay] || 0) >= proposal.payQty;
+    line.className = proposal.canAfford ? 'afford-line' : 'cannot-afford-line';
+    line.textContent = proposal.canAfford
+      ? 'You can afford this trade now.'
+      : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`;
   }
 
   function acceptOffer() {

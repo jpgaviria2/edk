@@ -32,6 +32,13 @@
           <div class="card-title-row"><h2>Your goods</h2><span class="round-badge">Turn <b data-round>0</b></span></div>
           <div class="inventory money-inventory" data-human-inventory></div>
           <div class="needs" data-human-needs></div>
+          <div class="shell-exchange inventory-exchange hidden" data-shell-exchange>
+            <span class="eyebrow">Money changer</span>
+            <label>Sell item <select data-sell-resource></select></label>
+            <label>Quantity <input type="number" min="1" step="1" value="1" data-sell-quantity /></label>
+            <button class="btn green" data-action="sell-for-shells">Sell for shells</button>
+            <p data-shell-exchange-copy></p>
+          </div>
         </div>
 
         <div class="monopoly-card dice-card">
@@ -73,13 +80,6 @@
           <h2 data-landing-title>Choose your move</h2>
           <p data-landing-copy>Roll dice to arrive at a trader. When you land somewhere, you can trade there or skip.</p>
           <div class="landing-offer" data-landing-offer></div>
-          <div class="shell-exchange hidden" data-shell-exchange>
-            <span class="eyebrow">Money changer</span>
-            <label>Sell item <select data-sell-resource></select></label>
-            <label>Quantity <input type="number" min="1" step="1" value="1" data-sell-quantity /></label>
-            <button class="btn green" data-action="sell-for-shells">Sell for shells</button>
-            <p data-shell-exchange-copy></p>
-          </div>
           <div class="offer-actions">
             <button class="btn primary" data-action="accept-offer">Accept offer</button>
             <button class="btn ghost" data-action="skip-trade">Skip trade</button>
@@ -137,7 +137,7 @@
   </main>
 
   <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=18"></script>
-  <script src="./moneyopoly.js?v=18"></script>
+  <script src="./game-data.js?v=19"></script>
+  <script src="./moneyopoly.js?v=19"></script>
 </body>
 </html>
