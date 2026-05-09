@@ -6,45 +6,45 @@
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
   const boardSpaces = [
-    { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff', gain: { mangoes: 2 } },
-    { name: 'Mango Grove', type: 'resource', icon: '🥭', color: '#8B4513', gain: { mangoes: 2 } },
-    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
-    { name: 'Banana Path', type: 'resource', icon: '🍌', color: '#8B4513', gain: { mangoes: 1 } },
-    { name: 'Spoilage Tax', type: 'event', icon: '🧾', color: '#ffffff' },
+    { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
+    { name: 'Mango Grove', type: 'trade', icon: '🥭', color: '#8B4513', trader: 'Mango farmer', offers: ['mangoes'] },
+    { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
+    { name: 'Banana Path', type: 'trade', icon: '🍌', color: '#8B4513', trader: 'Fruit seller', offers: ['mangoes'] },
+    { name: 'Spoilage Tax', type: 'trade', icon: '🧾', trader: 'Tax collector', offers: ['shelter'], color: '#ffffff' },
     { name: 'Trade Route', type: 'trade', icon: '🛤️', color: '#ffffff' },
-    { name: 'River Well', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 1 } },
-    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
-    { name: 'Spring Water', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 1 } },
-    { name: 'Rain Barrel', type: 'resource', icon: '💧', color: '#87CEEB', gain: { water: 2 } },
+    { name: 'River Well', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Water keeper', offers: ['water'] },
+    { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
+    { name: 'Spring Water', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Water keeper', offers: ['water'] },
+    { name: 'Rain Barrel', type: 'trade', icon: '💧', color: '#87CEEB', trader: 'Rain collector', offers: ['water'] },
     { name: 'Just Visiting', type: 'corner', icon: '🧱', color: '#ffffff' },
-    { name: 'Small Hut', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 1 } },
+    { name: 'Small Hut', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Builder', offers: ['shelter'] },
     { name: 'Tool Maker', type: 'trade', icon: '🛠️', color: '#ffffff' },
-    { name: 'Wood Shelter', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 1 } },
-    { name: 'Stone Shelter', type: 'resource', icon: '🏠', color: '#FF0080', gain: { shelter: 2 } },
+    { name: 'Wood Shelter', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Builder', offers: ['shelter'] },
+    { name: 'Stone Shelter', type: 'trade', icon: '🏠', color: '#FF0080', trader: 'Stone mason', offers: ['shelter'] },
     { name: 'Cattle Trail', type: 'trade', icon: '🐄', color: '#ffffff' },
-    { name: 'Pasture', type: 'resource', icon: '🐄', color: '#FFA500', gain: { cows: 1 } },
-    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
-    { name: 'Dairy Herd', type: 'resource', icon: '🐄', color: '#FFA500', gain: { cows: 1 } },
+    { name: 'Pasture', type: 'trade', icon: '🐄', color: '#FFA500', trader: 'Cattle herder', offers: ['cows'] },
+    { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
+    { name: 'Dairy Herd', type: 'trade', icon: '🐄', color: '#FFA500', trader: 'Cattle herder', offers: ['cows'] },
     { name: 'Open Market', type: 'trade', icon: '🧺', color: '#FFA500' },
     { name: 'Free Trade', type: 'corner', icon: '🅿️', color: '#ffffff' },
-    { name: 'Fishing Camp', type: 'resource', icon: '🐟', color: '#FF0000', gain: { mangoes: 1, water: 1 } },
-    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
-    { name: 'Grain Field', type: 'resource', icon: '🌾', color: '#FF0000', gain: { mangoes: 2 } },
-    { name: 'Hunting Ground', type: 'resource', icon: '🏹', color: '#FF0000', gain: { cows: 1 } },
+    { name: 'Fishing Camp', type: 'trade', icon: '🐟', color: '#FF0000', trader: 'Fishing camp', offers: ['mangoes', 'water'] },
+    { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
+    { name: 'Grain Field', type: 'trade', icon: '🌾', color: '#FF0000', trader: 'Grain farmer', offers: ['mangoes'] },
+    { name: 'Hunting Ground', type: 'trade', icon: '🏹', color: '#FF0000', trader: 'Hunter', offers: ['cows'] },
     { name: 'River Port', type: 'trade', icon: '⛵', color: '#ffffff' },
-    { name: 'Clay Bricks', type: 'resource', icon: '🧱', color: '#FFFF00', gain: { shelter: 1 } },
-    { name: 'Timber Lot', type: 'resource', icon: '🪵', color: '#FFFF00', gain: { shelter: 1 } },
-    { name: 'Water Works', type: 'resource', icon: '🚰', color: '#ffffff', gain: { water: 2 } },
-    { name: 'Granary', type: 'resource', icon: '🏚️', color: '#FFFF00', gain: { mangoes: 1, shelter: 1 } },
+    { name: 'Clay Bricks', type: 'trade', icon: '🧱', color: '#FFFF00', trader: 'Brick maker', offers: ['shelter'] },
+    { name: 'Timber Lot', type: 'trade', icon: '🪵', color: '#FFFF00', trader: 'Timber seller', offers: ['shelter'] },
+    { name: 'Water Works', type: 'trade', icon: '🚰', color: '#ffffff', trader: 'Water works', offers: ['water'] },
+    { name: 'Granary', type: 'trade', icon: '🏚️', color: '#FFFF00', trader: 'Granary keeper', offers: ['mangoes', 'shelter'] },
     { name: 'Go To Crisis', type: 'corner', icon: '🚨', color: '#ffffff' },
-    { name: 'Highland Well', type: 'resource', icon: '💧', color: '#008000', gain: { water: 1 } },
-    { name: 'Mountain Shelter', type: 'resource', icon: '🏠', color: '#008000', gain: { shelter: 1 } },
-    { name: 'Community Need', type: 'event', icon: '📦', color: '#ffffff' },
-    { name: 'Stone House', type: 'resource', icon: '🏠', color: '#008000', gain: { shelter: 2 } },
+    { name: 'Highland Well', type: 'trade', icon: '💧', color: '#008000', trader: 'Highland water keeper', offers: ['water'] },
+    { name: 'Mountain Shelter', type: 'trade', icon: '🏠', color: '#008000', trader: 'Mountain builder', offers: ['shelter'] },
+    { name: 'Community Need', type: 'trade', icon: '📦', trader: 'Community trader', offers: ['water', 'shelter'], color: '#ffffff' },
+    { name: 'Stone House', type: 'trade', icon: '🏠', color: '#008000', trader: 'Stone house builder', offers: ['shelter'] },
     { name: 'Caravan', type: 'trade', icon: '🐪', color: '#ffffff' },
-    { name: 'Chance', type: 'event', icon: '❓', color: '#ffffff' },
-    { name: 'Big Mango Farm', type: 'resource', icon: '🥭', color: '#0000FF', gain: { mangoes: 3 } },
-    { name: 'Scarcity Shock', type: 'event', icon: '⚠️', color: '#ffffff' },
+    { name: 'Chance', type: 'trade', icon: '❓', trader: 'Travelling trader', offers: ['mangoes', 'cows', 'water', 'shelter'], color: '#ffffff' },
+    { name: 'Big Mango Farm', type: 'trade', icon: '🥭', color: '#0000FF', trader: 'Big mango farm', offers: ['mangoes'] },
+    { name: 'Scarcity Shock', type: 'trade', icon: '⚠️', trader: 'Scarcity trader', offers: ['water', 'cows'], color: '#ffffff' },
     { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF' }
   ];
 
@@ -53,6 +53,7 @@
     round: 0,
     failedTrades: 0,
     successfulTrades: 0,
+    tradeAttempts: 0,
     players: [],
     lastEventIndex: -1,
     lastRoll: [1, 1]
@@ -87,13 +88,14 @@
     state.round = 0;
     state.failedTrades = 0;
     state.successfulTrades = 0;
+    state.tradeAttempts = 0;
     state.lastEventIndex = -1;
     state.lastRoll = [1, 1];
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
-    setCard('Welcome to Barter Market', 'There is no money yet. Roll dice, collect goods, and try to barter for water and shelter.', false);
-    $('[data-turn-copy]').textContent = 'Roll dice to move around the market board.';
+    setCard('Welcome to Barter Market', 'There is no money yet. Roll dice to visit traders, then barter from your starting balance into water and shelter.', false);
+    $('[data-turn-copy]').textContent = 'Roll dice to visit the next trader.';
     updateControls(true);
     renderAll();
   }
@@ -106,10 +108,8 @@
     moveNeighbours();
     resolveLandingSpace(human());
     consumeSurvivalNeeds();
-    attemptAutoTrades();
-    if (state.round % 3 === 0) triggerEvent();
     renderAll();
-    if (state.round >= 12) finishGame();
+    if (state.round >= 15) finishGame();
   }
 
   function rollDice() {
@@ -137,31 +137,27 @@
 
   function resolveLandingSpace(player, quiet = false) {
     const space = boardSpaces[player.position];
-    if (space.gain) {
-      Object.entries(space.gain).forEach(([resource, amount]) => {
-        player.inventory[resource] = (player.inventory[resource] || 0) + amount;
-      });
+    if (space.type === 'start') {
       if (!quiet && player.id === human().id) {
-        const gainText = Object.entries(space.gain).map(([resource, amount]) => `+${amount} ${label(resource)}`).join(', ');
-        setCard(`${space.icon} ${space.name}`, `You collected ${gainText}. But goods alone are not money — you still need the right trading partner.`, false);
+        setCard('🏘️ GO', 'You passed the village. Your balances stay intact — now find someone willing to trade.', false);
       }
-    } else if (space.type === 'trade' && !quiet && player.id === human().id) {
-      setCard(`${space.icon} ${space.name}`, 'You reached a trade space. Try to make a direct barter deal with another trader.', false);
-    } else if (space.type === 'event' && !quiet && player.id === human().id) {
-      triggerEvent();
-    } else if (space.type === 'start' && !quiet && player.id === human().id) {
-      player.inventory.mangoes += 1;
-      setCard('🏘️ Village Start', 'You passed through the village and harvested one extra mango.', false);
+      return;
+    }
+    if (space.type === 'corner') {
+      if (!quiet && player.id === human().id) {
+        setCard(`${space.icon} ${space.name}`, 'Corner space. No automatic gain or loss — your next deal still depends on barter.', false);
+      }
+      return;
+    }
+    if (!quiet && player.id === human().id) {
+      const offers = (space.offers || Object.keys(data.resources)).map(label).join(', ');
+      setCard(`${space.icon} ${space.trader || space.name}`, `You arrived at ${space.name}. This trader can offer: ${offers}. Make a barter proposal from your balance.`, false);
+      syncTradePartnerForSpace(space);
     }
   }
 
   function consumeSurvivalNeeds() {
-    state.players.forEach((player) => {
-      if (state.round % 2 !== 0) return;
-      Object.entries(player.survival).forEach(([resource, amount]) => {
-        player.inventory[resource] = Math.max(0, (player.inventory[resource] || 0) - amount);
-      });
-    });
+    // In this version, rolls do not drain balances. Goods only move through trades or event cards.
   }
 
   function attemptAutoTrades() {
@@ -199,6 +195,8 @@
     const giveB = $('[data-give-b]').value;
     const feedback = $('[data-trade-feedback]');
 
+    state.tradeAttempts += 1;
+
     if (!b || a.id === b.id) {
       feedback.textContent = 'Pick a neighbour to trade with.';
       return;
@@ -206,6 +204,7 @@
     if ((a.inventory[giveA] || 0) < 1 || (b.inventory[giveB] || 0) < 1) {
       state.failedTrades += 1;
       feedback.textContent = 'Trade failed: someone does not have the good they promised.';
+      maybeTriggerTradeEvent();
       renderAll();
       return;
     }
@@ -215,6 +214,7 @@
       state.failedTrades += 1;
       feedback.textContent = `${b.name} says no. They want ${wantLabels(b)}, not necessarily ${label(giveA)}.`;
       setCard('Trade rejected', 'This is the double coincidence problem: both sides must want exactly what the other side has.', true);
+      maybeTriggerTradeEvent();
       renderAll();
       return;
     }
@@ -223,6 +223,7 @@
     state.successfulTrades += 1;
     feedback.textContent = `Deal! You traded ${label(giveA)} for ${b.name}'s ${label(giveB)}.`;
     setCard('Trade accepted', 'A barter trade worked because both wants lined up at the same time.', false);
+    maybeTriggerTradeEvent();
     renderAll();
   }
 
@@ -240,6 +241,12 @@
     $('[data-trade-feedback]').textContent = suggestions[0] || 'No clean direct trade exists right now. This is why markets start looking for money.';
   }
 
+  function maybeTriggerTradeEvent() {
+    if (state.tradeAttempts > 0 && state.tradeAttempts % 3 === 0) {
+      triggerEvent();
+    }
+  }
+
   function finishGame() {
     state.started = false;
     updateControls(false);
@@ -248,12 +255,12 @@
     $('[data-results]').classList.remove('hidden');
     $('[data-result-summary]').textContent = missing.length === 0
       ? `You survived with food, water, and shelter. Even then, the market recorded ${state.failedTrades} failed barter attempts.`
-      : `You ended short on ${missing.map(label).join(', ')}. The market recorded ${state.failedTrades} failed barter attempts and ${state.successfulTrades} successful trades.`;
+      : `You ended short on ${missing.map(label).join(', ')}. The market recorded ${state.tradeAttempts} trade attempts, including ${state.failedTrades} failed barter attempts and ${state.successfulTrades} successful trades.`;
     $('[data-result-lessons]').innerHTML = [
       'Barter feels like a board game with no common scoring unit.',
       'Useful goods are not always saleable goods.',
       'Direct trade fails when wants do not line up.',
-      'The next version introduces commodity money to make the market playable.'
+      'Events after every 3 trades show why markets want a common medium of exchange.'
     ].map((lesson) => `<li>${lesson}</li>`).join('');
     setCard('Game complete', 'Now you have felt the problem. The next era asks: what if one good becomes accepted by everyone?', false);
   }
@@ -296,9 +303,7 @@
   }
 
   function spaceLabel(space) {
-    if (space.type === 'resource') return 'Collect good';
-    if (space.type === 'trade') return 'Barter';
-    if (space.type === 'event') return 'Draw card';
+    if (space.type === 'trade') return 'Trade here';
     if (space.type === 'start') return 'Collect mangoes';
     return 'Corner';
   }
@@ -350,6 +355,13 @@
       .map(([key, resource]) => `<option value="${key}">${resource.icon} ${resource.label}</option>`).join('');
   }
 
+  function syncTradePartnerForSpace(space) {
+    if (!space?.offers?.length) return;
+    const preferred = state.players.slice(1).find((player) => space.offers.some((resource) => (player.inventory[resource] || 0) > 0));
+    if (preferred) $('[data-trader-b]').value = preferred.id;
+    syncTradeResourceAvailability();
+  }
+
   function syncTradeResourceAvailability() {
     const a = human();
     const b = state.players.find((player) => player.id === $('[data-trader-b]').value) || state.players[1];
@@ -374,6 +386,8 @@
     $('[data-round]').textContent = state.round;
     $('[data-failed-trades]').textContent = state.failedTrades;
     $('[data-successful-trades]').textContent = state.successfulTrades;
+    const attempts = $('[data-trade-attempts]');
+    if (attempts) attempts.textContent = state.tradeAttempts;
   }
 
   function setCard(title, copy, danger) {

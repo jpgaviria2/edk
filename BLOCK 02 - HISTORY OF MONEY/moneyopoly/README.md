@@ -11,7 +11,9 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - 4 player roles: Mango Farmer, Cattle Herder, Water Keeper, Builder
 - 4 resources: mangoes, cows, water, shelter
 - 12 rounds
-- Every 3 rounds, an event changes the market
+- Every board space is a trading destination
+- Players start with a balance of goods instead of gaining/losing goods every roll
+- Every 3 trade attempts, an event changes the market
 - Direct barter only
 - Failed trades are counted as the main learning signal
 - End-game debrief introduces double coincidence of wants and the reason money emerges

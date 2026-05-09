@@ -10,7 +10,7 @@ Learners should be able to explain the concept by doing something practical, not
 
 ## Practical game/app
 
-Moneyopoly website-first game. Prototype 1 is a playable barter survival market with mangoes, cows, water, shelter, 12 rounds, failed-trade scoring, and events every 3 rounds. Future eras: commodity money, shells, coins, paper receipts, fiat, digital bank money, Bitcoin.
+Moneyopoly website-first game. Prototype 1 is a playable barter survival market with mangoes, cows, water, shelter, starting balances, trading destinations on each board space, failed-trade scoring, and events after every 3 trade attempts. Future eras: commodity money, shells, coins, paper receipts, fiat, digital bank money, Bitcoin.
 
 ## Core interactions
 

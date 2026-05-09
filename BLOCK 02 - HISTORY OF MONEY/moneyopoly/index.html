@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0c6f3d" />
   <title>Moneyopoly · Barter Edition</title>
   <link rel="stylesheet" href="../../assets/edk.css" />
-  <link rel="stylesheet" href="./moneyopoly.css?v=5" />
+  <link rel="stylesheet" href="./moneyopoly.css?v=6" />
 </head>
 <body>
   <main class="moneyopoly-app">
@@ -24,11 +24,11 @@
           <span class="eyebrow">You are playing as</span>
           <div class="avatar-token">🥭</div>
           <h1>Maya the Mango Farmer</h1>
-          <p>Your farm has mangoes, but you still need water and shelter to survive the market.</p>
+          <p>You start with mangoes to trade. Visit farms, builders, rivers, and herders to negotiate for what you need.</p>
         </div>
 
         <div class="monopoly-card inventory-card">
-          <div class="card-title-row"><h2>Your goods</h2><span class="round-badge">Round <b data-round>0</b>/12</span></div>
+          <div class="card-title-row"><h2>Your goods</h2><span class="round-badge">Turn <b data-round>0</b></span></div>
           <div class="inventory money-inventory" data-human-inventory></div>
           <div class="needs" data-human-needs></div>
         </div>
@@ -41,7 +41,7 @@
           </div>
           <button class="roll-button" data-action="next-round">Roll dice</button>
           <button class="btn green" data-action="suggest-trade">Ask the market for a trade</button>
-          <p class="turn-copy" data-turn-copy>Roll to move around the market board.</p>
+          <p class="turn-copy" data-turn-copy>Roll to visit the next trader.</p>
         </div>
       </aside>
 
@@ -50,8 +50,9 @@
           <div class="board-center">
             <span class="eyebrow">Barter edition</span>
             <h2>Survive without money</h2>
-            <p>Move, collect goods, barter with neighbours, and feel why a common money emerges.</p>
+            <p>Move from trader to trader. Every space is a deal opportunity. Every 3 trades, the market changes.</p>
             <div class="score-strip">
+              <span>Trade attempts <b data-trade-attempts>0</b></span>
               <span>Failed trades <b data-failed-trades>0</b></span>
               <span>Successful trades <b data-successful-trades>0</b></span>
             </div>
@@ -63,20 +64,20 @@
         <div class="monopoly-card event-card" data-event-card>
           <span class="eyebrow">Market card</span>
           <h2 data-event-title>Welcome to Barter Market</h2>
-          <p data-event-copy>There is no money yet. Everyone has useful goods, but trades only work when both people want what the other offers.</p>
+          <p data-event-copy>There is no money yet. Every space is a trader. You can only barter if both sides want what the other offers.</p>
         </div>
 
         <div class="monopoly-card trade-card">
           <span class="eyebrow">Barter table</span>
           <h2>Make a deal</h2>
-          <p>Offer one of your goods and ask another trader for something you need.</p>
+          <p>Offer one of your goods to the trader at your current space and ask for something you need.</p>
           <div class="solo-trade-builder">
             <label>You give <select data-give-a></select></label>
             <label>Ask <select data-trader-b></select></label>
             <label>for <select data-give-b></select></label>
             <button class="btn primary" data-action="trade">Propose trade</button>
           </div>
-          <p class="trade-feedback" data-trade-feedback>The market is open. Try to get water and shelter.</p>
+          <p class="trade-feedback" data-trade-feedback>The market is open. Land on spaces, make trades, and watch events after every 3 trades.</p>
         </div>
 
         <div class="monopoly-card neighbours-card">
@@ -106,10 +107,10 @@
         <h2>Barter Moneyopoly</h2>
         <ol class="compact-list ordered">
           <li>You play as Maya, the mango farmer.</li>
-          <li>Roll dice to move around the board and collect goods.</li>
-          <li>You need food, water, and shelter to survive.</li>
+          <li>Roll dice to visit a trader: farm, river, builder, herder, or market.</li>
+          <li>You start with a balance of goods, then try to trade into food, water, and shelter.</li>
           <li>There is no money, so every trade must be direct barter.</li>
-          <li>Every 3 rounds, an event card changes the market.</li>
+          <li>Every 3 trade attempts, an event card changes the market.</li>
           <li>If trades fail, that is the lesson: barter needs a double coincidence of wants.</li>
         </ol>
         <button class="btn primary">Got it</button>
@@ -118,7 +119,7 @@
   </main>
 
   <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=5"></script>
-  <script src="./moneyopoly.js?v=5"></script>
+  <script src="./game-data.js?v=6"></script>
+  <script src="./moneyopoly.js?v=6"></script>
 </body>
 </html>
