@@ -22,11 +22,11 @@
     renderPlayers();
     fillTradeControls();
     bindActions();
-    updateControls(false);
+    startGame();
   }
 
   function bindActions() {
-    $('[data-action="start"]').addEventListener('click', startGame);
+    $$('[data-action="start"]').forEach((button) => button.addEventListener('click', startGame));
     $('[data-action="next-round"]').addEventListener('click', nextRound);
     $('[data-action="suggest-trade"]').addEventListener('click', suggestTrade);
     $('[data-action="trade"]').addEventListener('click', attemptManualTrade);
@@ -53,11 +53,11 @@
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 2 }));
     state.lastEventIndex = -1;
     $('[data-results]').classList.add('hidden');
-    $('[data-trade-feedback]').textContent = 'Start the game to attempt trades.';
+    $('[data-trade-feedback]').textContent = 'The market is live — try a trade or press Next round.';
     $('[data-commodity-preview]').textContent = '';
     $('[data-event-banner]').classList.remove('danger');
     if (render) {
-      $('[data-event-banner]').textContent = 'Press start to set up the market.';
+      $('[data-event-banner]').textContent = 'Game is ready. Press Next round to play, or Restart game to reset the market.';
       updateControls(false);
       renderAll();
     }

@@ -34,7 +34,7 @@
         <h1>Moneyopoly: Barter Market</h1>
         <p class="lede">Play a tiny survival market before money exists. Every player has something valuable, but trade only works when wants line up.</p>
         <div class="actions">
-          <button class="btn primary" data-action="start">Start 12-round game</button>
+          <button class="btn primary" data-action="start">New game</button>
           <button class="btn green" data-action="demo">Auto-play demo</button>
           <a class="btn ghost" href="#facilitator">Facilitator notes</a>
         </div>
@@ -68,11 +68,12 @@
         <div class="track" data-track></div>
 
         <div class="event-banner" data-event-banner>
-          Press start to set up the market.
+          Game is ready. Press Next round to play, or Restart game to reset the market.
         </div>
 
         <div class="actions game-actions">
           <button class="btn primary" data-action="next-round" disabled>Next round</button>
+          <button class="btn blue" data-action="start">Restart game</button>
           <button class="btn green" data-action="suggest-trade" disabled>Suggest trade</button>
           <button class="btn ghost" data-action="reset">Reset</button>
         </div>
@@ -119,7 +120,7 @@
           <label>gives <select data-give-b></select></label>
           <button class="btn primary" data-action="trade" disabled>Attempt trade</button>
         </div>
-        <p class="trade-feedback" data-trade-feedback>Start the game to attempt trades.</p>
+        <p class="trade-feedback" data-trade-feedback>The market is live — try a trade or press Next round.</p>
       </article>
     </section>
 
