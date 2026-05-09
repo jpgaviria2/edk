@@ -22,9 +22,15 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 - Failed trades are counted as the main learning signal
 - End-game debrief introduces double coincidence of wants and the reason money emerges
 
+## Level 2 implemented
+
+- Commodity Money unlocks after a full lap / completed barter round.
+- Shells are added as basic commodity money.
+- Traders prefer shells when they are sufficient, making offers easier to execute and compare.
+
 ## Next eras
 
-1. Commodity Moneyopoly — one widely accepted good lowers trade friction
+1. Shell Moneyopoly — one widely accepted good lowers trade friction, then shell supply risk appears
 2. Shell Moneyopoly — easy money supply shock creates inflation
 3. Coin Moneyopoly — durable money plus debasement risk
 4. Paper Receipt Moneyopoly — portability plus custodian trust risk

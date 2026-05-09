@@ -4,7 +4,7 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  const baseMangoPrices = { mangoes: 1, water: 2, fish: 4, cows: 10, shelter: 20 };
+  const baseMangoPrices = { mangoes: 1, shells: 2, water: 2, fish: 4, cows: 10, shelter: 20 };
 
   const boardSpaces = [
     { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
@@ -80,7 +80,10 @@
     currentOffer: null,
     proposedOffer: null,
     marketShock: null,
-    mangoHarvest: 0
+    mangoHarvest: 0,
+    shellsEarned: 0,
+    mode: 'barter',
+    commodityUnlocked: false
   };
 
   function init() {
@@ -95,6 +98,7 @@
 
   function bindActions() {
     on('[data-action="start"]', 'click', startGame);
+    on('[data-action="start-commodity"]', 'click', startCommodityGame);
     on('[data-action="next-round"]', 'click', nextRound);
     on('[data-action="suggest-trade"]', 'click', suggestTrade);
     on('[data-action="trade"]', 'click', attemptManualTrade);
@@ -111,6 +115,8 @@
   }
 
   function startGame() {
+    state.mode = 'barter';
+    state.commodityUnlocked = false;
     state.started = true;
     state.round = 0;
     state.failedTrades = 0;
@@ -122,12 +128,42 @@
     state.proposedOffer = null;
     state.marketShock = null;
     state.mangoHarvest = 0;
+    state.shellsEarned = 0;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
+    toggleCommodityButton(false);
     setCard('Welcome to Barter Market', 'There is no money yet. Roll dice to visit traders, then barter from your starting balance into water and shelter.', false);
     setLandingAction(null);
     $('[data-turn-copy]').textContent = 'Roll dice to visit the next trader.';
+    updateControls(true);
+    renderAll();
+  }
+
+  function startCommodityGame() {
+    state.mode = 'commodity';
+    state.started = true;
+    state.round = 0;
+    state.failedTrades = 0;
+    state.successfulTrades = 0;
+    state.tradeAttempts = 0;
+    state.lastEventIndex = -1;
+    state.lastRoll = [1, 1];
+    state.currentOffer = null;
+    state.proposedOffer = null;
+    state.marketShock = null;
+    state.mangoHarvest = 0;
+    state.shellsEarned = 0;
+    state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
+    state.players.forEach((player, index) => {
+      player.inventory.shells = index === 0 ? 8 : 6;
+    });
+    $('[data-results]').classList.add('hidden');
+    $('[data-commodity-preview]').textContent = '';
+    toggleCommodityButton(false);
+    setCard('Commodity Money unlocked: Shells', 'Shells are now widely accepted. Traders prefer shells, so you can buy goods without needing the exact barter match.', false);
+    setLandingAction(null);
+    $('[data-turn-copy]').textContent = 'Level 2: roll dice and use shells as basic commodity money.';
     updateControls(true);
     renderAll();
   }
@@ -149,6 +185,13 @@
     const amount = Math.floor(Math.random() * 3) + 1;
     state.mangoHarvest = amount;
     human().inventory.mangoes = (human().inventory.mangoes || 0) + amount;
+    if (state.mode === 'commodity') {
+      const shellsEarned = Math.max(1, Math.floor(amount / 2));
+      human().inventory.shells = (human().inventory.shells || 0) + shellsEarned;
+      state.shellsEarned = shellsEarned;
+    } else {
+      state.shellsEarned = 0;
+    }
   }
 
   function rollDice() {
@@ -162,8 +205,10 @@
   function moveHuman() {
     const player = human();
     const roll = state.lastRoll[0] + state.lastRoll[1];
+    const previous = player.position;
     player.position = (player.position + roll) % boardSpaces.length;
-    $('[data-turn-copy]').textContent = `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
+    if (state.mode === 'barter' && player.position < previous) unlockCommodityMoney();
+    $('[data-turn-copy]').textContent = state.mode === 'commodity' ? `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'} and earned ${state.shellsEarned} shell${state.shellsEarned === 1 ? '' : 's'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.` : `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
   }
 
   function moveNeighbours() {
@@ -271,7 +316,7 @@
     title.textContent = `${space.icon} ${space.trader || space.name}`;
     copy.textContent = `You landed at ${space.name}. This trader makes one offer. Accept it or skip and roll again.`;
     offer.innerHTML = `<div class="deal-card">
-      <span class="eyebrow">Proposed trade</span>
+      <span class="eyebrow">${state.mode === 'commodity' ? 'Commodity money offer' : 'Proposed trade'}</span>
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
       <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then +50% crisis pricing' : ''}.</p>
@@ -293,12 +338,14 @@
     const crisis = priceMultiplier(receive);
     const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * crisis;
     const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
+    if (state.mode === 'commodity' && receive !== 'shells' && !payable.includes('shells')) payable.unshift('shells');
     const candidates = payable.map((resource) => {
       const payQty = Math.max(1, Math.round(costInMangoes / baseMangoPrices[resource]));
       const inventory = player.inventory[resource] || 0;
       return { resource, payQty, inventory, sufficient: inventory >= payQty, notAll: inventory > payQty };
     });
-    const choice = candidates.find((candidate) => candidate.sufficient && candidate.notAll)
+    const choice = (state.mode === 'commodity' ? candidates.find((candidate) => candidate.resource === 'shells' && candidate.sufficient) : null)
+      || candidates.find((candidate) => candidate.sufficient && candidate.notAll)
       || candidates.find((candidate) => candidate.sufficient)
       || candidates.find((candidate) => candidate.resource === 'mangoes')
       || candidates[0]
@@ -349,7 +396,7 @@
     player.inventory[proposal.receive] = (player.inventory[proposal.receive] || 0) + proposal.receiveQty;
     state.successfulTrades += 1;
     feedback.textContent = `Accepted: you traded ${proposal.payQty} ${label(proposal.pay)} for ${proposal.receiveQty} ${label(proposal.receive)}.`;
-    setCard('Offer accepted', 'A barter deal worked because you accepted the exact terms from this trader.', false);
+    setCard('Offer accepted', state.mode === 'commodity' ? 'Shells worked as commodity money: the trader accepted them even without needing your mangoes.' : 'A barter deal worked because you accepted the exact terms from this trader.', false);
     setLandingAction(null);
     maybeTriggerTradeEvent();
     renderAll();
@@ -432,26 +479,50 @@
     }
   }
 
+  function unlockCommodityMoney() {
+    if (state.commodityUnlocked) return;
+    state.commodityUnlocked = true;
+    toggleCommodityButton(true);
+    setCard('🐚 Commodity Money unlocked', 'You completed a full lap in barter. Next level: shells become widely accepted as basic commodity money.', false);
+    $('[data-trade-feedback]').textContent = 'New level unlocked: Play Commodity Money with shells.';
+  }
+
+  function toggleCommodityButton(show) {
+    $$('[data-action="start-commodity"]').forEach((button) => {
+      button.hidden = !show;
+      button.disabled = !show;
+    });
+  }
+
   function finishGame() {
     state.started = false;
     updateControls(false);
     const player = human();
     const missing = missingNeeds(player);
     $('[data-results]').classList.remove('hidden');
+    toggleCommodityButton(true);
     $('[data-result-summary]').textContent = missing.length === 0
-      ? `You survived with food, water, and shelter. Even then, the market recorded ${state.failedTrades} failed barter attempts.`
+      ? (state.mode === 'commodity' ? `You survived with food, water, and shelter. Shells helped complete ${state.successfulTrades} trades.` : `You survived with food, water, and shelter. Even then, the market recorded ${state.failedTrades} failed barter attempts.`)
       : `You ended short on ${missing.map(label).join(', ')}. The market recorded ${state.tradeAttempts} trade attempts, including ${state.failedTrades} failed barter attempts and ${state.successfulTrades} successful trades.`;
-    $('[data-result-lessons]').innerHTML = [
-      'Barter feels like a board game with no common scoring unit.',
-      'Useful goods are not always saleable goods.',
-      'Direct trade fails when wants do not line up.',
-      'Events after every 3 trades show why markets want a common medium of exchange.'
-    ].map((lesson) => `<li>${lesson}</li>`).join('');
-    setCard('Game complete', 'Now you have felt the problem. The next era asks: what if one good becomes accepted by everyone?', false);
+    const lessons = state.mode === 'commodity'
+      ? [
+        'Shells acted as basic commodity money.',
+        'Sellers could accept shells without needing your exact good.',
+        'Pricing in a common good makes offers easier to compare.',
+        'The next lesson can test what happens when shell supply expands.'
+      ]
+      : [
+        'Barter feels like a board game with no common scoring unit.',
+        'Useful goods are not always saleable goods.',
+        'Direct trade fails when wants do not line up.',
+        'Events after every 3 trades show why markets want a common medium of exchange.'
+      ];
+    $('[data-result-lessons]').innerHTML = lessons.map((lesson) => `<li>${lesson}</li>`).join('');
+    setCard(state.mode === 'commodity' ? 'Commodity round complete' : 'Game complete', state.mode === 'commodity' ? 'Shells made trade easier because they became broadly accepted.' : 'Now you have felt the problem. The next era asks: what if one good becomes accepted by everyone?', false);
   }
 
   function previewCommodity() {
-    $('[data-commodity-preview]').textContent = 'Commodity preview: shells become the first common money. You can accept shells even if you do not need them because everyone else accepts them too.';
+    $('[data-commodity-preview]').textContent = 'Commodity preview: shells become the first common money. Traders quote prices in shells and accept them broadly, so you do not need the exact good they personally want.';
   }
 
   function renderAll() {

@@ -4,6 +4,7 @@ window.MONEYOPOLY_DATA = {
     cows: { label: 'Cows', icon: '🐄', category: 'food' },
     water: { label: 'Water', icon: '💧', category: 'water' },
     fish: { label: 'Fish', icon: '🐟', category: 'food' },
+    shells: { label: 'Shells', icon: '🐚', category: 'money' },
     shelter: { label: 'Shelter', icon: '🏠', category: 'shelter' }
   },
   players: [
@@ -12,7 +13,7 @@ window.MONEYOPOLY_DATA = {
       name: 'Maya',
       role: 'Mango farmer',
       icon: '🥭',
-      inventory: { mangoes: 8, cows: 1, water: 1, fish: 0, shelter: 0 },
+      inventory: { mangoes: 8, cows: 1, water: 1, fish: 0, shells: 0, shelter: 0 },
       wants: ['shelter', 'water'],
       survival: { mangoes: 1, water: 1, shelter: 1 }
     },
@@ -21,7 +22,7 @@ window.MONEYOPOLY_DATA = {
       name: 'Cora',
       role: 'Cattle herder',
       icon: '🐄',
-      inventory: { mangoes: 1, cows: 7, water: 0, fish: 0, shelter: 1 },
+      inventory: { mangoes: 1, cows: 7, water: 0, fish: 0, shells: 0, shelter: 1 },
       wants: ['water', 'mangoes'],
       survival: { cows: 1, water: 1, shelter: 1 }
     },
@@ -30,7 +31,7 @@ window.MONEYOPOLY_DATA = {
       name: 'Wes',
       role: 'Water keeper',
       icon: '💧',
-      inventory: { mangoes: 1, cows: 0, water: 8, fish: 1, shelter: 0 },
+      inventory: { mangoes: 1, cows: 0, water: 8, fish: 1, shells: 0, shelter: 0 },
       wants: ['cows', 'shelter'],
       survival: { mangoes: 1, water: 1, shelter: 1 }
     },
@@ -39,7 +40,7 @@ window.MONEYOPOLY_DATA = {
       name: 'Bina',
       role: 'Builder',
       icon: '🏠',
-      inventory: { mangoes: 0, cows: 1, water: 1, fish: 0, shelter: 7 },
+      inventory: { mangoes: 0, cows: 1, water: 1, fish: 0, shells: 0, shelter: 7 },
       wants: ['mangoes', 'water'],
       survival: { cows: 1, water: 1, shelter: 1 }
     }
