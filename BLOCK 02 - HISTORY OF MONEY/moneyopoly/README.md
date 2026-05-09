@@ -25,9 +25,9 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 ## Level 2 implemented
 
 - Commodity Money unlocks after a full lap / completed barter round.
-- Shells are added as basic commodity money.
+- Shells are added as basic commodity money; accepted or skipped offers auto-roll to the next space.
 - Traders prefer shells when they are sufficient, making offers easier to execute and compare.
-- At each trade, the player can sell inventory into shells to afford the shell purchase.
+- In Commodity mode, the player can sell any available good into shells at any time by choosing the item and quantity; this exchange is separate from accepting/skipping the purchase offer.
 - Pest crisis cuts mangoes by 50%; Shell Rush crisis doubles shell-denominated prices temporarily.
 
 ## Next eras

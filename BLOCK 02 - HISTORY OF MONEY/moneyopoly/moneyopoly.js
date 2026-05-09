@@ -119,6 +119,7 @@
     });
     on('[data-trader-b]', 'change', syncTradeResourceAvailability);
     on('[data-sell-resource]', 'change', updateShellExchange);
+    on('[data-sell-quantity]', 'input', updateShellExchange);
   }
 
   function startGame() {
@@ -177,6 +178,7 @@
     $('[data-turn-copy]').textContent = 'Level 2: roll dice and use shells as basic commodity money.';
     updateControls(true);
     renderAll();
+    renderShellExchange(state.proposedOffer);
   }
 
   function nextRound() {
@@ -189,6 +191,7 @@
     resolveLandingSpace(human());
     consumeSurvivalNeeds();
     renderAll();
+    renderShellExchange(state.proposedOffer);
     if (state.round >= 15) finishGame();
   }
 
@@ -404,78 +407,71 @@
     return `${receiveQty} ${label(receive)} ≈ ${formattedPay} ${label(pay)}`;
   }
 
-  function renderShellExchange(proposal) {
+  function renderShellExchange(proposal = state.proposedOffer) {
     const box = $('[data-shell-exchange]');
     if (!box) return;
-    if (state.mode !== 'commodity' || !proposal || proposal.pay !== 'shells' || proposal.canAfford) {
+    if (state.mode !== 'commodity') {
       box.classList.add('hidden');
       return;
     }
     box.classList.remove('hidden');
     const select = $('[data-sell-resource]');
+    const current = select.value;
     select.innerHTML = Object.entries(human().inventory)
       .filter(([resource, amount]) => resource !== 'shells' && amount > 0)
       .map(([resource, amount]) => `<option value="${resource}">${data.resources[resource].icon} ${label(resource)} (${amount})</option>`).join('');
+    if (current && Array.from(select.options).some((option) => option.value === current)) select.value = current;
     updateShellExchange();
   }
 
   function updateShellExchange() {
-    const proposal = state.proposedOffer;
     const copy = $('[data-shell-exchange-copy]');
-    if (!proposal || !copy) return;
+    const qtyInput = $('[data-sell-quantity]');
+    if (!copy || !qtyInput) return;
     const resource = $('[data-sell-resource]')?.value;
     if (!resource) {
       copy.textContent = 'You have nothing available to sell for shells.';
       return;
     }
-    const neededShells = Math.max(0, proposal.payQty - (human().inventory.shells || 0));
-    const units = Math.ceil((neededShells * baseMangoPrices.shells) / baseMangoPrices[resource]);
-    const shellsRaised = Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells);
-    copy.textContent = `Sell ${units} ${label(resource)} for about ${shellsRaised} Shells, then buy ${proposal.receiveQty} ${label(proposal.receive)} for ${proposal.payQty} Shells.`;
+    const max = human().inventory[resource] || 0;
+    qtyInput.max = String(max);
+    let units = Math.max(1, Math.floor(Number(qtyInput.value) || 1));
+    if (units > max) units = max;
+    qtyInput.value = String(units);
+    const shellsRaised = shellsFor(resource, units);
+    const proposal = state.proposedOffer;
+    const extra = proposal?.pay === 'shells'
+      ? ` Current offer costs ${proposal.payQty} Shells; you have ${human().inventory.shells || 0}.`
+      : '';
+    copy.textContent = `Sell ${units} ${label(resource)} for ${shellsRaised} Shells.${extra}`;
+  }
+
+  function shellsFor(resource, units) {
+    return Math.max(1, Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells));
   }
 
   function sellForShells() {
-    const proposal = state.proposedOffer;
     const resource = $('[data-sell-resource]')?.value;
-    if (!proposal || !resource) return;
-    const neededShells = Math.max(0, proposal.payQty - (human().inventory.shells || 0));
-    const units = Math.ceil((neededShells * baseMangoPrices.shells) / baseMangoPrices[resource]);
-    if ((human().inventory[resource] || 0) < units) {
-      $('[data-trade-feedback]').textContent = `You do not have enough ${label(resource)} to raise the needed shells.`;
+    const qtyInput = $('[data-sell-quantity]');
+    if (!resource || !qtyInput) return;
+    const max = human().inventory[resource] || 0;
+    const units = Math.max(1, Math.min(max, Math.floor(Number(qtyInput.value) || 1)));
+    if (!max || units > max) {
+      $('[data-trade-feedback]').textContent = `You do not have enough ${label(resource)} to sell.`;
       return;
     }
-    const shellsRaised = Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells);
+    const shellsRaised = shellsFor(resource, units);
     human().inventory[resource] -= units;
     human().inventory.shells = (human().inventory.shells || 0) + shellsRaised;
-    state.proposedOffer.canAfford = (human().inventory.shells || 0) >= proposal.payQty;
-    const canAffordNow = state.proposedOffer.canAfford;
-    $('[data-trade-feedback]').textContent = canAffordNow
-      ? `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. You now have enough shells — accept the current offer.`
-      : `Sold ${units} ${label(resource)} for ${shellsRaised} Shells, but you still need more shells for this offer.`;
-    const accept = $('[data-action="accept-offer"]');
-    accept.disabled = !canAffordNow;
-    accept.removeAttribute('disabled');
-    if (!canAffordNow) accept.disabled = true;
+    if (state.proposedOffer?.pay === 'shells') {
+      state.proposedOffer.canAfford = (human().inventory.shells || 0) >= state.proposedOffer.payQty;
+      $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
+      refreshAffordabilityLine(state.proposedOffer);
+    }
+    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. This was just a money exchange, not the purchase.`;
     renderHumanPanel();
     syncTradeResourceAvailability();
-    refreshAffordabilityLine(state.proposedOffer);
-    const box = $('[data-shell-exchange]');
-    const copy = $('[data-shell-exchange-copy]');
-    if (box && copy) {
-      box.classList.remove('hidden');
-      copy.textContent = canAffordNow
-        ? `Ready: you have ${human().inventory.shells || 0} Shells and this offer costs ${proposal.payQty} Shells. Press Accept offer to complete the purchase.`
-        : copy.textContent;
-    }
-  }
-
-  function refreshAffordabilityLine(proposal) {
-    const line = document.querySelector('.cannot-afford-line, .afford-line');
-    if (!line || !proposal) return;
-    line.className = proposal.canAfford ? 'afford-line' : 'cannot-afford-line';
-    line.textContent = proposal.canAfford
-      ? 'You can afford this trade now.'
-      : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`;
+    renderShellExchange(state.proposedOffer);
   }
 
   function acceptOffer() {
@@ -498,6 +494,7 @@
     setLandingAction(null);
     maybeTriggerTradeEvent();
     renderAll();
+    scheduleAutoRoll();
   }
 
   function tradeHere() {
@@ -511,9 +508,20 @@
   }
 
   function skipTrade() {
-    $('[data-trade-feedback]').textContent = 'You skipped this trade. Roll again when ready.';
-    setCard('Trade skipped', 'Sometimes the best barter move is no deal. Without money, waiting for the right counterparty matters.', false);
+    $('[data-trade-feedback]').textContent = 'You skipped this trade. Rolling to the next trader...';
+    setCard('Trade skipped', state.mode === 'commodity' ? 'No deal. Shells stay in your wallet and you move to the next offer.' : 'Sometimes the best barter move is no deal. Waiting for the right counterparty matters.', false);
     setLandingAction(null);
+    scheduleAutoRoll();
+  }
+
+  function scheduleAutoRoll() {
+    if (!state.started || state.round >= 15) return;
+    updateControls(false);
+    window.setTimeout(() => {
+      if (!state.started) return;
+      updateControls(true);
+      nextRound();
+    }, 650);
   }
 
   function attemptManualTrade() {

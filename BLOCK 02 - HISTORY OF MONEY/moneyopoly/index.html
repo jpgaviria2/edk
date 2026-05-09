@@ -74,9 +74,10 @@
           <p data-landing-copy>Roll dice to arrive at a trader. When you land somewhere, you can trade there or skip.</p>
           <div class="landing-offer" data-landing-offer></div>
           <div class="shell-exchange hidden" data-shell-exchange>
-            <span class="eyebrow">Need shells?</span>
-            <label>Sell for shells <select data-sell-resource></select></label>
-            <button class="btn green" data-action="sell-for-shells">Sell enough for this purchase</button>
+            <span class="eyebrow">Money changer</span>
+            <label>Sell item <select data-sell-resource></select></label>
+            <label>Quantity <input type="number" min="1" step="1" value="1" data-sell-quantity /></label>
+            <button class="btn green" data-action="sell-for-shells">Sell for shells</button>
             <p data-shell-exchange-copy></p>
           </div>
           <div class="offer-actions">
@@ -136,7 +137,7 @@
   </main>
 
   <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=17"></script>
-  <script src="./moneyopoly.js?v=17"></script>
+  <script src="./game-data.js?v=18"></script>
+  <script src="./moneyopoly.js?v=18"></script>
 </body>
 </html>
