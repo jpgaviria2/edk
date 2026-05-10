@@ -160,7 +160,7 @@
     on('[data-action="trade"]', 'click', attemptManualTrade);
     on('[data-action="trade-here"]', 'click', tradeHere);
     on('[data-action="accept-offer"]', 'click', acceptOffer);
-    on('[data-action="sell-for-shells"]', 'click', sellForShells);
+    on('[data-action="sell-for-shells"]', 'click', sellForMoney);
     on('[data-action="skip-trade"]', 'click', skipTrade);
     on('[data-action="preview-commodity"]', 'click', previewCommodity);
     on('[data-action="open-rules"]', 'click', () => {
@@ -615,18 +615,27 @@
     return `${receiveQty} ${label(receive)} ≈ ${formattedPay} ${label(pay)}`;
   }
 
+  function currentMoneyResource() {
+    return eraProfiles[state.mode]?.money || null;
+  }
+
   function renderShellExchange(proposal = state.proposedOffer) {
     const box = $('[data-shell-exchange]');
     if (!box) return;
-    if (state.mode !== 'commodity') {
+    const targetMoney = currentMoneyResource();
+    if (!targetMoney) {
       box.classList.add('hidden');
       return;
     }
     box.classList.remove('hidden');
+    const heading = box.querySelector('.eyebrow');
+    const button = $('[data-action="sell-for-shells"]');
+    if (heading) heading.textContent = `${label(targetMoney)} changer`;
+    if (button) button.textContent = `Sell for ${label(targetMoney)}`;
     const select = $('[data-sell-resource]');
     const current = select.value;
     select.innerHTML = Object.entries(human().inventory)
-      .filter(([resource, amount]) => resource !== 'shells' && amount > 0)
+      .filter(([resource, amount]) => resource !== targetMoney && amount > 0 && baseMangoPrices[resource])
       .map(([resource, amount]) => `<option value="${resource}">${data.resources[resource].icon} ${label(resource)} (${amount})</option>`).join('');
     if (current && Array.from(select.options).some((option) => option.value === current)) select.value = current;
     updateShellExchange();
@@ -635,10 +644,11 @@
   function updateShellExchange() {
     const copy = $('[data-shell-exchange-copy]');
     const qtyInput = $('[data-sell-quantity]');
-    if (!copy || !qtyInput) return;
+    const targetMoney = currentMoneyResource();
+    if (!copy || !qtyInput || !targetMoney) return;
     const resource = $('[data-sell-resource]')?.value;
     if (!resource) {
-      copy.textContent = 'You have nothing available to sell for shells.';
+      copy.textContent = `You have nothing available to sell for ${label(targetMoney)}.`;
       return;
     }
     const max = human().inventory[resource] || 0;
@@ -646,37 +656,47 @@
     let units = Math.max(1, Math.floor(Number(qtyInput.value) || 1));
     if (units > max) units = max;
     qtyInput.value = String(units);
-    const shellsRaised = shellsFor(resource, units);
+    const moneyRaised = moneyFor(resource, units, targetMoney);
     const proposal = state.proposedOffer;
-    const extra = proposal?.pay === 'shells'
-      ? ` Current offer costs ${proposal.payQty} Shells; you have ${human().inventory.shells || 0}.`
+    const extra = proposal?.pay === targetMoney
+      ? ` Current offer costs ${proposal.payQty} ${label(targetMoney)}; you have ${human().inventory[targetMoney] || 0}.`
       : '';
-    copy.textContent = `Sell ${units} ${label(resource)} for ${shellsRaised} Shells. This is separate from the landing offer.${extra}`;
+    const unavailable = moneyRaised <= 0 ? ` This is not enough value for 1 ${label(targetMoney)} yet — sell a larger bundle.` : '';
+    copy.textContent = `Sell ${units} ${label(resource)} for ${moneyRaised} ${label(targetMoney)}. This is separate from the landing offer.${extra}${unavailable}`;
   }
 
-  function shellsFor(resource, units) {
-    return Math.max(1, Math.round((units * baseMangoPrices[resource]) / baseMangoPrices.shells));
+  function moneyFor(resource, units, targetMoney) {
+    const valueInMangoes = units * baseMangoPrices[resource];
+    const raw = valueInMangoes / baseMangoPrices[targetMoney];
+    if (targetMoney === 'sats') return Math.max(100, Math.round(raw / 100) * 100);
+    if (targetMoney === 'gold') return Math.max(0.1, Math.round(raw * 10) / 10);
+    return Math.max(1, Math.round(raw));
   }
 
-  function sellForShells() {
+  function sellForMoney() {
+    const targetMoney = currentMoneyResource();
     const resource = $('[data-sell-resource]')?.value;
     const qtyInput = $('[data-sell-quantity]');
-    if (!resource || !qtyInput) return;
+    if (!targetMoney || !resource || !qtyInput) return;
     const max = human().inventory[resource] || 0;
     const units = Math.max(1, Math.min(max, Math.floor(Number(qtyInput.value) || 1)));
     if (!max || units > max) {
       $('[data-trade-feedback]').textContent = `You do not have enough ${label(resource)} to sell.`;
       return;
     }
-    const shellsRaised = shellsFor(resource, units);
+    const moneyRaised = moneyFor(resource, units, targetMoney);
+    if (moneyRaised <= 0) {
+      $('[data-trade-feedback]').textContent = `That bundle is not valuable enough for 1 ${label(targetMoney)}. Sell more goods or choose a higher-value item.`;
+      return;
+    }
     human().inventory[resource] -= units;
-    human().inventory.shells = (human().inventory.shells || 0) + shellsRaised;
-    if (state.proposedOffer?.pay === 'shells') {
-      state.proposedOffer.canAfford = (human().inventory.shells || 0) >= state.proposedOffer.payQty;
+    human().inventory[targetMoney] = (human().inventory[targetMoney] || 0) + moneyRaised;
+    if (state.proposedOffer?.pay === targetMoney) {
+      state.proposedOffer.canAfford = (human().inventory[targetMoney] || 0) >= state.proposedOffer.payQty;
       $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
       refreshAffordabilityLine(state.proposedOffer);
     }
-    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${shellsRaised} Shells. This was just a money exchange, not the purchase.`;
+    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${moneyRaised} ${label(targetMoney)}. This was just a money exchange, not the purchase.`;
     renderHumanPanel();
     syncTradeResourceAvailability();
     renderShellExchange(state.proposedOffer);
