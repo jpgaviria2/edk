@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="../../assets/edk.css?v=1" />
   <link rel="stylesheet" href="./moneyopoly.css?v=17" />
 </head>
-<body>
+<body><a class="global-home-button" href="/" aria-label="Home" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(33,60,36,.35);background:rgba(255,250,240,.94);color:#172016;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px)">⌂ Home</a>
   <main class="moneyopoly-app">
     <header class="money-topbar">
       <a class="money-brand" href="../"><span class="money-logo">M</span><span>Moneyopoly</span></a>
@@ -195,7 +195,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=5').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=6').catch(() => {});
       });
     }
   </script>
