@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/assets/icons/history-money-icon.svg" />
   <title>Moneyopoly · History of Money</title>
   <link rel="stylesheet" href="../../assets/edk.css?v=1" />
-  <link rel="stylesheet" href="./moneyopoly.css?v=14" />
+  <link rel="stylesheet" href="./moneyopoly.css?v=15" />
 </head>
 <body>
   <main class="moneyopoly-app">
@@ -25,6 +25,8 @@
       </div>
       <div class="money-top-actions">
         <button class="btn ghost" data-action="open-rules">Instructions</button>
+        <button class="btn ghost" data-action="open-comparison">Compare Eras</button>
+        <button class="btn ghost" data-action="open-facilitator">Teacher Mode</button>
         <button class="btn blue" data-action="start">Play Barter</button>
         <button class="btn green" data-action="start-commodity">Play Commodity Money</button>
         <button class="btn gold" data-action="start-gold">Play Gold Money</button>
@@ -126,7 +128,10 @@
         <div class="actions">
           <button class="btn primary" data-action="start">Play barter again</button>
           <button class="btn green" data-action="start-commodity">Play Commodity Money</button>
-          <button class="btn ghost" data-action="preview-commodity">Preview Commodity Moneyopoly</button>
+          <button class="btn gold" data-action="start-gold">Play Gold Money</button>
+          <button class="btn paper" data-action="start-fiat">Play Fiat Money</button>
+          <button class="btn bitcoin" data-action="start-bitcoin">Play Bitcoin Money</button>
+          <button class="btn ghost" data-action="open-comparison">Compare Eras</button>
         </div>
         <p class="trade-feedback" data-commodity-preview></p>
       </article>
@@ -145,19 +150,52 @@
           <li><strong>Bitcoin / Digital Electronic Money:</strong> events still happen, but the money itself cannot be printed away or destroyed by a local ruler.</li>
         </ol>
         <p>Every 3 rounds there is a crisis or event, like in real life. The question is: can this form of money survive environmental events such as earthquakes and fires, political events such as dictatorships or leader seizure, economic downturns, and money printing?</p>
+        <p>The scorecard checks the same questions every time: survival, failed trades, purchasing power, debasement, seizure/freeze risk, and how easy the money was to carry, divide, and use.</p>
         <p>The Bitcoin board is designed to show the hardest-money idea: earthquakes, fires, politics, and downturns can still hurt people and markets, but Bitcoin itself is not debased by money printing.</p>
         <button class="btn primary">Got it</button>
+      </form>
+    </dialog>
+
+    <dialog class="rules-modal" data-comparison-modal>
+      <form method="dialog" class="monopoly-card rules-card wide-card">
+        <span class="eyebrow">Final comparison</span>
+        <h2>Same needs, same crises, different money</h2>
+        <p>Each board asks Maya to secure food, water, and shelter. The difference is the money system: barter matching, commodity acceptance, gold hardness, fiat trust, or Bitcoin self-custody.</p>
+        <div data-comparison-cards></div>
+        <button class="btn primary">Close</button>
+      </form>
+    </dialog>
+
+    <dialog class="rules-modal" data-facilitator-modal>
+      <form method="dialog" class="monopoly-card rules-card wide-card">
+        <span class="eyebrow">Teacher / facilitator mode</span>
+        <h2>Run-of-show</h2>
+        <ol class="compact-list ordered">
+          <li>Start with Barter: ask why good goods are not always good money.</li>
+          <li>Move to Commodity Money: ask what changed when sellers accepted shells.</li>
+          <li>Play Gold: ask why scarcity/durability helped saving, then discuss weight and confiscation.</li>
+          <li>Play Fiat: ask how stimulus can feel good first and then raise prices.</li>
+          <li>Play Bitcoin: ask what problems fixed supply solves and what responsibilities self-custody adds.</li>
+        </ol>
+        <h3>Discussion prompts</h3>
+        <ul class="compact-list">
+          <li>Which board made it easiest to get essentials?</li>
+          <li>Which money held purchasing power through crises?</li>
+          <li>Who could change, seize, freeze, or debase the money?</li>
+          <li>Was the money easy to carry, divide, verify, and use?</li>
+        </ul>
+        <button class="btn primary">Close</button>
       </form>
     </dialog>
   </main>
 
   <script src="../../assets/edk.js?v=1"></script>
-  <script src="./game-data.js?v=20"></script>
-  <script src="./moneyopoly.js?v=21"></script>
+  <script src="./game-data.js?v=21"></script>
+  <script src="./moneyopoly.js?v=22"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=2').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=3').catch(() => {});
       });
     }
   </script>

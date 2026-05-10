@@ -4,7 +4,8 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  const baseMangoPrices = { mangoes: 1, shells: 0.5, water: 2, fish: 4, cows: 10, shelter: 20 };
+  const baseMangoPrices = { mangoes: 1, shells: 0.5, gold: 25, dollars: 1, sats: 0.002, water: 2, fish: 4, cows: 10, shelter: 20 };
+  const moneyResources = ['shells', 'gold', 'dollars', 'sats'];
 
   const boardSpaces = [
     { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
@@ -51,36 +52,41 @@
 
 
 
-  const eraScaffolds = {
+  const eraProfiles = {
+    barter: {
+      name: 'Barter', money: null, purchasingPower: 'No unit', debasement: 'No money to debase', seizure: 'Goods can be stolen', portability: 1,
+      lesson: 'Direct barter requires a double coincidence of wants. Same survival needs, hardest matching problem.'
+    },
+    commodity: {
+      name: 'Commodity Money', money: 'shells', purchasingPower: 'Usually helpful, but supply shocks can dilute shells', debasement: 'Possible if more shells flood in', seizure: 'Physical shells can be taken', portability: 3,
+      lesson: 'Shells improve trade because many people accept one common good, but commodity money can still be diluted or damaged.'
+    },
     gold: {
       modeLabel: 'Hard commodity money edition',
       title: 'Gold becomes hard money',
       copy: 'Gold is scarce, durable, divisible, and hard to produce. This era asks why people moved from everyday commodities into harder savings money.',
       cardTitle: 'Gold Money: hard commodity money',
-      cardCopy: 'Gold does not rot like food or flood in like shells. The next mechanics will test how hard commodity money handles crises, transport, and seizure risk.',
-      landingTitle: 'Gold board scaffold',
-      landingCopy: 'Detailed gold mechanics come next. For now, study where gold sits in history: a harder commodity money used to save and compare prices.',
-      feedback: 'Gold placeholder active: future turns will compare scarcity, durability, portability, and political seizure risk.'
+      cardCopy: 'Gold coins are scarce and durable, so they store value better than food or shells. Now test the physical tradeoffs: weight, clipping, theft, and confiscation.',
+      money: 'gold', startingMoney: 3, purchasingPower: 'Strong unless coins are clipped', debasement: 'Coin clipping lowers trust', seizure: 'Physical confiscation/theft risk', portability: 3,
+      lesson: 'Gold is hard commodity money: scarce and durable, but heavy to move and vulnerable to physical seizure.'
     },
     fiat: {
       modeLabel: 'Fiat / paper money edition',
       title: 'Paper claims and government money',
       copy: 'Fiat money is useful and familiar, but its rules depend on institutions. This era introduces banking, leaders, controls, and money printing.',
       cardTitle: 'Fiat Money: paper promises',
-      cardCopy: 'Paper money can move quickly, but the supply can be expanded. Future mechanics will test inflation, freezes, political seizure, and downturns.',
-      landingTitle: 'Fiat board scaffold',
-      landingCopy: 'Detailed fiat mechanics come next. For now, this board marks the era where money becomes paper, policy, and trust in an issuer.',
-      feedback: 'Fiat placeholder active: future events will ask what happens when leaders seize accounts or print more money.'
+      cardCopy: 'Dollars are convenient legal tender, but they are trust-based. Printing, bank busts, inflation, and account freezes change the game.',
+      money: 'dollars', startingMoney: 40, purchasingPower: 'Falls when supply expands', debasement: 'Money printing raises prices', seizure: 'Accounts can freeze or debank', portability: 5,
+      lesson: 'Fiat makes payment easy, but purchasing power depends on policy and trust in institutions.'
     },
     bitcoin: {
       modeLabel: 'Bitcoin / digital electronic money edition',
       title: 'Digital money with a fixed supply',
       copy: 'Bitcoin is digital electronic money with a hard cap. Crises can still happen around people, but the money itself is not printed or locally debased.',
       cardTitle: 'Bitcoin Money: hardest digital money',
-      cardCopy: 'Earthquakes, fires, dictators, recessions, and politics can still affect life. The lesson is that Bitcoin itself cannot be inflated by emergency money printing.',
-      landingTitle: 'Bitcoin board scaffold',
-      landingCopy: 'Detailed Bitcoin mechanics come next. For now, compare it with earlier money: the network survives events without a ruler changing the supply.',
-      feedback: 'Bitcoin placeholder active: events still happen, but Bitcoin money itself is not debased or destroyed by those events.'
+      cardCopy: 'Sats move digitally and the supply cannot be inflated. Self-custody protects against freezes, but losing your seed means losing access.',
+      money: 'sats', startingMoney: 30000, purchasingPower: 'Supply cannot be printed away', debasement: 'No money-printing debasement', seizure: 'Self-custody resists freeze; careless custody can lose funds', portability: 5,
+      lesson: 'Bitcoin is sound digital money: crises hit goods and people, not the monetary supply. Responsibility shifts to key custody.'
     }
   };
 
@@ -123,7 +129,14 @@
     mangoHarvest: 0,
     shellsEarned: 0,
     mode: 'barter',
-    commodityUnlocked: false
+    commodityUnlocked: false,
+    purchasingPower: 100,
+    debasementEvents: 0,
+    seizureEvents: 0,
+    portabilityHits: 0,
+    freezeTurns: 0,
+    seedProtected: true,
+    accessLost: false
   };
 
   function init() {
@@ -139,9 +152,9 @@
   function bindActions() {
     on('[data-action="start"]', 'click', startGame);
     on('[data-action="start-commodity"]', 'click', startCommodityGame);
-    on('[data-action="start-gold"]', 'click', () => startEraScaffold('gold'));
-    on('[data-action="start-fiat"]', 'click', () => startEraScaffold('fiat'));
-    on('[data-action="start-bitcoin"]', 'click', () => startEraScaffold('bitcoin'));
+    on('[data-action="start-gold"]', 'click', () => startMoneyEra('gold'));
+    on('[data-action="start-fiat"]', 'click', () => startMoneyEra('fiat'));
+    on('[data-action="start-bitcoin"]', 'click', () => startMoneyEra('bitcoin'));
     on('[data-action="next-round"]', 'click', nextRound);
     on('[data-action="suggest-trade"]', 'click', suggestTrade);
     on('[data-action="trade"]', 'click', attemptManualTrade);
@@ -155,9 +168,32 @@
       if (modal?.showModal) modal.showModal();
       else alert('Roll dice to move. Collect goods. Barter for water and shelter. Every 3 rounds, an event changes the market.');
     });
+    on('[data-action="open-comparison"]', 'click', openComparison);
+    on('[data-action="open-facilitator"]', 'click', openFacilitator);
     on('[data-trader-b]', 'change', syncTradeResourceAvailability);
     on('[data-sell-resource]', 'change', updateShellExchange);
     on('[data-sell-quantity]', 'input', updateShellExchange);
+  }
+
+
+  function openComparison() {
+    const target = $('[data-comparison-cards]');
+    if (target) target.innerHTML = `<div class="comparison-grid standalone">${Object.entries(eraProfiles).map(([key, profile]) => `
+      <article class="comparison-card ${key === state.mode ? 'active' : ''}">
+        <h3>${profile.name}</h3>
+        <p><b>Purchasing power:</b> ${profile.purchasingPower}</p>
+        <p><b>Debasement:</b> ${profile.debasement}</p>
+        <p><b>Seize/freeze:</b> ${profile.seizure}</p>
+        <p><b>Carry/divide/use:</b> ${profile.portability}/5</p>
+        <p>${profile.lesson}</p>
+      </article>`).join('')}</div>`;
+    const modal = $('[data-comparison-modal]');
+    if (modal?.showModal) modal.showModal();
+  }
+
+  function openFacilitator() {
+    const modal = $('[data-facilitator-modal]');
+    if (modal?.showModal) modal.showModal();
   }
 
   function startGame() {
@@ -176,6 +212,13 @@
     state.shellInflation = null;
     state.mangoHarvest = 0;
     state.shellsEarned = 0;
+    state.purchasingPower = 100;
+    state.debasementEvents = 0;
+    state.seizureEvents = 0;
+    state.portabilityHits = 0;
+    state.freezeTurns = 0;
+    state.seedProtected = true;
+    state.accessLost = false;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
@@ -203,6 +246,13 @@
     state.shellInflation = null;
     state.mangoHarvest = 0;
     state.shellsEarned = 0;
+    state.purchasingPower = 100;
+    state.debasementEvents = 0;
+    state.seizureEvents = 0;
+    state.portabilityHits = 0;
+    state.freezeTurns = 0;
+    state.seedProtected = true;
+    state.accessLost = false;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     state.players.forEach((player, index) => {
       player.inventory.shells = index === 0 ? 8 : 6;
@@ -220,11 +270,11 @@
   }
 
 
-  function startEraScaffold(era) {
-    const info = eraScaffolds[era];
+  function startMoneyEra(era) {
+    const info = eraProfiles[era];
     if (!info) return;
     state.mode = era;
-    state.started = false;
+    state.started = true;
     state.round = 0;
     state.failedTrades = 0;
     state.successfulTrades = 0;
@@ -237,27 +287,28 @@
     state.shellInflation = null;
     state.mangoHarvest = 0;
     state.shellsEarned = 0;
+    state.purchasingPower = 100;
+    state.debasementEvents = 0;
+    state.seizureEvents = 0;
+    state.portabilityHits = 0;
+    state.freezeTurns = 0;
+    state.seedProtected = era === 'bitcoin';
+    state.accessLost = false;
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
+    state.players.forEach((player, index) => {
+      moneyResources.forEach((resource) => { player.inventory[resource] = 0; });
+      if (info.money) player.inventory[info.money] = index === 0 ? info.startingMoney : Math.max(1, Math.round(info.startingMoney * 0.6));
+    });
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
+    toggleCommodityButton(true);
     updateBoardDescription();
-    setCard(info.cardTitle, info.cardCopy, era === 'fiat');
-    setScaffoldLanding(info);
-    $('[data-turn-copy]').textContent = info.feedback;
+    setCard(info.cardTitle, info.cardCopy, false);
+    setLandingAction(null);
+    $('[data-turn-copy]').textContent = `${info.name}: roll dice, buy essentials with ${label(info.money)}, and watch how this money handles crises.`;
+    updateControls(true);
     renderAll();
     renderShellExchange(null);
-    updateControls(false);
-  }
-
-  function setScaffoldLanding(info) {
-    state.currentOffer = null;
-    state.proposedOffer = null;
-    $('[data-landing-title]').textContent = info.landingTitle;
-    $('[data-landing-copy]').textContent = info.landingCopy;
-    $('[data-landing-offer]').innerHTML = '<span class="offer-chip muted">Mechanics scaffold: no trading actions on this board yet</span>';
-    $('[data-trade-feedback]').textContent = info.feedback;
-    $('[data-action="accept-offer"]').disabled = true;
-    $('[data-action="skip-trade"]').disabled = true;
   }
 
   function nextRound() {
@@ -282,6 +333,11 @@
       const shellsEarned = Math.max(1, Math.floor(amount / 2));
       human().inventory.shells = (human().inventory.shells || 0) + shellsEarned;
       state.shellsEarned = shellsEarned;
+    } else if (state.mode === 'fiat') {
+      human().inventory.dollars = (human().inventory.dollars || 0) + 2;
+      state.shellsEarned = 0;
+    } else if (state.mode === 'bitcoin') {
+      state.shellsEarned = 0;
     } else {
       state.shellsEarned = 0;
     }
@@ -301,7 +357,8 @@
     const previous = player.position;
     player.position = (player.position + roll) % boardSpaces.length;
     if (state.mode === 'barter' && player.position < previous) unlockCommodityMoney();
-    $('[data-turn-copy]').textContent = state.mode === 'commodity' ? `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'} and earned ${state.shellsEarned} shell${state.shellsEarned === 1 ? '' : 's'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.` : `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
+    const moneyNote = state.mode === 'commodity' ? ` and earned ${state.shellsEarned} shell${state.shellsEarned === 1 ? '' : 's'}` : state.mode === 'fiat' ? ' and received 2 new dollars of income' : '';
+    $('[data-turn-copy]').textContent = `Maya harvested ${state.mangoHarvest} mango${state.mangoHarvest === 1 ? '' : 'es'}${moneyNote}. You rolled ${roll} and landed on ${boardSpaces[player.position].name}.`;
   }
 
   function moveNeighbours() {
@@ -362,6 +419,12 @@
   function triggerEvent(reason = 'trade') {
     state.lastEventIndex = (state.lastEventIndex + 1) % crisisEvents.length;
     const event = crisisEvents[state.lastEventIndex];
+    const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
+
+    if (state.mode === 'gold') return triggerGoldEvent(event, reasonText);
+    if (state.mode === 'fiat') return triggerFiatEvent(event, reasonText);
+    if (state.mode === 'bitcoin') return triggerBitcoinEvent(event, reasonText);
+
     state.marketShock = { ...event, remainingTrades: 3 };
     if (event.damage === 'mangoes') {
       human().inventory.mangoes = Math.floor((human().inventory.mangoes || 0) / 2);
@@ -369,18 +432,78 @@
     if (event.shellInflation) {
       state.shellInflation = { remainingTrades: 3, multiplier: 2 };
     }
-    const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
     setCard(`${event.icon} ${event.title}`, `${reasonText} ${event.description} ${event.shellInflation ? 'For the next 3 offers, goods priced in shells cost 2× more.' : `For the next 3 trade offers, ${label(event.scarce)} costs 50% more.`}`, true);
     $('[data-trade-feedback]').textContent = event.shellInflation ? `${event.title}: shell prices doubled for the next 3 offers.` : `${event.title}: ${label(event.scarce)} now costs 50% more for the next 3 offers.`;
   }
 
+  function triggerGoldEvent(event, reasonText) {
+    const cycle = state.tradeAttempts + state.round;
+    if (cycle % 3 === 0) {
+      state.debasementEvents += 1;
+      state.purchasingPower = Math.max(65, state.purchasingPower - 12);
+      state.marketShock = { title: 'Coin clipping', icon: '✂️', scarce: 'gold', multiplier: 1.25, remainingTrades: 3 };
+      setCard('✂️ Coin clipping', `${reasonText} Some coins are clipped. Traders now demand extra gold because trust in coin weight fell.`, true);
+      $('[data-trade-feedback]').textContent = 'Coin clipping: gold prices are 25% higher for the next 3 offers.';
+    } else {
+      state.seizureEvents += 1;
+      state.portabilityHits += 1;
+      human().inventory.gold = Math.max(0, (human().inventory.gold || 0) - 1);
+      setCard('🛡️ Road toll and theft risk', `${reasonText} Carrying wealth physically has risk. You lost 1 gold coin to a toll/confiscation attempt.`, true);
+      $('[data-trade-feedback]').textContent = 'Physical-risk event: gold stores value, but moving it invites theft or seizure.';
+    }
+  }
+
+  function triggerFiatEvent(event, reasonText) {
+    const cycle = state.tradeAttempts + state.round;
+    if (cycle % 2 === 0) {
+      const stimulus = 12;
+      human().inventory.dollars = (human().inventory.dollars || 0) + stimulus;
+      state.purchasingPower = Math.max(45, state.purchasingPower - 15);
+      state.debasementEvents += 1;
+      state.marketShock = { title: 'Money printing', icon: '🖨️', scarce: 'dollars', multiplier: 1.35, remainingTrades: 3 };
+      setCard('🖨️ Stimulus and inflation', `${reasonText} You received ${stimulus} dollars, but more money chases the same goods. Prices rise for the next 3 offers.`, true);
+      $('[data-trade-feedback]').textContent = 'Money printing: you have more dollars, but each dollar buys less.';
+    } else {
+      state.seizureEvents += 1;
+      state.freezeTurns = 1;
+      setCard('🏦 Bank freeze / debanking', `${reasonText} A bank/policy shock freezes your account for one trade. Fiat is convenient, but permissions matter.`, true);
+      $('[data-trade-feedback]').textContent = 'Freeze risk: you may need to skip or barter until the account unfreezes.';
+    }
+  }
+
+  function triggerBitcoinEvent(event, reasonText) {
+    if ((state.tradeAttempts + state.round) % 4 === 0) {
+      state.seedProtected = false;
+      setCard('🔐 Seed phrase check', `${reasonText} You got careless with self-custody. Protect your seed before the next crisis or access can be lost.`, true);
+      $('[data-trade-feedback]').textContent = 'Self-custody responsibility: your money cannot be printed, but keys matter.';
+      return;
+    }
+    if (!state.seedProtected) {
+      state.accessLost = true;
+      human().inventory.sats = Math.max(0, Math.floor((human().inventory.sats || 0) * 0.5));
+      state.seizureEvents += 1;
+      setCard('🧠 Lost access', `${reasonText} You failed the seed-phrase responsibility check and lost access to half your sats.`, true);
+      $('[data-trade-feedback]').textContent = 'Bitcoin lesson: no central freeze, but careless custody can lose funds.';
+      state.seedProtected = true;
+      return;
+    }
+    state.marketShock = { ...event, remainingTrades: 3 };
+    if (event.damage === 'mangoes') human().inventory.mangoes = Math.floor((human().inventory.mangoes || 0) / 2);
+    setCard(`${event.icon} ${event.title}`, `${reasonText} Goods are scarce, but sats were not printed or debased. Environmental crises affect markets, not the fixed money supply.`, true);
+    $('[data-trade-feedback]').textContent = `${event.title}: goods are affected; Bitcoin supply is not.`;
+  }
+
   function priceMultiplier(resource, pay = null) {
     if (pay === 'shells' && resource !== 'shells' && state.shellInflation) return state.shellInflation.multiplier;
+    if (state.mode === 'fiat' && pay === 'dollars') return Math.max(1, 100 / Math.max(35, state.purchasingPower));
+    if (state.mode === 'gold' && pay === 'gold' && state.marketShock?.scarce === 'gold') return state.marketShock.multiplier;
     return state.marketShock?.scarce === resource && !state.marketShock.shellInflation ? state.marketShock.multiplier : 1;
   }
 
   function shockLine(resource, pay = null) {
     if (pay === 'shells' && state.shellInflation) return `<p class="shock-line">🐚 Shell rush: goods priced in shells cost 2× more for ${state.shellInflation.remainingTrades} more offer${state.shellInflation.remainingTrades === 1 ? '' : 's'}.</p>`;
+    if (state.mode === 'fiat' && pay === 'dollars' && state.purchasingPower < 100) return `<p class="shock-line">🖨️ Purchasing power meter: ${state.purchasingPower}/100. Goods require more dollars now.</p>`;
+    if (state.mode === 'gold' && pay === 'gold' && state.marketShock?.scarce === 'gold') return `<p class="shock-line">✂️ Clipped coins: traders demand extra gold for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
     if (state.marketShock?.scarce !== resource || state.marketShock?.shellInflation) return '';
     return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} costs 50% more for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
   }
@@ -422,10 +545,10 @@
     title.textContent = `${space.icon} ${space.trader || space.name}`;
     copy.textContent = `You landed at ${space.name}. This trader makes one offer. Accept it or skip and roll again.`;
     offer.innerHTML = `<div class="deal-card">
-      <span class="eyebrow">${state.mode === 'commodity' ? 'Commodity money offer' : 'Proposed trade'}</span>
+      <span class="eyebrow">${eraProfiles[state.mode]?.money ? `${eraProfiles[state.mode].name} offer` : 'Proposed trade'}</span>
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
-      <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then +50% crisis pricing' : ''}.</p>
+      <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then crisis pricing' : ''}.</p>
       <p class="${proposal.canAfford ? 'afford-line' : 'cannot-afford-line'}">${proposal.canAfford ? 'You can afford this trade.' : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`}</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
       ${shockLine(proposal.receive, proposal.pay)}
@@ -443,14 +566,20 @@
     const receiveQty = proposedReceiveQty(receive);
     const discount = 0.9 + (Math.random() * 0.1); // market offers are 0–10% below base
     const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
-    if (state.mode === 'commodity' && receive !== 'shells' && !payable.includes('shells')) payable.unshift('shells');
+    const eraMoney = eraProfiles[state.mode]?.money;
+    if (eraMoney && receive !== eraMoney) {
+      const existing = payable.indexOf(eraMoney);
+      if (existing > -1) payable.splice(existing, 1);
+      payable.unshift(eraMoney);
+    }
     const candidates = payable.map((resource) => {
       const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * priceMultiplier(receive, resource);
-      const payQty = Math.max(1, Math.round(costInMangoes / baseMangoPrices[resource]));
+      const rawQty = costInMangoes / baseMangoPrices[resource];
+      const payQty = resource === 'sats' ? Math.max(100, Math.round(rawQty / 100) * 100) : Math.max(1, Math.round(rawQty));
       const inventory = player.inventory[resource] || 0;
       return { resource, payQty, inventory, sufficient: inventory >= payQty, notAll: inventory > payQty };
     });
-    const choice = (state.mode === 'commodity' ? candidates.find((candidate) => candidate.resource === 'shells') : null)
+    const choice = (eraMoney ? candidates.find((candidate) => candidate.resource === eraMoney) : null)
       || candidates.find((candidate) => candidate.sufficient && candidate.notAll)
       || candidates.find((candidate) => candidate.sufficient)
       || candidates.find((candidate) => candidate.resource === 'mangoes')
@@ -568,22 +697,50 @@
     if (!proposal) return;
     const player = human();
     const feedback = $('[data-trade-feedback]');
+    if (state.mode === 'fiat' && state.freezeTurns > 0 && proposal.pay === 'dollars') {
+      state.freezeTurns -= 1;
+      state.tradeAttempts += 1;
+      state.failedTrades += 1;
+      feedback.textContent = 'Payment failed: your fiat account was frozen for this trade.';
+      maybeTriggerTradeEvent();
+      renderAll();
+      return;
+    }
+    if (state.mode === 'bitcoin' && state.accessLost && proposal.pay === 'sats') {
+      feedback.textContent = 'Access problem: recover your custody habit by rolling through one more event, then try again.';
+      state.accessLost = false;
+      renderAll();
+      return;
+    }
     if ((player.inventory[proposal.pay] || 0) < proposal.payQty) {
       feedback.textContent = `You cannot afford this yet. Keep harvesting mangoes and save for a later trade.`;
       renderAll();
       return;
+    }
+    if (state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1) {
+      state.portabilityHits += 1;
+      feedback.textContent = 'Heavy gold trade: carrying several coins slowed the deal, but it still settled.';
     }
     state.tradeAttempts += 1;
     countShockOffer();
     player.inventory[proposal.pay] -= proposal.payQty;
     player.inventory[proposal.receive] = (player.inventory[proposal.receive] || 0) + proposal.receiveQty;
     state.successfulTrades += 1;
-    feedback.textContent = `Accepted: you traded ${proposal.payQty} ${label(proposal.pay)} for ${proposal.receiveQty} ${label(proposal.receive)}.`;
-    setCard('Offer accepted', state.mode === 'commodity' ? 'Shells worked as commodity money: the trader accepted them even without needing your mangoes.' : 'A barter deal worked because you accepted the exact terms from this trader.', false);
+    if (!(state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1)) feedback.textContent = `Accepted: you traded ${proposal.payQty} ${label(proposal.pay)} for ${proposal.receiveQty} ${label(proposal.receive)}.`;
+    setCard('Offer accepted', offerLesson(), false);
     setLandingAction(null);
     maybeTriggerTradeEvent();
     renderAll();
     scheduleAutoRoll();
+  }
+
+
+  function offerLesson() {
+    if (state.mode === 'commodity') return 'Shells worked as commodity money: the trader accepted them even without needing your mangoes.';
+    if (state.mode === 'gold') return 'Gold settled the trade because it is scarce and trusted, though physical coins create handling risk.';
+    if (state.mode === 'fiat') return 'Dollars settled quickly because the market accepts legal-tender paper, as long as accounts stay usable.';
+    if (state.mode === 'bitcoin') return 'Sats settled digitally. Lightning-style payment is fast, while self-custody keeps responsibility with you.';
+    return 'A barter deal worked because you accepted the exact terms from this trader.';
   }
 
   function tradeHere() {
@@ -698,8 +855,8 @@
       mode.textContent = 'Commodity money edition';
       title.textContent = 'Trade with shells';
       copy.textContent = 'Shells are broadly accepted. Sell goods into shells, buy what you need, and watch crises change shell prices.';
-    } else if (eraScaffolds[state.mode]) {
-      const info = eraScaffolds[state.mode];
+    } else if (['gold', 'fiat', 'bitcoin'].includes(state.mode)) {
+      const info = eraProfiles[state.mode];
       mode.textContent = info.modeLabel;
       title.textContent = info.title;
       copy.textContent = info.copy;
@@ -715,26 +872,36 @@
     updateControls(false);
     const player = human();
     const missing = missingNeeds(player);
+    const profile = eraProfiles[state.mode] || eraProfiles.barter;
+    const survived = missing.length === 0;
+    const portabilityScore = Math.max(1, (profile.portability || 2) - state.portabilityHits);
     $('[data-results]').classList.remove('hidden');
     toggleCommodityButton(true);
-    $('[data-result-summary]').textContent = missing.length === 0
-      ? (state.mode === 'commodity' ? `You survived with food, water, and shelter. Shells helped complete ${state.successfulTrades} trades.` : `You survived with food, water, and shelter. Even then, the market recorded ${state.failedTrades} failed barter attempts.`)
-      : `You ended short on ${missing.map(label).join(', ')}. The market recorded ${state.tradeAttempts} trade attempts, including ${state.failedTrades} failed barter attempts and ${state.successfulTrades} successful trades.`;
-    const lessons = state.mode === 'commodity'
-      ? [
-        'Shells acted as basic commodity money.',
-        'Sellers could accept shells without needing your exact good.',
-        'Pricing in a common good makes offers easier to compare.',
-        'The next lesson can test what happens when shell supply expands.'
-      ]
-      : [
-        'Barter feels like a board game with no common scoring unit.',
-        'Useful goods are not always saleable goods.',
-        'Direct trade fails when wants do not line up.',
-        'Events after every 3 trades show why markets want a common medium of exchange.'
-      ];
-    $('[data-result-lessons]').innerHTML = lessons.map((lesson) => `<li>${lesson}</li>`).join('');
-    setCard(state.mode === 'commodity' ? 'Commodity round complete' : 'Game complete', state.mode === 'commodity' ? 'Shells made trade easier because they became broadly accepted.' : 'Now you have felt the problem. The next era asks: what if one good becomes accepted by everyone?', false);
+    $('[data-result-summary]').textContent = survived
+      ? `You survived the ${profile.name} board with food, water, and shelter after ${state.tradeAttempts} trade attempts.`
+      : `You ended the ${profile.name} board short on ${missing.map(label).join(', ')} after ${state.tradeAttempts} trade attempts.`;
+    const lessons = [
+      `Survived: ${survived ? 'Yes' : 'No — missing ' + missing.map(label).join(', ')}`,
+      `Trades: ${state.successfulTrades} successful, ${state.failedTrades} failed`,
+      `Purchasing power: ${state.mode === 'fiat' ? state.purchasingPower + '/100' : profile.purchasingPower}`,
+      `Debasement: ${state.debasementEvents ? state.debasementEvents + ' event(s)' : profile.debasement}`,
+      `Seize/freeze risk: ${state.seizureEvents ? state.seizureEvents + ' event(s)' : profile.seizure}`,
+      `Portability / divisibility / ease of use: ${portabilityScore}/5`,
+      `Lesson: ${profile.lesson}`
+    ];
+    $('[data-result-lessons]').innerHTML = lessons.map((lesson) => `<li>${lesson}</li>`).join('') + comparisonHtml(state.mode);
+    setCard(`${profile.name} round complete`, profile.lesson, false);
+  }
+
+  function comparisonHtml(activeMode = state.mode) {
+    return `<li class="comparison-block"><strong>Same needs, different money systems</strong><div class="comparison-grid">${Object.entries(eraProfiles).map(([key, profile]) => `
+      <article class="comparison-card ${key === activeMode ? 'active' : ''}">
+        <h3>${profile.name}</h3>
+        <p><b>Purchasing power:</b> ${profile.purchasingPower}</p>
+        <p><b>Debasement:</b> ${profile.debasement}</p>
+        <p><b>Freeze/seizure:</b> ${profile.seizure}</p>
+        <p><b>Use score:</b> ${profile.portability}/5</p>
+      </article>`).join('')}</div></li>`;
   }
 
   function previewCommodity() {
