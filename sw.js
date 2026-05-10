@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v4';
+const CACHE_VERSION = 'history-money-pwa-v5';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [

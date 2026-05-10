@@ -62,6 +62,7 @@
       lesson: 'Shells improve trade because many people accept one common good, but commodity money can still be diluted or damaged.'
     },
     gold: {
+      name: 'Gold Money',
       modeLabel: 'Hard commodity money edition',
       title: 'Gold becomes hard money',
       copy: 'Gold is scarce, durable, divisible, and hard to produce. This era asks why people moved from everyday commodities into harder savings money.',
@@ -71,6 +72,7 @@
       lesson: 'Gold is hard commodity money: scarce and durable, but heavy to move and vulnerable to physical seizure.'
     },
     fiat: {
+      name: 'Fiat Money',
       modeLabel: 'Fiat / paper money edition',
       title: 'Paper claims and government money',
       copy: 'Fiat money is useful and familiar, but its rules depend on institutions. This era introduces banking, leaders, controls, and money printing.',
@@ -80,13 +82,14 @@
       lesson: 'Fiat makes payment easy, but purchasing power depends on policy and trust in institutions.'
     },
     bitcoin: {
+      name: 'Bitcoin Money',
       modeLabel: 'Bitcoin / digital electronic money edition',
       title: 'Digital money with a fixed supply',
       copy: 'Bitcoin is digital electronic money with a hard cap. Crises can still happen around people, but the money itself is not printed or locally debased.',
       cardTitle: 'Bitcoin Money: hardest digital money',
-      cardCopy: 'Sats move digitally and the supply cannot be inflated. Self-custody protects against freezes, but losing your seed means losing access.',
-      money: 'sats', startingMoney: 30000, purchasingPower: 'Supply cannot be printed away', debasement: 'No money-printing debasement', seizure: 'Self-custody resists freeze; careless custody can lose funds', portability: 5,
-      lesson: 'Bitcoin is sound digital money: crises hit goods and people, not the monetary supply. Responsibility shifts to key custody.'
+      cardCopy: 'Sats move digitally and the supply cannot be inflated. Crises can damage goods, homes, and harvests — but the sats you saved are not debased.',
+      money: 'sats', startingMoney: 30000, purchasingPower: 'Supply cannot be printed away', debasement: 'No money-printing debasement', seizure: 'Authorities may freeze property, not self-custodied sats', portability: 5,
+      lesson: 'Bitcoin is sound digital money: crises can reduce goods in hand, but sats saved for the future are not printed away or locally frozen.'
     }
   };
 
@@ -472,25 +475,37 @@
   }
 
   function triggerBitcoinEvent(event, reasonText) {
-    if ((state.tradeAttempts + state.round) % 4 === 0) {
-      state.seedProtected = false;
-      setCard('🔐 Seed phrase check', `${reasonText} You got careless with self-custody. Protect your seed before the next crisis or access can be lost.`, true);
-      $('[data-trade-feedback]').textContent = 'Self-custody responsibility: your money cannot be printed, but keys matter.';
-      return;
-    }
-    if (!state.seedProtected) {
-      state.accessLost = true;
-      human().inventory.sats = Math.max(0, Math.floor((human().inventory.sats || 0) * 0.5));
+    const player = human();
+    const cycle = (state.tradeAttempts + state.round) % 4;
+    if (cycle === 0) {
+      const before = player.inventory.shelter || 0;
+      player.inventory.shelter = Math.min(before, 1);
       state.seizureEvents += 1;
-      setCard('🧠 Lost access', `${reasonText} You failed the seed-phrase responsibility check and lost access to half your sats.`, true);
-      $('[data-trade-feedback]').textContent = 'Bitcoin lesson: no central freeze, but careless custody can lose funds.';
-      state.seedProtected = true;
+      setCard('🏛️ New housing decree', `${reasonText} A new government freezes housing assets and limits shelter to 1 per person. You lost ${Math.max(0, before - player.inventory.shelter)} shelter, but your sats were not frozen or debased.`, true);
+      $('[data-trade-feedback]').textContent = 'Bitcoin lesson: authorities can interfere with property, but self-custodied sats are still savings you can use later.';
       return;
     }
+    if (cycle === 1) {
+      const before = player.inventory.mangoes || 0;
+      player.inventory.mangoes = Math.floor(before / 2);
+      state.marketShock = { title: 'Pest outbreak', icon: '🐛', scarce: 'mangoes', multiplier: 1.5, remainingTrades: 3 };
+      setCard('🐛 Pest outbreak', `${reasonText} Mango production was cut in half. You lost ${before - player.inventory.mangoes} mangoes, but no sats were printed away. This is why saving in sats protects value beyond today’s harvest.`, true);
+      $('[data-trade-feedback]').textContent = 'Pests damaged food in hand; sats stayed intact.';
+      return;
+    }
+    if (cycle === 2) {
+      const before = player.inventory.water || 0;
+      player.inventory.water = Math.floor(before / 2);
+      state.marketShock = { title: 'Contaminated water', icon: '💧', scarce: 'water', multiplier: 1.5, remainingTrades: 3 };
+      setCard('💧 Contaminated water', `${reasonText} Half your water supply was contaminated. You lost ${before - player.inventory.water} water, but your sats still measure saved value.`, true);
+      $('[data-trade-feedback]').textContent = 'Water got reduced; sats were not debased.';
+      return;
+    }
+    const before = player.inventory.cows || 0;
+    player.inventory.cows = Math.max(0, before - 1);
     state.marketShock = { ...event, remainingTrades: 3 };
-    if (event.damage === 'mangoes') human().inventory.mangoes = Math.floor((human().inventory.mangoes || 0) / 2);
-    setCard(`${event.icon} ${event.title}`, `${reasonText} Goods are scarce, but sats were not printed or debased. Environmental crises affect markets, not the fixed money supply.`, true);
-    $('[data-trade-feedback]').textContent = `${event.title}: goods are affected; Bitcoin supply is not.`;
+    setCard(`${event.icon} ${event.title}`, `${reasonText} A real-world crisis reduced goods in hand${before ? ' — you lost 1 cow.' : '.'} Goods are scarce, but sats were not printed or locally frozen.`, true);
+    $('[data-trade-feedback]').textContent = `${event.title}: goods/assets took the hit; Bitcoin savings stayed intact.`;
   }
 
   function priceMultiplier(resource, pay = null) {
