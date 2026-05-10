@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#120b03" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Moneyopoly" />
+  <link rel="manifest" href="/manifest.webmanifest?v=1" />
+  <link rel="icon" href="/assets/icons/history-money-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/icons/history-money-icon.svg" />
   <meta name="description" content="History of Money — an interactive Bitcoin education module featuring Moneyopoly, a practical game about barter, commodity money, and trade." />
   <title>History of Money · Moneyopoly</title>
   <style>
@@ -229,6 +235,34 @@
       font-size: 1.2rem;
     }
 
+
+    .partner-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      color: rgba(255, 247, 225, 0.7);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .partner-mark {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 247, 225, 0.16);
+      background: rgba(255, 247, 225, 0.07);
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .partner-mark.foundation { border-color: rgba(247, 183, 51, 0.28); }
+    .partner-mark.mfb { border-color: rgba(53, 198, 107, 0.26); }
+    .partner-mark.edk { border-color: rgba(242, 107, 33, 0.3); }
+
     .footer {
       display: flex;
       justify-content: space-between;
@@ -275,6 +309,12 @@
           <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/">Play Moneyopoly</a>
           <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">View the lesson</a>
         </div>
+        <div class="partner-strip" aria-label="Project partners">
+          <span>In collaboration with</span>
+          <span class="partner-mark foundation">Learning Bitcoin Foundation</span>
+          <span class="partner-mark mfb">My First Bitcoin</span>
+          <span class="partner-mark edk">EDK</span>
+        </div>
       </article>
 
       <aside class="game-card" aria-label="Moneyopoly preview">
@@ -311,9 +351,17 @@
     </section>
 
     <footer class="footer">
-      <span>HistoryOfMoney.me · Part of the open-source EDK Bitcoin learning project</span>
+      <span>HistoryOfMoney.me · Learning Bitcoin Foundation · My First Bitcoin · EDK</span>
       <span>Built for classrooms, meetups, and curious learners.</span>
     </footer>
   </main>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js?v=1').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

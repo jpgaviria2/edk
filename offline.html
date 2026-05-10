@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#120b03" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Moneyopoly" />
+  <link rel="manifest" href="/manifest.webmanifest?v=1" />
+  <link rel="icon" href="/assets/icons/history-money-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/icons/history-money-icon.svg" />
+  <title>Offline · History of Money</title>
+  <style>
+    :root { color-scheme: dark; --bg:#120b03; --text:#fff7e1; --muted:#d8c49b; --gold:#f7b733; --orange:#f26b21; --border:rgba(255,247,225,.18); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 20% 10%,rgba(247,183,51,.25),transparent 30rem),linear-gradient(135deg,#120b03,#050302); color:var(--text); }
+    main { width:min(680px,100%); border:1px solid var(--border); border-radius:30px; padding:clamp(26px,6vw,54px); background:rgba(255,247,225,.08); box-shadow:0 26px 80px rgba(0,0,0,.42); }
+    .coin { width:58px; height:58px; display:grid; place-items:center; border-radius:50%; background:linear-gradient(145deg,#ffd978,#f7931a 62%,#8f4e06); color:#241000; font-weight:950; font-size:1.5rem; }
+    h1 { margin:22px 0 10px; font-size:clamp(2.2rem,8vw,4.8rem); line-height:.9; letter-spacing:-.07em; }
+    p { color:var(--muted); line-height:1.6; font-size:1.05rem; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+    a { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:0 18px; border-radius:999px; border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:850; }
+    a.primary { color:#241000; border-color:transparent; background:linear-gradient(135deg,var(--gold),var(--orange)); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="coin">₿</div>
+    <h1>You’re offline.</h1>
+    <p>The core History of Money shell and Moneyopoly game are designed to work offline after the app has loaded once. Try the cached home page or the game below.</p>
+    <div class="actions">
+      <a class="primary" href="/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/">Open Moneyopoly</a>
+      <a href="/">Back home</a>
+    </div>
+  </main>
+</body>
+</html>

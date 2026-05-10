@@ -1,0 +1,43 @@
+{
+  "name": "History of Money · Moneyopoly",
+  "short_name": "Moneyopoly",
+  "description": "An offline-ready History of Money learning module with the Moneyopoly barter and commodity money game.",
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "orientation": "any",
+  "theme_color": "#120b03",
+  "background_color": "#120b03",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "/assets/icons/history-money-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/history-money-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Moneyopoly",
+      "short_name": "Play",
+      "description": "Launch the Moneyopoly barter game.",
+      "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/?source=pwa-shortcut",
+      "icons": [{ "src": "/assets/icons/history-money-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Open Block 02 Lesson",
+      "short_name": "Lesson",
+      "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/?source=pwa-shortcut",
+      "icons": [{ "src": "/assets/icons/history-money-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

@@ -4,14 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c6f3d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Moneyopoly" />
+  <link rel="manifest" href="/manifest.webmanifest?v=1" />
+  <link rel="icon" href="/assets/icons/history-money-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/icons/history-money-icon.svg" />
   <title>Moneyopoly · Barter Edition</title>
-  <link rel="stylesheet" href="../../assets/edk.css" />
-  <link rel="stylesheet" href="./moneyopoly.css?v=12" />
+  <link rel="stylesheet" href="../../assets/edk.css?v=1" />
+  <link rel="stylesheet" href="./moneyopoly.css?v=13" />
 </head>
 <body>
   <main class="moneyopoly-app">
     <header class="money-topbar">
       <a class="money-brand" href="../"><span class="money-logo">M</span><span>Moneyopoly</span></a>
+      <div class="money-partners" aria-label="Project partners">
+        <span>Learning Bitcoin Foundation</span>
+        <span>My First Bitcoin</span>
+        <span>EDK</span>
+      </div>
       <div class="money-top-actions">
         <button class="btn ghost" data-action="open-rules">How to play</button>
         <button class="btn green" data-action="start-commodity">Play Commodity Money</button>
@@ -136,8 +147,15 @@
     </dialog>
   </main>
 
-  <script src="../../assets/edk.js"></script>
-  <script src="./game-data.js?v=19"></script>
-  <script src="./moneyopoly.js?v=19"></script>
+  <script src="../../assets/edk.js?v=1"></script>
+  <script src="./game-data.js?v=20"></script>
+  <script src="./moneyopoly.js?v=20"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js?v=1').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
