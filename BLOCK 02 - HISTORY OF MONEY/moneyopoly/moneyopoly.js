@@ -49,6 +49,41 @@
     { name: 'Market Boardwalk', type: 'trade', icon: '👑', color: '#0000FF', trader: 'Prime merchant', offers: ['fish', 'water', 'shelter', 'cows'] }
   ];
 
+
+
+  const eraScaffolds = {
+    gold: {
+      modeLabel: 'Hard commodity money edition',
+      title: 'Gold becomes hard money',
+      copy: 'Gold is scarce, durable, divisible, and hard to produce. This era asks why people moved from everyday commodities into harder savings money.',
+      cardTitle: 'Gold Money: hard commodity money',
+      cardCopy: 'Gold does not rot like food or flood in like shells. The next mechanics will test how hard commodity money handles crises, transport, and seizure risk.',
+      landingTitle: 'Gold board scaffold',
+      landingCopy: 'Detailed gold mechanics come next. For now, study where gold sits in history: a harder commodity money used to save and compare prices.',
+      feedback: 'Gold placeholder active: future turns will compare scarcity, durability, portability, and political seizure risk.'
+    },
+    fiat: {
+      modeLabel: 'Fiat / paper money edition',
+      title: 'Paper claims and government money',
+      copy: 'Fiat money is useful and familiar, but its rules depend on institutions. This era introduces banking, leaders, controls, and money printing.',
+      cardTitle: 'Fiat Money: paper promises',
+      cardCopy: 'Paper money can move quickly, but the supply can be expanded. Future mechanics will test inflation, freezes, political seizure, and downturns.',
+      landingTitle: 'Fiat board scaffold',
+      landingCopy: 'Detailed fiat mechanics come next. For now, this board marks the era where money becomes paper, policy, and trust in an issuer.',
+      feedback: 'Fiat placeholder active: future events will ask what happens when leaders seize accounts or print more money.'
+    },
+    bitcoin: {
+      modeLabel: 'Bitcoin / digital electronic money edition',
+      title: 'Digital money with a fixed supply',
+      copy: 'Bitcoin is digital electronic money with a hard cap. Crises can still happen around people, but the money itself is not printed or locally debased.',
+      cardTitle: 'Bitcoin Money: hardest digital money',
+      cardCopy: 'Earthquakes, fires, dictators, recessions, and politics can still affect life. The lesson is that Bitcoin itself cannot be inflated by emergency money printing.',
+      landingTitle: 'Bitcoin board scaffold',
+      landingCopy: 'Detailed Bitcoin mechanics come next. For now, compare it with earlier money: the network survives events without a ruler changing the supply.',
+      feedback: 'Bitcoin placeholder active: events still happen, but Bitcoin money itself is not debased or destroyed by those events.'
+    }
+  };
+
   const crisisEvents = [
     {
       title: 'Drought', icon: '☀️', scarce: 'water', multiplier: 1.5,
@@ -104,6 +139,9 @@
   function bindActions() {
     on('[data-action="start"]', 'click', startGame);
     on('[data-action="start-commodity"]', 'click', startCommodityGame);
+    on('[data-action="start-gold"]', 'click', () => startEraScaffold('gold'));
+    on('[data-action="start-fiat"]', 'click', () => startEraScaffold('fiat'));
+    on('[data-action="start-bitcoin"]', 'click', () => startEraScaffold('bitcoin'));
     on('[data-action="next-round"]', 'click', nextRound);
     on('[data-action="suggest-trade"]', 'click', suggestTrade);
     on('[data-action="trade"]', 'click', attemptManualTrade);
@@ -179,6 +217,47 @@
     updateControls(true);
     renderAll();
     renderShellExchange(state.proposedOffer);
+  }
+
+
+  function startEraScaffold(era) {
+    const info = eraScaffolds[era];
+    if (!info) return;
+    state.mode = era;
+    state.started = false;
+    state.round = 0;
+    state.failedTrades = 0;
+    state.successfulTrades = 0;
+    state.tradeAttempts = 0;
+    state.lastEventIndex = -1;
+    state.lastRoll = [1, 1];
+    state.currentOffer = null;
+    state.proposedOffer = null;
+    state.marketShock = null;
+    state.shellInflation = null;
+    state.mangoHarvest = 0;
+    state.shellsEarned = 0;
+    state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
+    $('[data-results]').classList.add('hidden');
+    $('[data-commodity-preview]').textContent = '';
+    updateBoardDescription();
+    setCard(info.cardTitle, info.cardCopy, era === 'fiat');
+    setScaffoldLanding(info);
+    $('[data-turn-copy]').textContent = info.feedback;
+    renderAll();
+    renderShellExchange(null);
+    updateControls(false);
+  }
+
+  function setScaffoldLanding(info) {
+    state.currentOffer = null;
+    state.proposedOffer = null;
+    $('[data-landing-title]').textContent = info.landingTitle;
+    $('[data-landing-copy]').textContent = info.landingCopy;
+    $('[data-landing-offer]').innerHTML = '<span class="offer-chip muted">Mechanics scaffold: no trading actions on this board yet</span>';
+    $('[data-trade-feedback]').textContent = info.feedback;
+    $('[data-action="accept-offer"]').disabled = true;
+    $('[data-action="skip-trade"]').disabled = true;
   }
 
   function nextRound() {
@@ -619,6 +698,11 @@
       mode.textContent = 'Commodity money edition';
       title.textContent = 'Trade with shells';
       copy.textContent = 'Shells are broadly accepted. Sell goods into shells, buy what you need, and watch crises change shell prices.';
+    } else if (eraScaffolds[state.mode]) {
+      const info = eraScaffolds[state.mode];
+      mode.textContent = info.modeLabel;
+      title.textContent = info.title;
+      copy.textContent = info.copy;
     } else {
       mode.textContent = 'Barter edition';
       title.textContent = 'Survive without money';
@@ -785,7 +869,9 @@
   }
 
   function updateControls(enabled) {
-    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="accept-offer"], [data-action="skip-trade"], [data-action="sell-for-shells"]').forEach((button) => { button.disabled = !enabled; });
+    $$('[data-action="next-round"], [data-action="suggest-trade"], [data-action="trade"], [data-action="trade-here"], [data-action="sell-for-shells"]').forEach((button) => { button.disabled = !enabled; });
+    $$('[data-action="accept-offer"]').forEach((button) => { button.disabled = !enabled || !state.proposedOffer?.canAfford; });
+    $$('[data-action="skip-trade"]').forEach((button) => { button.disabled = !enabled || !state.currentOffer; });
   }
 
   function missingNeeds(player) {
