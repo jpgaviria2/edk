@@ -1,1 +1,319 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#07111f"/><title>EDK · Bitcoin Learning App</title><link rel="stylesheet" href="./assets/edk.css"/></head><body><main class="app-shell"><header class="app-header"><a class="brand" href="./"><span class="logo">₿</span><span>EDK</span></a><nav class="nav-links"><a class="btn ghost" href="./learn/">Learn</a><a class="btn ghost" href="./host/">Host</a><a class="btn ghost" href="./#roadmap">Roadmap</a><a class="btn blue" href="https://github.com/jpgaviria2/edk">GitHub</a></nav><button class="btn hamburger" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">☰ Menu</button></header><nav class="mobile-menu" id="mobile-menu"><a class="btn" href="./learn/">Learn mode</a><a class="btn" href="./host/">Host mode</a><a class="btn" href="./#roadmap">Roadmap</a><a class="btn" href="https://github.com/jpgaviria2/edk">GitHub</a></nav><section class="hero"><div class="hero-copy"><span class="eyebrow">Bitcoin education, rebuilt as an app</span><h1>Learn Bitcoin by doing.</h1><p class="lede">EDK is becoming the Duolingo-style path for Bitcoin education: short lessons, interactive moments, progress, and a separate Host mode for classrooms, meetups, and conferences.</p><div class="actions"><a class="btn primary" href="./learn/">Start learning</a><a class="btn green" href="./host/">Host a group</a></div></div><aside class="side-card"><span class="pill gold">New UX direction</span><h2>Two modes. Less clutter.</h2><p>Learn mode is guided and personal. Host mode is a facilitator control panel. The content is no longer presented like a curriculum packet.</p></aside></section><section class="section"><div class="grid two"><a class="card link mode-card" href="./learn/"><span class="pill">Learn mode</span><h2>Solo learner path</h2><p>One clear next step, bite-sized lessons, interactive checks, and progress through the 12-block Bitcoin journey.</p><span class="btn primary">Enter Learn</span></a><a class="card link mode-card" href="./host/"><span class="pill green">Host mode</span><h2>Group setting mode</h2><p>Session plans, run-of-show, group prompts, material checklists, and projector-friendly activities.</p><span class="btn green">Enter Host</span></a></div></section><section class="section" id="roadmap"><div class="section-head"><div><span class="eyebrow">Roadmap</span><h2>The 12-block learning spine</h2></div></div><div class="grid"><a class="card link" href="./BLOCK%2001%20-%20WHAT%20IS%20MONEY/"><span class="pill green">Block 01</span><h3>What Is Money?</h3><p>Learn what money does before learning Bitcoin.</p></a><a class="card link" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/"><span class="pill gold">Block 02</span><h3>History of Money</h3><p>Flagship market game: barter to Bitcoin.</p></a><a class="card link" href="./BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/"><span class="pill green">Block 03</span><h3>Fiat & Inflation</h3><p>Feel purchasing-power loss through simulation.</p></a><a class="card link" href="./BLOCK%2004%20-%20WHY%20BITCOIN/"><span class="pill green">Block 04</span><h3>Why Bitcoin?</h3><p>Match problems to Bitcoin design choices.</p></a><a class="card link" href="./BLOCK%2005%20-%20WHAT%20IS%20BITCOIN/"><span class="pill ">Block 05</span><h3>What Is Bitcoin?</h3><p>Misconceptions and sound digital money.</p></a><a class="card link" href="./BLOCK%2006%20-%20WALLETS%20KEYS%20%26%20CUSTODY/"><span class="pill ">Block 06</span><h3>Wallets & Custody</h3><p>Keys, backups, and custody tradeoffs.</p></a><a class="card link" href="./BLOCK%2007%20-%20TRANSACTIONS%20SEND%20%26%20RECEIVE/"><span class="pill ">Block 07</span><h3>Transactions</h3><p>Send, receive, and verify payments.</p></a><a class="card link" href="./BLOCK%2008%20-%20LIGHTNING%20%26%20DAILY%20PAYMENTS/"><span class="pill ">Block 08</span><h3>Lightning</h3><p>Daily payments and routing.</p></a><a class="card link" href="./BLOCK%2009%20-%20HASHING%20MINING%20%26%20PROOF%20OF%20WORK/"><span class="pill ">Block 09</span><h3>Mining & Proof of Work</h3><p>Hash race and difficulty.</p></a><a class="card link" href="./BLOCK%2010%20-%20NODES%20RULES%20%26%20CONSENSUS/"><span class="pill ">Block 10</span><h3>Nodes & Consensus</h3><p>Rules, validation, and invalid blocks.</p></a><a class="card link" href="./BLOCK%2011%20-%20UTXOS%20FEES%20%26%20PRIVACY/"><span class="pill ">Block 11</span><h3>UTXOs & Privacy</h3><p>Coin selection and fee market.</p></a><a class="card link" href="./BLOCK%2012%20-%20BITCOIN%20FUTURE%20%26%20PHILOSOPHY/"><span class="pill ">Block 12</span><h3>Future & Philosophy</h3><p>Censorship resistance and empowerment.</p></a></div></section><footer class="footer"><p class="small">EDK is a static, open-source Bitcoin learning app for solo learners and group facilitators.</p><div class="footer-links"><a class="btn ghost" href="./learn/">Learn</a><a class="btn ghost" href="./host/">Host</a><a class="btn ghost" href="./materials.md">Materials</a></div></footer></main><script src="./assets/edk.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#120b03" />
+  <meta name="description" content="History of Money — an interactive Bitcoin education module featuring Moneyopoly, a practical game about barter, commodity money, and trade." />
+  <title>History of Money · Moneyopoly</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #120b03;
+      --panel: rgba(255, 247, 225, 0.08);
+      --panel-strong: rgba(255, 247, 225, 0.14);
+      --text: #fff7e1;
+      --muted: #d8c49b;
+      --gold: #f7b733;
+      --orange: #f26b21;
+      --green: #35c66b;
+      --border: rgba(255, 247, 225, 0.18);
+      --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(247, 183, 51, 0.24), transparent 32rem),
+        radial-gradient(circle at 78% 12%, rgba(242, 107, 33, 0.2), transparent 34rem),
+        linear-gradient(135deg, #120b03 0%, #211105 48%, #050302 100%);
+      color: var(--text);
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 850;
+      letter-spacing: -0.04em;
+      text-decoration: none;
+      font-size: 1.12rem;
+    }
+
+    .coin {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ffd978, #f7931a 62%, #8f4e06);
+      color: #241000;
+      box-shadow: 0 10px 28px rgba(247, 147, 26, 0.32);
+      font-weight: 950;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 247, 225, 0.08);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); border-color: rgba(255, 247, 225, 0.34); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #241000;
+      border-color: transparent;
+      box-shadow: 0 16px 36px rgba(247, 147, 26, 0.28);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.72fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .hero-card, .game-card, .info-card {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+      border-radius: 34px;
+      padding: clamp(30px, 6vw, 64px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -120px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 54px solid rgba(247, 183, 51, 0.08);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: #ffd978;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(3rem, 8vw, 6.9rem);
+      line-height: 0.88;
+      letter-spacing: -0.08em;
+    }
+
+    .lede {
+      max-width: 690px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 2.4vw, 1.35rem);
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .game-card {
+      border-radius: 30px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+    }
+
+    .board-preview {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+    }
+
+    .tile {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      background: rgba(255, 247, 225, 0.1);
+      border: 1px solid rgba(255, 247, 225, 0.1);
+    }
+
+    .tile.hot { background: linear-gradient(135deg, #f7b733, #f26b21); }
+    .tile.green { background: linear-gradient(135deg, #35c66b, #0a7a3f); }
+    .tile.dark { background: rgba(0, 0, 0, 0.38); }
+
+    .game-card h2, .info-card h2 { margin: 24px 0 10px; font-size: 1.55rem; letter-spacing: -0.04em; }
+    .game-card p, .info-card p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .section {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .info-card {
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .badge {
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: rgba(247, 183, 51, 0.14);
+      border: 1px solid rgba(247, 183, 51, 0.22);
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      padding: 0 4px;
+      color: rgba(255, 247, 225, 0.62);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 840px) {
+      .nav { align-items: flex-start; margin-bottom: 28px; }
+      .hero, .section { grid-template-columns: 1fr; }
+      .game-card { min-height: auto; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 22px, 1120px); padding-top: 16px; }
+      .nav { flex-direction: column; }
+      .nav-links, .actions { width: 100%; }
+      .btn { width: 100%; }
+      .hero-card { border-radius: 26px; padding: 28px 22px; }
+      .game-card, .info-card { border-radius: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="nav" aria-label="Site navigation">
+      <a class="brand" href="./" aria-label="History of Money home"><span class="coin">₿</span><span>History of Money</span></a>
+      <nav class="nav-links">
+        <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Block 02</a>
+        <a class="btn" href="https://github.com/jpgaviria2/edk">GitHub</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <article class="hero-card">
+        <span class="eyebrow">Interactive Bitcoin education</span>
+        <h1>Play through the history of money.</h1>
+        <p class="lede">Start with barter, feel why trade gets messy, then discover how commodity money makes markets easier. The practical activity is Moneyopoly: Barter Market.</p>
+        <div class="actions">
+          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/">Play Moneyopoly</a>
+          <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">View the lesson</a>
+        </div>
+      </article>
+
+      <aside class="game-card" aria-label="Moneyopoly preview">
+        <div class="board-preview" aria-hidden="true">
+          <span class="tile hot"></span><span class="tile"></span><span class="tile green"></span><span class="tile"></span><span class="tile hot"></span>
+          <span class="tile"></span><span class="tile dark"></span><span class="tile dark"></span><span class="tile dark"></span><span class="tile"></span>
+          <span class="tile green"></span><span class="tile dark"></span><span class="tile hot"></span><span class="tile dark"></span><span class="tile green"></span>
+          <span class="tile"></span><span class="tile dark"></span><span class="tile dark"></span><span class="tile dark"></span><span class="tile"></span>
+          <span class="tile hot"></span><span class="tile"></span><span class="tile green"></span><span class="tile"></span><span class="tile hot"></span>
+        </div>
+        <div>
+          <h2>Moneyopoly: Barter Market</h2>
+          <p>A Monopoly-style board game where players trade mangoes, cows, water, and shelter before moving into commodity money.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" aria-label="What learners experience">
+      <article class="info-card">
+        <span class="badge">🤝</span>
+        <h2>Barter friction</h2>
+        <p>Players learn why direct exchange is hard when both sides need to want what the other has.</p>
+      </article>
+      <article class="info-card">
+        <span class="badge">🐚</span>
+        <h2>Commodity money</h2>
+        <p>Shells enter as a common trading good, showing why some goods become easier to price and exchange.</p>
+      </article>
+      <article class="info-card">
+        <span class="badge">₿</span>
+        <h2>Bitcoin bridge</h2>
+        <p>The lesson tees up the deeper question: what makes money durable, scarce, portable, and verifiable?</p>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <span>HistoryOfMoney.me · Part of the open-source EDK Bitcoin learning project</span>
+      <span>Built for classrooms, meetups, and curious learners.</span>
+    </footer>
+  </main>
+</body>
+</html>
