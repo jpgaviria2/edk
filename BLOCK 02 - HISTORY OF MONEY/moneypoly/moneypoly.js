@@ -884,7 +884,7 @@
     const extra = proposal?.pay === targetMoney
       ? ` Current offer costs ${formatAmount(targetMoney, proposal.payQty)} ${label(targetMoney)}; you have ${formatAmount(targetMoney, human().inventory[targetMoney] || 0)}.`
       : '';
-    const unavailable = moneyRaised <= 0 ? ` This is not enough value for 1 ${label(targetMoney)} yet — sell a larger bundle.` : '';
+    const unavailable = moneyRaised <= 0 ? ` This is not enough value for a signed ${label(targetMoney)} claim yet — sell a larger bundle.` : '';
     copy.textContent = `Sell ${formatAmount(resource, units)} ${label(resource)} for ${formatAmount(targetMoney, moneyRaised)} ${label(targetMoney)}. This is separate from the landing offer.${extra}${unavailable}`;
   }
 
@@ -907,14 +907,14 @@
     }
     let moneyRaised = moneyFor(resource, units, targetMoney);
     if (state.mode === 'medici' && targetMoney === 'slips') {
-      const fee = Math.max(0.1, Math.round(moneyRaised * 0.1 * 10) / 10);
-      moneyRaised = Math.max(0, Math.round((moneyRaised - fee) * 10) / 10);
-      state.feesPaid = Math.round((state.feesPaid + fee) * 10) / 10;
+      const fee = Math.max(0.01, Math.round(moneyRaised * 0.1 * 100) / 100);
+      moneyRaised = Math.max(0, Math.round((moneyRaised - fee) * 100) / 100);
+      state.feesPaid = Math.round((state.feesPaid + fee) * 100) / 100;
       state.signedSlip = true;
-      state.ledgerEntries.push(`Deposited ${units} ${label(resource)} for ${moneyRaised} signed slips; fee ${fee}.`);
+      state.ledgerEntries.push(`Deposited ${formatAmount(resource, units)} ${label(resource)} for ${formatAmount('slips', moneyRaised)} signed slips; fee ${formatAmount('slips', fee)}.`);
     }
     if (moneyRaised <= 0) {
-      $('[data-trade-feedback]').textContent = `That bundle is not valuable enough for 1 ${label(targetMoney)}. Sell more goods or choose a higher-value item.`;
+      $('[data-trade-feedback]').textContent = `That bundle is not valuable enough for a signed ${label(targetMoney)} claim. Sell more goods or choose a higher-value item.`;
       return;
     }
     human().inventory[resource] -= units;
