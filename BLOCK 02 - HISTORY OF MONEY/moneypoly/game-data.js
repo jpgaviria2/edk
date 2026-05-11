@@ -8,6 +8,7 @@ window.MONEYPOLY_DATA = {
     gold: { label: 'Gold coins', icon: '🪙', category: 'money' },
     dollars: { label: 'Dollars', icon: '💵', category: 'money' },
     sats: { label: 'Sats', icon: '₿', category: 'money' },
+    slips: { label: 'Credit slips', icon: '📜', category: 'money' },
     shelter: { label: 'Shelter', icon: '🏠', category: 'shelter' }
   },
   players: [
@@ -16,7 +17,7 @@ window.MONEYPOLY_DATA = {
       name: 'Maya',
       role: 'Mango farmer',
       icon: '🥭',
-      inventory: { mangoes: 8, cows: 1, water: 1, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, shelter: 0 },
+      inventory: { mangoes: 8, cows: 1, water: 1, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, slips: 0, shelter: 0 },
       wants: ['shelter', 'water'],
       survival: { mangoes: 1, water: 1, shelter: 1 }
     },
@@ -25,7 +26,7 @@ window.MONEYPOLY_DATA = {
       name: 'Cora',
       role: 'Cattle herder',
       icon: '🐄',
-      inventory: { mangoes: 1, cows: 7, water: 0, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, shelter: 1 },
+      inventory: { mangoes: 1, cows: 7, water: 0, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, slips: 0, shelter: 1 },
       wants: ['water', 'mangoes'],
       survival: { cows: 1, water: 1, shelter: 1 }
     },
@@ -34,7 +35,7 @@ window.MONEYPOLY_DATA = {
       name: 'Wes',
       role: 'Water keeper',
       icon: '💧',
-      inventory: { mangoes: 1, cows: 0, water: 8, fish: 1, shells: 0, gold: 0, dollars: 0, sats: 0, shelter: 0 },
+      inventory: { mangoes: 1, cows: 0, water: 8, fish: 1, shells: 0, gold: 0, dollars: 0, sats: 0, slips: 0, shelter: 0 },
       wants: ['cows', 'shelter'],
       survival: { mangoes: 1, water: 1, shelter: 1 }
     },
@@ -43,7 +44,7 @@ window.MONEYPOLY_DATA = {
       name: 'Bina',
       role: 'Builder',
       icon: '🏠',
-      inventory: { mangoes: 0, cows: 1, water: 1, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, shelter: 7 },
+      inventory: { mangoes: 0, cows: 1, water: 1, fish: 0, shells: 0, gold: 0, dollars: 0, sats: 0, slips: 0, shelter: 7 },
       wants: ['mangoes', 'water'],
       survival: { cows: 1, water: 1, shelter: 1 }
     }

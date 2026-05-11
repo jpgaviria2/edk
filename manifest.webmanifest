@@ -1,7 +1,7 @@
 {
   "name": "History of Money \u00b7 Moneypoly",
   "short_name": "Moneypoly",
-  "description": "An offline-ready History of Money learning module with the Moneypoly barter and commodity money game.",
+  "description": "An offline-ready History of Money learning module with the Moneypoly barter, commodity money, Medici credit-and-ledgers, gold, fiat, and Bitcoin game.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",

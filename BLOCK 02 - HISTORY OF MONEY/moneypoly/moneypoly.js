@@ -4,8 +4,8 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  const baseMangoPrices = { mangoes: 1, shells: 0.5, gold: 25, dollars: 1, sats: 0.002, water: 2, fish: 4, cows: 10, shelter: 20 };
-  const moneyResources = ['shells', 'gold', 'dollars', 'sats'];
+  const baseMangoPrices = { mangoes: 1, shells: 0.5, gold: 25, dollars: 1, sats: 0.002, slips: 22.5, water: 2, fish: 4, cows: 10, shelter: 20 };
+  const moneyResources = ['shells', 'gold', 'slips', 'dollars', 'sats'];
 
   const boardSpaces = [
     { name: 'GO', type: 'start', icon: '🏘️', color: '#ffffff' },
@@ -52,6 +52,17 @@
 
 
 
+  const workshopRounds = [
+    { min: 0, title: 'Round 1: Barter only', objective: 'Trade cards/goods you have but do not need for goods you need. No money yet.', prompt: ['Who has something useful but cannot find the right match?', 'What makes double coincidence of wants hard?'] },
+    { min: 2, title: 'Round 2: Changed needs', objective: 'Needs shift mid-game. Matching gets harder because everyone wants different things at the wrong time.', prompt: ['What changed when needs moved?', 'Did valuable goods automatically become good money?'] },
+    { min: 4, title: 'Round 3: Commodity money introduced', objective: 'Shells, coffee beans, and beads begin acting as local money — but acceptance grows unevenly.', prompt: ['Why does a widely accepted good reduce failed trades?', 'What happens when a table refuses your commodity?'] },
+    { min: 7, title: 'Bonus: Future planning', objective: 'You can preview next-round needs. Saving and pre-positioning helps generational wealth.', prompt: ['Who saved before the need arrived?', 'How does planning across time change wealth?'] },
+    { min: 9, title: 'Bonus: Inflation + scarcity', objective: 'Extra shells enter circulation and scarce face-card goods cost more.', prompt: ['Did more money create more goods?', 'What happened to prices when everyone needed scarce goods?'] },
+    { min: 11, title: 'Bonus: Divisibility + fungibility', objective: 'Large indivisible goods need a money changer, and some traders accept coffee beans but reject shells.', prompt: ['Why does divisibility matter for small transactions?', 'Are two “money” goods equally useful if acceptance differs?'] }
+  ];
+  const commodityNames = { shells: 'shells', mangoes: 'coffee beans', fish: 'beads' };
+  const cityBranches = ['Florence', 'Venice', 'Rome'];
+
   const eraProfiles = {
     barter: {
       name: 'Barter', money: null, purchasingPower: 'No unit', debasement: 'No money to debase', seizure: 'Goods can be stolen', portability: 1,
@@ -70,6 +81,17 @@
       cardCopy: 'Gold coins are scarce and durable, so they store value better than food or shells. Now test the physical tradeoffs: weight, clipping, theft, and confiscation.',
       money: 'gold', startingMoney: 3, purchasingPower: 'Strong unless coins are clipped', debasement: 'Coin clipping lowers trust', seizure: 'Physical confiscation/theft risk', portability: 3,
       lesson: 'Gold is hard commodity money and can store wealth across generations, but it is heavy to move and vulnerable to physical seizure.'
+    },
+
+    medici: {
+      name: 'Credit & Ledgers',
+      modeLabel: 'Credit & Ledgers / Medici Banking edition',
+      title: 'Medici credit and ledgers',
+      copy: 'Gold is valuable but heavy and risky. Deposit it with a trusted branch, receive signed credit slips, and test fees, reserves, bank runs, and ledger trust.',
+      cardTitle: 'Credit & Ledgers: Medici banking',
+      cardCopy: 'Use signed slips to move wealth safely between cities. Slips avoid bandits, but they only work when branches trust the ledger and hold enough reserves.',
+      money: 'slips', startingMoney: 0, purchasingPower: 'Strong when branches honour the ledger', debasement: 'Bad loans and over-issued slips weaken trust', seizure: 'Rulers can pressure banks; physical gold can be robbed', portability: 4,
+      lesson: 'Credit and ledgers made money more portable before modern fiat, but trust is fragile: reserves, signatures, city branches, and reputation matter.'
     },
     fiat: {
       name: 'Fiat Money',
@@ -139,7 +161,20 @@
     portabilityHits: 0,
     freezeTurns: 0,
     seedProtected: true,
-    accessLost: false
+    accessLost: false,
+    workshopPhase: workshopRounds[0],
+    nextNeeds: ['water', 'shelter'],
+    commodityAcceptance: 0,
+    regionMoneyPreference: 'shells',
+    divisibilityEvent: false,
+    branchCity: 'Florence',
+    bankReserves: { Florence: 4, Venice: 3, Rome: 2 },
+    creditSlips: 0,
+    feesPaid: 0,
+    signedSlip: true,
+    reserveStress: 0,
+    bankRunRisk: 0,
+    ledgerEntries: []
   };
 
   function init() {
@@ -156,6 +191,7 @@
     on('[data-action="start"]', 'click', startGame);
     on('[data-action="start-commodity"]', 'click', startCommodityGame);
     on('[data-action="start-gold"]', 'click', () => startMoneyEra('gold'));
+    on('[data-action="start-medici"]', 'click', () => startMoneyEra('medici'));
     on('[data-action="start-fiat"]', 'click', () => startMoneyEra('fiat'));
     on('[data-action="start-bitcoin"]', 'click', () => startMoneyEra('bitcoin'));
     on('[data-action="next-round"]', 'click', nextRound);
@@ -178,6 +214,66 @@
     on('[data-sell-quantity]', 'input', updateShellExchange);
   }
 
+
+  function resetWorkshopState() {
+    state.workshopPhase = workshopRounds[0];
+    state.nextNeeds = ['water', 'shelter'];
+    state.commodityAcceptance = state.mode === 'commodity' ? 2 : 0;
+    state.regionMoneyPreference = 'shells';
+    state.divisibilityEvent = false;
+    state.branchCity = 'Florence';
+    state.bankReserves = { Florence: 4, Venice: 3, Rome: 2 };
+    state.creditSlips = 0;
+    state.feesPaid = 0;
+    state.signedSlip = true;
+    state.reserveStress = 0;
+    state.bankRunRisk = 0;
+    state.ledgerEntries = [];
+  }
+
+  function updateWorkshopPhase() {
+    const phase = [...workshopRounds].reverse().find((round) => state.round >= round.min) || workshopRounds[0];
+    const changed = state.workshopPhase?.title !== phase.title;
+    state.workshopPhase = phase;
+    if (state.mode === 'barter' && state.round >= 2) {
+      human().wants = ['cows', 'water'];
+      state.players[1].wants = ['shelter', 'fish'];
+      state.players[2].wants = ['mangoes', 'shelter'];
+      state.players[3].wants = ['water', 'cows'];
+    }
+    if (['commodity', 'medici'].includes(state.mode) || state.round >= 4) {
+      state.commodityAcceptance = Math.min(5, Math.max(state.commodityAcceptance, 1 + Math.floor(state.round / 3)));
+    }
+    if (state.round >= 7) state.nextNeeds = state.round % 2 ? ['water', 'fish'] : ['shelter', 'cows'];
+    if (state.round >= 11) state.divisibilityEvent = true;
+    if (changed && state.round > 0) setCard(phase.title, `${phase.objective} Facilitator prompt: ${phase.prompt[0]}`, false);
+  }
+
+  function renderWorkshopPanel() {
+    const title = $('[data-workshop-title]');
+    if (!title) return;
+    const phase = state.workshopPhase || workshopRounds[0];
+    title.textContent = state.mode === 'medici' ? 'Workshop 2: Credit and Ledgers with the Medici' : phase.title;
+    $('[data-workshop-copy]').textContent = state.mode === 'medici'
+      ? `City: ${state.branchCity}. Bank reserves F/V/R: ${state.bankReserves.Florence}/${state.bankReserves.Venice}/${state.bankReserves.Rome}. Signed slips avoid bandits, but redemption depends on ledger trust and reserves.`
+      : phase.objective;
+    $('[data-workshop-prompts]').innerHTML = (state.mode === 'medici'
+      ? ['Why are paper slips safer than carrying gold?', 'What makes the signature and ledger trustworthy?', 'What happens if too many people redeem at once?']
+      : phase.prompt).map((item) => `<li>${item}</li>`).join('');
+    const future = $('[data-future-panel]');
+    if (future) future.innerHTML = `<strong>Future planning preview</strong><br>Next generation likely needs: ${state.nextNeeds.map(label).join(', ')}. Save or pre-position these to improve the wealth score.`;
+  }
+
+  function compactHaveNeed(player) {
+    const have = Object.entries(player.inventory).filter(([, amount]) => amount > 0).slice(0, 6).map(([resource, amount]) => `<span>${data.resources[resource].icon} ${amount} ${label(resource)}</span>`).join('') || '<span>Nothing spare</span>';
+    const need = [...new Set([...missingNeeds(player), ...(player.wants || [])])].slice(0, 5).map((resource) => `<span>${data.resources[resource].icon} ${label(resource)}</span>`).join('') || '<span>Needs met</span>';
+    return `<div class="have-need-grid"><div class="mini-card"><strong>Have</strong>${have}</div><div class="mini-card"><strong>Need</strong>${need}</div></div>`;
+  }
+
+  function mediciStatusLine() {
+    if (state.mode !== 'medici') return '';
+    return `<p class="ledger-line">🏦 Medici ledger: ${human().inventory.gold || 0} gold carried · ${human().inventory.slips || 0} signed slips · fees paid ${state.feesPaid} · reserve stress ${state.reserveStress} · bank run risk ${state.bankRunRisk}.</p>`;
+  }
 
   function openComparison() {
     const target = $('[data-comparison-cards]');
@@ -222,6 +318,7 @@
     state.freezeTurns = 0;
     state.seedProtected = true;
     state.accessLost = false;
+    resetWorkshopState();
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
@@ -256,6 +353,7 @@
     state.freezeTurns = 0;
     state.seedProtected = true;
     state.accessLost = false;
+    resetWorkshopState();
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     state.players.forEach((player, index) => {
       player.inventory.shells = index === 0 ? 8 : 6;
@@ -297,10 +395,15 @@
     state.freezeTurns = 0;
     state.seedProtected = era === 'bitcoin';
     state.accessLost = false;
+    resetWorkshopState();
     state.players = clone(data.players).map((player, index) => ({ ...player, position: index * 10 }));
     state.players.forEach((player, index) => {
       moneyResources.forEach((resource) => { player.inventory[resource] = 0; });
       if (info.money) player.inventory[info.money] = index === 0 ? info.startingMoney : Math.max(1, Math.round(info.startingMoney * 0.6));
+      if (era === 'medici') {
+        player.inventory.gold = index === 0 ? 4 : 2;
+        player.inventory.slips = index === 0 ? 1 : 1;
+      }
     });
     $('[data-results]').classList.add('hidden');
     $('[data-commodity-preview]').textContent = '';
@@ -317,6 +420,7 @@
   function nextRound() {
     if (!state.started) return;
     state.round += 1;
+    updateWorkshopPhase();
     harvestMangoes();
     rollDice();
     moveHuman();
@@ -425,6 +529,7 @@
     const reasonText = reason === 'crisis' ? 'You hit a crisis space.' : 'Three trades have passed.';
 
     if (state.mode === 'gold') return triggerGoldEvent(event, reasonText);
+    if (state.mode === 'medici') return triggerMediciEvent(event, reasonText);
     if (state.mode === 'fiat') return triggerFiatEvent(event, reasonText);
     if (state.mode === 'bitcoin') return triggerBitcoinEvent(event, reasonText);
 
@@ -454,6 +559,38 @@
       setCard('🛡️ Road toll and theft risk', `${reasonText} Carrying wealth physically has risk. You lost 1 gold coin to a toll/confiscation attempt.`, true);
       $('[data-trade-feedback]').textContent = 'Physical-risk event: gold stores value, but moving it invites theft or seizure.';
     }
+  }
+
+
+  function triggerMediciEvent(event, reasonText) {
+    const player = human();
+    const cycle = (state.tradeAttempts + state.round) % 4;
+    if (cycle === 0) {
+      const lost = Math.min(1, player.inventory.gold || 0);
+      player.inventory.gold = Math.max(0, (player.inventory.gold || 0) - lost);
+      state.seizureEvents += lost ? 1 : 0;
+      setCard('🗡️ Bandits on the road', `${reasonText} Bandits can rob physical gold${lost ? ` — you lost ${lost} gold.` : ', but you carried no gold.'} Signed paper slips were not useful to steal and stayed safe.`, true);
+      $('[data-trade-feedback]').textContent = 'Bandit risk: paper credit can move wealth more safely than heavy gold.';
+      return;
+    }
+    if (cycle === 1) {
+      state.bankRunRisk += 1;
+      state.reserveStress += 1;
+      Object.keys(state.bankReserves).forEach((city) => { state.bankReserves[city] = Math.max(0, state.bankReserves[city] - 1); });
+      setCard('🏦 Bank run', `${reasonText} Too many people redeem at once. Branch reserves fall; slips still exist, but trust is stressed.`, true);
+      $('[data-trade-feedback]').textContent = 'Bank run: credit depends on reserves and reputation, not just paper.';
+      return;
+    }
+    if (cycle === 2) {
+      state.branchCity = cityBranches[(cityBranches.indexOf(state.branchCity) + 1) % cityBranches.length];
+      setCard('📍 Wrong-city redemption', `${reasonText} You travelled to ${state.branchCity}. A slip signed in one branch may need ledger confirmation before another branch redeems it.`, true);
+      $('[data-trade-feedback]').textContent = 'Ledger network lesson: credit travels only as far as trust and recordkeeping.';
+      return;
+    }
+    state.seizureEvents += 1;
+    state.freezeTurns = 1;
+    setCard('👑 Ruler pressures the bank', `${reasonText} A ruler threatens a temporary freeze. The ledger is powerful, but political pressure can interrupt redemption.`, true);
+    $('[data-trade-feedback]').textContent = 'Ruler pressure: trusted intermediaries can be coerced.';
   }
 
   function triggerFiatEvent(event, reasonText) {
@@ -512,6 +649,7 @@
     if (pay === 'shells' && resource !== 'shells' && state.shellInflation) return state.shellInflation.multiplier;
     if (state.mode === 'fiat' && pay === 'dollars') return Math.max(1, 100 / Math.max(35, state.purchasingPower));
     if (state.mode === 'gold' && pay === 'gold' && state.marketShock?.scarce === 'gold') return state.marketShock.multiplier;
+    if (state.mode === 'medici' && pay === 'slips') return state.reserveStress ? 1 + (state.reserveStress * 0.15) : 1;
     return state.marketShock?.scarce === resource && !state.marketShock.shellInflation ? state.marketShock.multiplier : 1;
   }
 
@@ -519,6 +657,7 @@
     if (pay === 'shells' && state.shellInflation) return `<p class="shock-line">🐚 Shell rush: goods priced in shells cost 2× more for ${state.shellInflation.remainingTrades} more offer${state.shellInflation.remainingTrades === 1 ? '' : 's'}.</p>`;
     if (state.mode === 'fiat' && pay === 'dollars' && state.purchasingPower < 100) return `<p class="shock-line">🖨️ Purchasing power meter: ${state.purchasingPower}/100. Goods require more dollars now.</p>`;
     if (state.mode === 'gold' && pay === 'gold' && state.marketShock?.scarce === 'gold') return `<p class="shock-line">✂️ Clipped coins: traders demand extra gold for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
+    if (state.mode === 'medici' && pay === 'slips') return `<p class="ledger-line">📜 Signed Medici slips pay safely, minus a 10% banking fee when you create them. Branch reserve stress: ${state.reserveStress}.</p>`;
     if (state.marketShock?.scarce !== resource || state.marketShock?.shellInflation) return '';
     return `<p class="shock-line">${state.marketShock.icon} ${state.marketShock.title}: ${label(resource)} costs 50% more for ${state.marketShock.remainingTrades} more offer${state.marketShock.remainingTrades === 1 ? '' : 's'}.</p>`;
   }
@@ -563,9 +702,13 @@
       <span class="eyebrow">${eraProfiles[state.mode]?.money ? `${eraProfiles[state.mode].name} offer` : 'Proposed trade'}</span>
       <h3>${space.trader || space.name} offers</h3>
       <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
+      ${compactHaveNeed(human())}
       <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then crisis pricing' : ''}.</p>
       <p class="${proposal.canAfford ? 'afford-line' : 'cannot-afford-line'}">${proposal.canAfford ? 'You can afford this trade.' : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`}</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
+      ${proposal.acceptance?.copy ? `<p class="acceptance-line">${proposal.acceptance.copy}</p>` : ''}
+      ${state.divisibilityEvent ? `<p class="acceptance-line">🪓 Divisibility event: large goods like shelter/cows are hard to split. Money changers and smaller units make exact payment easier.</p>` : ''}
+      ${mediciStatusLine()}
       ${shockLine(proposal.receive, proposal.pay)}
     </div>`;
     $('[data-give-a]').value = proposal.pay;
@@ -582,13 +725,20 @@
     const discount = 0.9 + (Math.random() * 0.1); // market offers are 0–10% below base
     const payable = Object.keys(data.resources).filter((resource) => resource !== receive && (player.inventory[resource] || 0) > 0);
     const eraMoney = eraProfiles[state.mode]?.money;
-    if (eraMoney && receive !== eraMoney) {
+    if (state.mode === 'commodity') {
+      const preferred = commodityPreferenceFor(space);
+      if (payable.includes(preferred)) {
+        payable.splice(payable.indexOf(preferred), 1);
+        payable.unshift(preferred);
+      }
+    } else if (eraMoney && receive !== eraMoney) {
       const existing = payable.indexOf(eraMoney);
       if (existing > -1) payable.splice(existing, 1);
       payable.unshift(eraMoney);
     }
     const candidates = payable.map((resource) => {
-      const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * priceMultiplier(receive, resource);
+      const acceptability = commodityAcceptability(space, resource);
+      const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * priceMultiplier(receive, resource) * acceptability.multiplier;
       const rawQty = costInMangoes / baseMangoPrices[resource];
       const payQty = resource === 'sats' ? Math.max(100, Math.round(rawQty / 100) * 100) : Math.max(1, Math.round(rawQty));
       const inventory = player.inventory[resource] || 0;
@@ -612,7 +762,31 @@
       goodDeal,
       baseText,
       discountPercent,
-      crisisApplied: priceMultiplier(receive, choice.resource) > 1
+      crisisApplied: priceMultiplier(receive, choice.resource) > 1,
+      acceptance: commodityAcceptability(space, choice.resource)
+    };
+  }
+
+
+  function commodityPreferenceFor(space) {
+    if (state.mode !== 'commodity') return eraProfiles[state.mode]?.money || 'mangoes';
+    const index = boardSpaces.indexOf(space);
+    if (index % 5 === 0) return 'fish'; // beads at this table
+    if (index % 4 === 0) return 'mangoes'; // coffee beans at this table
+    return 'shells';
+  }
+
+  function commodityAcceptability(space, pay) {
+    if (state.mode !== 'commodity') return { accepted: true, multiplier: 1, copy: '' };
+    const preferred = commodityPreferenceFor(space);
+    const acceptsShells = pay === 'shells' && (state.commodityAcceptance >= 3 || preferred === 'shells');
+    const accepted = pay === preferred || acceptsShells;
+    return {
+      accepted,
+      multiplier: accepted ? 1 : 1.6,
+      copy: accepted
+        ? `${label(pay)} accepted at this table. Acceptance is spreading, but preferences still differ.`
+        : `${label(pay)} is not this table’s preferred commodity (${commodityNames[preferred] || label(preferred)}). The trader demands a steep premium — fungibility/acceptability problem.`
     };
   }
 
@@ -699,7 +873,14 @@
       $('[data-trade-feedback]').textContent = `You do not have enough ${label(resource)} to sell.`;
       return;
     }
-    const moneyRaised = moneyFor(resource, units, targetMoney);
+    let moneyRaised = moneyFor(resource, units, targetMoney);
+    if (state.mode === 'medici' && targetMoney === 'slips') {
+      const fee = Math.max(0.1, Math.round(moneyRaised * 0.1 * 10) / 10);
+      moneyRaised = Math.max(0, Math.round((moneyRaised - fee) * 10) / 10);
+      state.feesPaid = Math.round((state.feesPaid + fee) * 10) / 10;
+      state.signedSlip = true;
+      state.ledgerEntries.push(`Deposited ${units} ${label(resource)} for ${moneyRaised} signed slips; fee ${fee}.`);
+    }
     if (moneyRaised <= 0) {
       $('[data-trade-feedback]').textContent = `That bundle is not valuable enough for 1 ${label(targetMoney)}. Sell more goods or choose a higher-value item.`;
       return;
@@ -752,6 +933,32 @@
       renderAll();
       return;
     }
+    if (state.mode === 'medici' && proposal.pay === 'slips') {
+      if (!state.signedSlip) {
+        state.failedTrades += 1;
+        feedback.textContent = 'Payment failed: the branch manager did not sign this slip. Trust requires verification.';
+        renderAll();
+        return;
+      }
+      const reserveCity = state.branchCity;
+      if ((state.bankReserves[reserveCity] || 0) <= 0) {
+        state.failedTrades += 1;
+        state.reserveStress += 1;
+        feedback.textContent = `${reserveCity} branch has no reserves. The slip is a claim, but redemption fails during reserve stress.`;
+        maybeTriggerTradeEvent();
+        renderAll();
+        return;
+      }
+      if (state.freezeTurns > 0) {
+        state.freezeTurns -= 1;
+        state.failedTrades += 1;
+        feedback.textContent = 'A ruler pressured the bank. Redemption is temporarily frozen even though the ledger still records your claim.';
+        renderAll();
+        return;
+      }
+      state.bankReserves[reserveCity] = Math.max(0, state.bankReserves[reserveCity] - 0.25);
+      state.ledgerEntries.push(`Paid ${proposal.payQty} signed slips in ${reserveCity} for ${proposal.receiveQty} ${label(proposal.receive)}.`);
+    }
     if (state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1) {
       state.portabilityHits += 1;
       feedback.textContent = 'Heavy gold trade: carrying several coins slowed the deal, but it still settled.';
@@ -773,6 +980,7 @@
   function offerLesson() {
     if (state.mode === 'commodity') return 'Shells worked as commodity money: the trader accepted them even without needing your mangoes.';
     if (state.mode === 'gold') return 'Gold settled the trade because it is scarce and trusted, though physical coins create handling risk.';
+    if (state.mode === 'medici') return 'A signed credit slip settled without carrying heavy gold — because the trader trusted the Medici ledger and branch reserves.';
     if (state.mode === 'fiat') return 'Dollars settled quickly because the market accepts legal-tender paper, as long as accounts stay usable.';
     if (state.mode === 'bitcoin') return 'Sats settled digitally. Lightning-style payment is fast, while self-custody keeps responsibility with you.';
     return 'A barter deal worked because you accepted the exact terms from this trader.';
@@ -890,7 +1098,7 @@
       mode.textContent = 'Commodity money edition';
       title.textContent = 'Trade with shells';
       copy.textContent = 'Shells are broadly accepted. Survive first, then see whether shell savings can preserve wealth for the next generation when crises hit.';
-    } else if (['gold', 'fiat', 'bitcoin'].includes(state.mode)) {
+    } else if (['gold', 'medici', 'fiat', 'bitcoin'].includes(state.mode)) {
       const info = eraProfiles[state.mode];
       mode.textContent = info.modeLabel;
       title.textContent = info.title;
@@ -922,10 +1130,11 @@
       `Debasement: ${state.debasementEvents ? state.debasementEvents + ' event(s)' : profile.debasement}`,
       `Seize/freeze risk: ${state.seizureEvents ? state.seizureEvents + ' event(s)' : profile.seizure}`,
       `Portability / divisibility / ease of use: ${portabilityScore}/5`,
+      state.mode === 'medici' ? `Ledger trust: signed slips ${human().inventory.slips || 0}, branch reserves F/V/R ${state.bankReserves.Florence}/${state.bankReserves.Venice}/${state.bankReserves.Rome}, bank run risk ${state.bankRunRisk}` : null,
       `Generational wealth test: ${generationalWealthSummary(profile, portabilityScore)}`,
       `Lesson: ${profile.lesson}`
     ];
-    $('[data-result-lessons]').innerHTML = lessons.map((lesson) => `<li>${lesson}</li>`).join('') + comparisonHtml(state.mode);
+    $('[data-result-lessons]').innerHTML = lessons.filter(Boolean).map((lesson) => `<li>${lesson}</li>`).join('') + comparisonHtml(state.mode);
     setCard(`${profile.name} round complete`, profile.lesson, false);
   }
 
@@ -933,6 +1142,7 @@
     const weakDebasement = String(profile.debasement).toLowerCase().includes('printing') || String(profile.debasement).toLowerCase().includes('dilute');
     const weakSeizure = String(profile.seizure).toLowerCase().includes('seiz') || String(profile.seizure).toLowerCase().includes('freeze') || String(profile.seizure).toLowerCase().includes('stolen');
     if (profile.name === 'Bitcoin Money') return 'Strong — savings in sats are not printed away, and self-custody helps pass value forward.';
+    if (profile.name === 'Credit & Ledgers') return 'Moderate-strong while trust holds — portable signed claims help, but bank runs and reserves can break the promise.';
     if (profile.name === 'Gold Money') return 'Good but physical — durable savings, with transport and seizure risks.';
     if (weakDebasement || weakSeizure || portabilityScore < 3) return 'Weak — survival may be possible, but passing wealth forward is fragile.';
     return 'Moderate — useful for trade, but test how it handles crisis across generations.';
@@ -960,6 +1170,7 @@
     renderPlayers();
     syncStats();
     syncTradeResourceAvailability();
+    renderWorkshopPanel();
   }
 
   function renderTrack() {
@@ -1004,7 +1215,7 @@
       const needs = missingNeeds(player);
       return `<article class="neighbour ${needs.length ? 'needs-help' : ''}">
         <span class="neighbour-icon">${player.icon}</span>
-        <div><strong>${player.name}</strong><small>${player.role}</small><small>Wants ${wantLabels(player)}</small></div>
+        <div><strong>${player.name}</strong><small>${player.role}</small><small>Wants ${wantLabels(player)}</small>${compactHaveNeed(player)}</div>
       </article>`;
     }).join('');
   }
