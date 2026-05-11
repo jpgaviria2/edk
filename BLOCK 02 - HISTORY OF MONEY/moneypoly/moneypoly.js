@@ -115,6 +115,29 @@
     }
   };
 
+
+
+  const moneyPropertyLabels = {
+    durability: 'Durability',
+    portability: 'Portability',
+    divisibility: 'Divisibility',
+    fungibility: 'Fungibility',
+    acceptability: 'Acceptability',
+    scarcity: 'Scarcity / hardness',
+    verifiability: 'Verifiability',
+    decentralization: 'Decentralization',
+    storeOfValue: 'Store of value'
+  };
+
+  const moneyPropertyScores = {
+    barter: { durability: 1, portability: 1, divisibility: 1, fungibility: 1, acceptability: 1, scarcity: 2, verifiability: 2, decentralization: 4, storeOfValue: 1 },
+    commodity: { durability: 2, portability: 3, divisibility: 3, fungibility: 2, acceptability: 3, scarcity: 2, verifiability: 2, decentralization: 3, storeOfValue: 2 },
+    gold: { durability: 5, portability: 2, divisibility: 2, fungibility: 4, acceptability: 3, scarcity: 4, verifiability: 3, decentralization: 2, storeOfValue: 5 },
+    medici: { durability: 3, portability: 4, divisibility: 4, fungibility: 3, acceptability: 3, scarcity: 3, verifiability: 3, decentralization: 1, storeOfValue: 3 },
+    fiat: { durability: 3, portability: 5, divisibility: 5, fungibility: 5, acceptability: 5, scarcity: 1, verifiability: 3, decentralization: 1, storeOfValue: 2 },
+    bitcoin: { durability: 5, portability: 5, divisibility: 5, fungibility: 4, acceptability: 3, scarcity: 5, verifiability: 5, decentralization: 5, storeOfValue: 5 }
+  };
+
   const crisisEvents = [
     {
       title: 'Drought', icon: '☀️', scarce: 'water', multiplier: 1.5,
@@ -288,15 +311,7 @@
 
   function openComparison() {
     const target = $('[data-comparison-cards]');
-    if (target) target.innerHTML = `<div class="comparison-grid standalone">${Object.entries(eraProfiles).map(([key, profile]) => `
-      <article class="comparison-card ${key === state.mode ? 'active' : ''}">
-        <h3>${profile.name}</h3>
-        <p><b>Purchasing power:</b> ${profile.purchasingPower}</p>
-        <p><b>Debasement:</b> ${profile.debasement}</p>
-        <p><b>Seize/freeze:</b> ${profile.seizure}</p>
-        <p><b>Carry/divide/use:</b> ${profile.portability}/5</p>
-        <p>${profile.lesson}</p>
-      </article>`).join('')}</div>`;
+    if (target) target.innerHTML = `<p class="comparison-intro">Money is tested by its properties: durability, portability, divisibility, fungibility, acceptability, scarcity, verifiability, decentralization, and store of value.</p><div class="comparison-grid standalone">${Object.entries(eraProfiles).map(([key, profile]) => comparisonCardHtml(key, profile, state.mode)).join('')}</div>`;
     const modal = $('[data-comparison-modal]');
     if (modal?.showModal) modal.showModal();
   }
@@ -1181,15 +1196,27 @@
   }
 
   function comparisonHtml(activeMode = state.mode) {
-    return `<li class="comparison-block"><strong>Same needs, different money systems</strong><div class="comparison-grid">${Object.entries(eraProfiles).map(([key, profile]) => `
-      <article class="comparison-card ${key === activeMode ? 'active' : ''}">
-        <h3>${profile.name}</h3>
-        <p><b>Purchasing power:</b> ${profile.purchasingPower}</p>
-        <p><b>Debasement:</b> ${profile.debasement}</p>
-        <p><b>Freeze/seizure:</b> ${profile.seizure}</p>
-        <p><b>Use score:</b> ${profile.portability}/5</p>
-        <p><b>Generational wealth:</b> ${generationalWealthSummary(profile, profile.portability)}</p>
-      </article>`).join('')}</div></li>`;
+    return `<li class="comparison-block"><strong>Same needs, different money systems</strong><p class="comparison-intro">Each era is scored against the full properties of money.</p><div class="comparison-grid">${Object.entries(eraProfiles).map(([key, profile]) => comparisonCardHtml(key, profile, activeMode)).join('')}</div></li>`;
+  }
+
+  function comparisonCardHtml(key, profile, activeMode = state.mode) {
+    return `<article class="comparison-card ${key === activeMode ? 'active' : ''}">
+      <h3>${profile.name}</h3>
+      <p><b>Purchasing power:</b> ${profile.purchasingPower}</p>
+      <p><b>Debasement:</b> ${profile.debasement}</p>
+      <p><b>Freeze/seizure:</b> ${profile.seizure}</p>
+      <p><b>Generational wealth:</b> ${generationalWealthSummary(profile, profile.portability)}</p>
+      ${propertiesHtml(key)}
+      <p>${profile.lesson}</p>
+    </article>`;
+  }
+
+  function propertiesHtml(key) {
+    const scores = moneyPropertyScores[key] || {};
+    return `<div class="property-grid">${Object.entries(moneyPropertyLabels).map(([property, labelText]) => {
+      const score = scores[property] || 0;
+      return `<span title="${labelText}: ${score}/5"><b>${labelText}</b><i>${'●'.repeat(score)}${'○'.repeat(5 - score)}</i></span>`;
+    }).join('')}</div>`;
   }
 
   function previewCommodity() {
