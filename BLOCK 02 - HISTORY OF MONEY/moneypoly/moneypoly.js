@@ -1,5 +1,5 @@
 (() => {
-  const data = window.MONEYOPOLY_DATA;
+  const data = window.MONEYPOLY_DATA;
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const clone = (value) => JSON.parse(JSON.stringify(value));

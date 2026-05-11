@@ -1,4 +1,4 @@
-window.MONEYOPOLY_DATA = {
+window.MONEYPOLY_DATA = {
   resources: {
     mangoes: { label: 'Mangoes', icon: '🥭', category: 'food' },
     cows: { label: 'Cows', icon: '🐄', category: 'food' },

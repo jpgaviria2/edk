@@ -1,4 +1,4 @@
-# Moneyopoly — Barter Market MVP
+# Moneypoly — Barter Market MVP
 
 Prototype 1 for the Block 02 flagship History of Money game.
 
@@ -32,10 +32,10 @@ Make learners *feel* the limits of barter before introducing commodity money, fi
 
 ## Next eras
 
-1. Shell Moneyopoly — one widely accepted good lowers trade friction, then shell supply risk appears
-2. Shell Moneyopoly — easy money supply shock creates inflation
-3. Coin Moneyopoly — durable money plus debasement risk
-4. Paper Receipt Moneyopoly — portability plus custodian trust risk
-5. Fiat Moneyopoly — money printing and purchasing-power loss
-6. Digital Bank Moneyopoly — speed plus censorship/custody risk
-7. Bitcoin Moneyopoly — fixed supply, self-custody, verification, Lightning
+1. Shell Moneypoly — one widely accepted good lowers trade friction, then shell supply risk appears
+2. Shell Moneypoly — easy money supply shock creates inflation
+3. Coin Moneypoly — durable money plus debasement risk
+4. Paper Receipt Moneypoly — portability plus custodian trust risk
+5. Fiat Moneypoly — money printing and purchasing-power loss
+6. Digital Bank Moneypoly — speed plus censorship/custody risk
+7. Bitcoin Moneypoly — fixed supply, self-custody, verification, Lightning

@@ -1,7 +1,7 @@
 {
-  "name": "History of Money \u00b7 Moneyopoly",
-  "short_name": "Moneyopoly",
-  "description": "An offline-ready History of Money learning module with the Moneyopoly barter and commodity money game.",
+  "name": "History of Money \u00b7 Moneypoly",
+  "short_name": "Moneypoly",
+  "description": "An offline-ready History of Money learning module with the Moneypoly barter and commodity money game.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",
@@ -20,19 +20,19 @@
   ],
   "icons": [
     {
-      "src": "/assets/icons/moneyopoly-icon-192.png",
+      "src": "/assets/icons/moneypoly-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/moneyopoly-icon-512.png",
+      "src": "/assets/icons/moneypoly-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/moneyopoly-icon-512.png",
+      "src": "/assets/icons/moneypoly-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -40,13 +40,13 @@
   ],
   "shortcuts": [
     {
-      "name": "Play Moneyopoly",
+      "name": "Play Moneypoly",
       "short_name": "Play",
-      "description": "Launch the Moneyopoly barter game.",
-      "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/?source=pwa-shortcut",
+      "description": "Launch the Moneypoly barter game.",
+      "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/?source=pwa-shortcut",
       "icons": [
         {
-          "src": "/assets/icons/moneyopoly-icon-192.png",
+          "src": "/assets/icons/moneypoly-icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -58,7 +58,7 @@
       "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/?source=pwa-shortcut",
       "icons": [
         {
-          "src": "/assets/icons/moneyopoly-icon-192.png",
+          "src": "/assets/icons/moneypoly-icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }

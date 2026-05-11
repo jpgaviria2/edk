@@ -10,7 +10,7 @@ Learners should be able to explain the concept by doing something practical, not
 
 ## Practical game/app
 
-Moneyopoly website-first game. Prototype 1 is a playable barter survival market with mangoes, cows, water, shelter, starting balances, trading destinations on each board space, failed-trade scoring, and events after every 3 trade attempts. Future eras: commodity money, shells, coins, paper receipts, fiat, digital bank money, Bitcoin.
+Moneypoly website-first game. Prototype 1 is a playable barter survival market with mangoes, cows, water, shelter, starting balances, trading destinations on each board space, failed-trade scoring, and events after every 3 trade attempts. Future eras: commodity money, shells, coins, paper receipts, fiat, digital bank money, Bitcoin.
 
 ## Core interactions
 
@@ -27,7 +27,7 @@ See `CONTENT-PLAN.md` and the copied `curriculum-content/` folder inside this bl
 ## Minimum viable app
 
 - One static HTML/CSS/JS page.
-- Barter Moneyopoly prototype under `moneyopoly/`.
+- Barter Moneypoly prototype under `moneypoly/`.
 - No backend required.
 - Mobile-first.
 - Works as a standalone GitHub Pages path.

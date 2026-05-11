@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v9';
+const CACHE_VERSION = 'history-money-pwa-v10';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [
@@ -6,19 +6,19 @@ const CORE_ASSETS = [
   '/index.html',
   '/offline.html',
   '/manifest.webmanifest',
-  '/assets/moneyopoly-board-logo.jpg',
-  '/assets/icons/moneyopoly-icon-192.png',
-  '/assets/icons/moneyopoly-icon-512.png',
+  '/assets/moneypoly-board-logo.jpg',
+  '/assets/icons/moneypoly-icon-192.png',
+  '/assets/icons/moneypoly-icon-512.png',
   '/assets/icons/apple-touch-icon.png',
   '/assets/edk.css',
   '/assets/edk.js',
   '/BLOCK 02 - HISTORY OF MONEY/',
   '/BLOCK 02 - HISTORY OF MONEY/index.html',
-  '/BLOCK 02 - HISTORY OF MONEY/moneyopoly/',
-  '/BLOCK 02 - HISTORY OF MONEY/moneyopoly/index.html',
-  '/BLOCK 02 - HISTORY OF MONEY/moneyopoly/moneyopoly.css',
-  '/BLOCK 02 - HISTORY OF MONEY/moneyopoly/game-data.js',
-  '/BLOCK 02 - HISTORY OF MONEY/moneyopoly/moneyopoly.js'
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/',
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/index.html',
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/moneypoly.css',
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/game-data.js',
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/moneypoly.js'
 ];
 
 const toCacheRequest = (url) => new Request(encodeURI(url), { cache: 'reload' });
