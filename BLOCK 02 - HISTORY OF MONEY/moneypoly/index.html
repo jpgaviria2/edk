@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Moneypoly" />
-  <link rel="manifest" href="/manifest.webmanifest?v=12" />
+  <link rel="manifest" href="/manifest.webmanifest?v=13" />
   <link rel="icon" href="/assets/icons/moneypoly-icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <title>Moneypoly · History of Money</title>
@@ -168,6 +168,7 @@
         <h2>Same needs, same crises, different money</h2>
         <p>Each board asks Maya to secure food, water, and shelter, then build something worth passing down. The difference is the money system: barter matching, commodity acceptance, gold hardness, fiat trust, or Bitcoin self-custody.</p>
         <div data-comparison-cards></div>
+        <a class="btn green" href="./physical-kit/FACILITATOR-KIT.md">Open physical facilitator kit</a>
         <button class="btn primary">Close</button>
       </form>
     </dialog>
@@ -202,7 +203,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=17').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=18').catch(() => {});
       });
     }
   </script>
