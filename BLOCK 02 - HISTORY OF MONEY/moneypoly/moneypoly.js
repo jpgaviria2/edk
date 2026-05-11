@@ -55,11 +55,11 @@
   const eraProfiles = {
     barter: {
       name: 'Barter', money: null, purchasingPower: 'No unit', debasement: 'No money to debase', seizure: 'Goods can be stolen', portability: 1,
-      lesson: 'Direct barter requires a double coincidence of wants. Same survival needs, hardest matching problem.'
+      lesson: 'Direct barter requires a double coincidence of wants. It may help you survive today, but it is a weak path for building generational wealth.'
     },
     commodity: {
       name: 'Commodity Money', money: 'shells', purchasingPower: 'Usually helpful, but supply shocks can dilute shells', debasement: 'Possible if more shells flood in', seizure: 'Physical shells can be taken', portability: 3,
-      lesson: 'Shells improve trade because many people accept one common good, but commodity money can still be diluted or damaged.'
+      lesson: 'Shells improve trade because many people accept one common good, but weak commodity money can still be diluted or damaged before wealth reaches the next generation.'
     },
     gold: {
       name: 'Gold Money',
@@ -69,7 +69,7 @@
       cardTitle: 'Gold Money: hard commodity money',
       cardCopy: 'Gold coins are scarce and durable, so they store value better than food or shells. Now test the physical tradeoffs: weight, clipping, theft, and confiscation.',
       money: 'gold', startingMoney: 3, purchasingPower: 'Strong unless coins are clipped', debasement: 'Coin clipping lowers trust', seizure: 'Physical confiscation/theft risk', portability: 3,
-      lesson: 'Gold is hard commodity money: scarce and durable, but heavy to move and vulnerable to physical seizure.'
+      lesson: 'Gold is hard commodity money and can store wealth across generations, but it is heavy to move and vulnerable to physical seizure.'
     },
     fiat: {
       name: 'Fiat Money',
@@ -79,7 +79,7 @@
       cardTitle: 'Fiat Money: paper promises',
       cardCopy: 'Dollars are convenient legal tender, but they are trust-based. Printing, bank busts, inflation, and account freezes change the game.',
       money: 'dollars', startingMoney: 40, purchasingPower: 'Falls when supply expands', debasement: 'Money printing raises prices', seizure: 'Accounts can freeze or debank', portability: 5,
-      lesson: 'Fiat makes payment easy, but purchasing power depends on policy and trust in institutions.'
+      lesson: 'Fiat makes payment easy, but generational wealth is fragile when purchasing power depends on policy, banks, and money printing.'
     },
     bitcoin: {
       name: 'Bitcoin Money',
@@ -89,7 +89,7 @@
       cardTitle: 'Bitcoin Money: hardest digital money',
       cardCopy: 'Sats move digitally and the supply cannot be inflated. Crises can damage goods, homes, and harvests — but the sats you saved are not debased.',
       money: 'sats', startingMoney: 30000, purchasingPower: 'Supply cannot be printed away', debasement: 'No money-printing debasement', seizure: 'Authorities may freeze property, not self-custodied sats', portability: 5,
-      lesson: 'Bitcoin is sound digital money: crises can reduce goods in hand, but sats saved for the future are not printed away or locally frozen.'
+      lesson: 'Bitcoin is sound digital money: crises can reduce goods in hand, but sats saved for the future are not printed away or locally frozen, making them stronger generational savings.'
     }
   };
 
@@ -889,7 +889,7 @@
     if (state.mode === 'commodity') {
       mode.textContent = 'Commodity money edition';
       title.textContent = 'Trade with shells';
-      copy.textContent = 'Shells are broadly accepted. Sell goods into shells, buy what you need, and watch crises change shell prices.';
+      copy.textContent = 'Shells are broadly accepted. Survive first, then see whether shell savings can preserve wealth for the next generation when crises hit.';
     } else if (['gold', 'fiat', 'bitcoin'].includes(state.mode)) {
       const info = eraProfiles[state.mode];
       mode.textContent = info.modeLabel;
@@ -897,8 +897,8 @@
       copy.textContent = info.copy;
     } else {
       mode.textContent = 'Barter edition';
-      title.textContent = 'Survive without money';
-      copy.textContent = 'Move from trader to trader. Save mangoes, accept or skip offers, and feel why direct barter is hard.';
+      title.textContent = 'Survive, then build wealth';
+      copy.textContent = 'Move from trader to trader. Survival matters, but the bigger test is whether this system can help Maya save wealth for future generations.';
     }
   }
 
@@ -913,8 +913,8 @@
     $('[data-results]').classList.remove('hidden');
     toggleCommodityButton(true);
     $('[data-result-summary]').textContent = survived
-      ? `You survived the ${profile.name} board with food, water, and shelter after ${state.tradeAttempts} trade attempts.`
-      : `You ended the ${profile.name} board short on ${missing.map(label).join(', ')} after ${state.tradeAttempts} trade attempts.`;
+      ? `You survived the ${profile.name} board with food, water, and shelter after ${state.tradeAttempts} trade attempts. Now compare whether this money helped Maya preserve wealth for future generations.`
+      : `You ended the ${profile.name} board short on ${missing.map(label).join(', ')} after ${state.tradeAttempts} trade attempts. Survival comes first before generational wealth is possible.`;
     const lessons = [
       `Survived: ${survived ? 'Yes' : 'No — missing ' + missing.map(label).join(', ')}`,
       `Trades: ${state.successfulTrades} successful, ${state.failedTrades} failed`,
@@ -922,10 +922,20 @@
       `Debasement: ${state.debasementEvents ? state.debasementEvents + ' event(s)' : profile.debasement}`,
       `Seize/freeze risk: ${state.seizureEvents ? state.seizureEvents + ' event(s)' : profile.seizure}`,
       `Portability / divisibility / ease of use: ${portabilityScore}/5`,
+      `Generational wealth test: ${generationalWealthSummary(profile, portabilityScore)}`,
       `Lesson: ${profile.lesson}`
     ];
     $('[data-result-lessons]').innerHTML = lessons.map((lesson) => `<li>${lesson}</li>`).join('') + comparisonHtml(state.mode);
     setCard(`${profile.name} round complete`, profile.lesson, false);
+  }
+
+  function generationalWealthSummary(profile, portabilityScore) {
+    const weakDebasement = String(profile.debasement).toLowerCase().includes('printing') || String(profile.debasement).toLowerCase().includes('dilute');
+    const weakSeizure = String(profile.seizure).toLowerCase().includes('seiz') || String(profile.seizure).toLowerCase().includes('freeze') || String(profile.seizure).toLowerCase().includes('stolen');
+    if (profile.name === 'Bitcoin Money') return 'Strong — savings in sats are not printed away, and self-custody helps pass value forward.';
+    if (profile.name === 'Gold Money') return 'Good but physical — durable savings, with transport and seizure risks.';
+    if (weakDebasement || weakSeizure || portabilityScore < 3) return 'Weak — survival may be possible, but passing wealth forward is fragile.';
+    return 'Moderate — useful for trade, but test how it handles crisis across generations.';
   }
 
   function comparisonHtml(activeMode = state.mode) {
@@ -936,6 +946,7 @@
         <p><b>Debasement:</b> ${profile.debasement}</p>
         <p><b>Freeze/seizure:</b> ${profile.seizure}</p>
         <p><b>Use score:</b> ${profile.portability}/5</p>
+        <p><b>Generational wealth:</b> ${generationalWealthSummary(profile, profile.portability)}</p>
       </article>`).join('')}</div></li>`;
   }
 
