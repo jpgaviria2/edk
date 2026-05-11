@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v6';
+const CACHE_VERSION = 'history-money-pwa-v7';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [
@@ -6,7 +6,10 @@ const CORE_ASSETS = [
   '/index.html',
   '/offline.html',
   '/manifest.webmanifest',
-  '/assets/icons/history-money-icon.svg',
+  '/assets/icons/learning-bitcoin-foundation-logo.jpg',
+  '/assets/icons/learning-bitcoin-foundation-icon-192.png',
+  '/assets/icons/learning-bitcoin-foundation-icon-512.png',
+  '/assets/icons/apple-touch-icon.png',
   '/assets/edk.css',
   '/assets/edk.js',
   '/BLOCK 02 - HISTORY OF MONEY/',

@@ -1,27 +1,40 @@
 {
-  "name": "History of Money · Moneyopoly",
+  "name": "History of Money \u00b7 Moneyopoly",
   "short_name": "Moneyopoly",
   "description": "An offline-ready History of Money learning module with the Moneyopoly barter and commodity money game.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "browser"
+  ],
   "orientation": "any",
   "theme_color": "#120b03",
   "background_color": "#120b03",
-  "categories": ["education", "games"],
+  "categories": [
+    "education",
+    "games"
+  ],
   "icons": [
     {
-      "src": "/assets/icons/history-money-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/assets/icons/learning-bitcoin-foundation-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/history-money-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/assets/icons/learning-bitcoin-foundation-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/learning-bitcoin-foundation-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
@@ -31,13 +44,25 @@
       "short_name": "Play",
       "description": "Launch the Moneyopoly barter game.",
       "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneyopoly/?source=pwa-shortcut",
-      "icons": [{ "src": "/assets/icons/history-money-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [
+        {
+          "src": "/assets/icons/learning-bitcoin-foundation-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Open Block 02 Lesson",
       "short_name": "Lesson",
       "url": "/BLOCK%2002%20-%20HISTORY%20OF%20MONEY/?source=pwa-shortcut",
-      "icons": [{ "src": "/assets/icons/history-money-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [
+        {
+          "src": "/assets/icons/learning-bitcoin-foundation-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
