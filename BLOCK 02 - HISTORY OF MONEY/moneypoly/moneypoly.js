@@ -54,7 +54,7 @@
 
   const workshopRounds = [
     { min: 0, title: 'Round 1: Barter only', objective: 'Trade cards/goods you have but do not need for goods you need. No money yet.', prompt: ['Who has something useful but cannot find the right match?', 'What makes double coincidence of wants hard?'] },
-    { min: 2, title: 'Round 2: Changed needs', objective: 'Needs shift mid-game. Matching gets harder because everyone wants different things at the wrong time.', prompt: ['What changed when needs moved?', 'Did valuable goods automatically become good money?'] },
+    { min: 2, title: 'Round 2: Changed needs', objective: 'Needs shift mid-game. Matching gets harder because wants matter in barter; later boards focus more on pricing, savings, and preserving wealth.', prompt: ['What changed when needs moved?', 'Did valuable goods automatically become good money?'] },
     { min: 4, title: 'Round 3: Commodity money introduced', objective: 'Shells, coffee beans, and beads begin acting as local money — but acceptance grows unevenly.', prompt: ['Why does a widely accepted good reduce failed trades?', 'What happens when a table refuses your commodity?'] },
     { min: 7, title: 'Bonus: Future planning', objective: 'You can preview next-round needs. Saving and pre-positioning helps generational wealth.', prompt: ['Who saved before the need arrived?', 'How does planning across time change wealth?'] },
     { min: 9, title: 'Bonus: Inflation + scarcity', objective: 'Extra shells enter circulation and scarce face-card goods cost more.', prompt: ['Did more money create more goods?', 'What happened to prices when everyone needed scarce goods?'] },
@@ -265,14 +265,25 @@
   }
 
   function compactHaveNeed(player) {
-    const have = Object.entries(player.inventory).filter(([, amount]) => amount > 0).slice(0, 6).map(([resource, amount]) => `<span>${data.resources[resource].icon} ${amount} ${label(resource)}</span>`).join('') || '<span>Nothing spare</span>';
-    const need = [...new Set([...missingNeeds(player), ...(player.wants || [])])].slice(0, 5).map((resource) => `<span>${data.resources[resource].icon} ${label(resource)}</span>`).join('') || '<span>Needs met</span>';
-    return `<div class="have-need-grid"><div class="mini-card"><strong>Have</strong>${have}</div><div class="mini-card"><strong>Need</strong>${need}</div></div>`;
+    const have = Object.entries(player.inventory)
+      .filter(([, amount]) => amount > 0)
+      .slice(0, 6)
+      .map(([resource, amount]) => `<span>${data.resources[resource].icon} ${formatAmount(resource, amount)} ${label(resource)}</span>`).join('') || '<span>Nothing spare</span>';
+    if (state.mode === 'barter') {
+      const need = [...new Set([...missingNeeds(player), ...(player.wants || [])])].slice(0, 5).map((resource) => `<span>${data.resources[resource].icon} ${label(resource)}</span>`).join('') || '<span>Needs met</span>';
+      return `<div class="have-need-grid"><div class="mini-card"><strong>Have</strong>${have}</div><div class="mini-card"><strong>Need / wants</strong>${need}</div></div>`;
+    }
+    const survival = missingNeeds(player).length
+      ? missingNeeds(player).map((resource) => `<span>${data.resources[resource].icon} Need ${label(resource)}</span>`).join('')
+      : '<span>Survival needs met</span>';
+    const money = currentMoneyResource();
+    const moneyLine = money ? `<span>${data.resources[money].icon} ${formatAmount(money, player.inventory[money] || 0)} ${label(money)} saved</span>` : '';
+    return `<div class="have-need-grid"><div class="mini-card"><strong>Have</strong>${have}</div><div class="mini-card"><strong>Survival + savings</strong>${survival}${moneyLine}<span>Next gen: ${state.nextNeeds.map(label).join(', ')}</span></div></div>`;
   }
 
   function mediciStatusLine() {
     if (state.mode !== 'medici') return '';
-    return `<p class="ledger-line">🏦 Medici ledger: ${human().inventory.gold || 0} gold carried · ${human().inventory.slips || 0} signed slips · fees paid ${state.feesPaid} · reserve stress ${state.reserveStress} · bank run risk ${state.bankRunRisk}.</p>`;
+    return `<p class="ledger-line">🏦 Medici ledger: ${formatAmount('gold', human().inventory.gold || 0)} gold carried · ${formatAmount('slips', human().inventory.slips || 0)} signed slips · fees paid ${formatAmount('slips', state.feesPaid)} · reserve stress ${state.reserveStress} · bank run risk ${state.bankRunRisk}.</p>`;
   }
 
   function openComparison() {
@@ -701,9 +712,10 @@
     offer.innerHTML = `<div class="deal-card">
       <span class="eyebrow">${eraProfiles[state.mode]?.money ? `${eraProfiles[state.mode].name} offer` : 'Proposed trade'}</span>
       <h3>${space.trader || space.name} offers</h3>
-      <div class="deal-equation"><strong>${proposal.receiveQty} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${proposal.payQty} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
+      <div class="deal-equation"><strong>${formatAmount(proposal.receive, proposal.receiveQty)} ${data.resources[proposal.receive].icon} ${label(proposal.receive)}</strong><span>for</span><strong>${formatAmount(proposal.pay, proposal.payQty)} ${data.resources[proposal.pay].icon} ${label(proposal.pay)}</strong></div>
       ${compactHaveNeed(human())}
       <p>Base market: ${proposal.baseText}. This offer is ${proposal.discountPercent}% under base${proposal.crisisApplied ? ', then crisis pricing' : ''}.</p>
+      ${relativePriceLine(proposal.pay)}
       <p class="${proposal.canAfford ? 'afford-line' : 'cannot-afford-line'}">${proposal.canAfford ? 'You can afford this trade.' : `You cannot afford this yet. Save more ${label(proposal.pay)} and come back later.`}</p>
       <p>${proposal.goodDeal ? 'This looks useful for your survival needs.' : 'This may be expensive, but barter is messy.'}</p>
       ${proposal.acceptance?.copy ? `<p class="acceptance-line">${proposal.acceptance.copy}</p>` : ''}
@@ -740,7 +752,7 @@
       const acceptability = commodityAcceptability(space, resource);
       const costInMangoes = baseMangoPrices[receive] * receiveQty * discount * priceMultiplier(receive, resource) * acceptability.multiplier;
       const rawQty = costInMangoes / baseMangoPrices[resource];
-      const payQty = resource === 'sats' ? Math.max(100, Math.round(rawQty / 100) * 100) : Math.max(1, Math.round(rawQty));
+      const payQty = priceQuantity(resource, rawQty);
       const inventory = player.inventory[resource] || 0;
       return { resource, payQty, inventory, sufficient: inventory >= payQty, notAll: inventory > payQty };
     });
@@ -749,7 +761,7 @@
       || candidates.find((candidate) => candidate.sufficient)
       || candidates.find((candidate) => candidate.resource === 'mangoes')
       || candidates[0]
-      || { resource: 'mangoes', payQty: Math.max(1, Math.round(baseMangoPrices[receive] * receiveQty)), inventory: 0, sufficient: false };
+      || { resource: 'mangoes', payQty: priceQuantity('mangoes', baseMangoPrices[receive] * receiveQty), inventory: 0, sufficient: false };
     const goodDeal = missingNeeds(player).includes(receive) || receive === 'fish';
     const baseText = basePriceText(receive, receiveQty, choice.resource);
     const discountPercent = Math.round((1 - discount) * 100);
@@ -800,8 +812,30 @@
   function basePriceText(receive, receiveQty, pay) {
     const receiveValue = baseMangoPrices[receive] * receiveQty;
     const payUnits = receiveValue / baseMangoPrices[pay];
-    const formattedPay = Number.isInteger(payUnits) ? payUnits : payUnits.toFixed(1);
-    return `${receiveQty} ${label(receive)} ≈ ${formattedPay} ${label(pay)}`;
+    return `${formatAmount(receive, receiveQty)} ${label(receive)} ≈ ${formatAmount(pay, payUnits)} ${label(pay)}`;
+  }
+
+  function priceQuantity(resource, rawQty) {
+    if (resource === 'sats') return Math.max(100, Math.ceil(rawQty / 100) * 100);
+    if (resource === 'gold' || resource === 'slips') return Math.max(0.1, Math.ceil(rawQty * 10) / 10);
+    if (resource === 'dollars') return Math.max(1, Math.ceil(rawQty));
+    return Math.max(1, Math.round(rawQty));
+  }
+
+  function formatAmount(resource, amount) {
+    const value = Number(amount || 0);
+    if (resource === 'sats') return String(Math.round(value));
+    if (resource === 'gold' || resource === 'slips') return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, '');
+    if (resource === 'dollars') return String(Math.round(value));
+    return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, '');
+  }
+
+  function relativePriceLine(pay) {
+    if (pay === 'gold') return '<p class="price-line">⚖️ Relative pricing: 1 gold coin ≈ 25 mangoes / 25 dollars. Small goods should cost fractions of a coin, not a whole coin.</p>';
+    if (pay === 'slips') return '<p class="price-line">📜 Relative pricing: 1 credit slip is a paper claim worth about 0.9 gold after the 10% fee, so small goods use fractional slips.</p>';
+    if (pay === 'dollars') return '<p class="price-line">💵 Relative pricing: dollars are the unit of account here — mango $1, water about $2, cow about $10, shelter about $20 before shocks.</p>';
+    if (pay === 'sats') return '<p class="price-line">₿ Relative pricing: sats are tiny units, so even small goods can be priced without forcing a full large coin.</p>';
+    return '';
   }
 
   function currentMoneyResource() {
@@ -848,18 +882,16 @@
     const moneyRaised = moneyFor(resource, units, targetMoney);
     const proposal = state.proposedOffer;
     const extra = proposal?.pay === targetMoney
-      ? ` Current offer costs ${proposal.payQty} ${label(targetMoney)}; you have ${human().inventory[targetMoney] || 0}.`
+      ? ` Current offer costs ${formatAmount(targetMoney, proposal.payQty)} ${label(targetMoney)}; you have ${formatAmount(targetMoney, human().inventory[targetMoney] || 0)}.`
       : '';
     const unavailable = moneyRaised <= 0 ? ` This is not enough value for 1 ${label(targetMoney)} yet — sell a larger bundle.` : '';
-    copy.textContent = `Sell ${units} ${label(resource)} for ${moneyRaised} ${label(targetMoney)}. This is separate from the landing offer.${extra}${unavailable}`;
+    copy.textContent = `Sell ${formatAmount(resource, units)} ${label(resource)} for ${formatAmount(targetMoney, moneyRaised)} ${label(targetMoney)}. This is separate from the landing offer.${extra}${unavailable}`;
   }
 
   function moneyFor(resource, units, targetMoney) {
     const valueInMangoes = units * baseMangoPrices[resource];
     const raw = valueInMangoes / baseMangoPrices[targetMoney];
-    if (targetMoney === 'sats') return Math.max(100, Math.round(raw / 100) * 100);
-    if (targetMoney === 'gold') return Math.max(0.1, Math.round(raw * 10) / 10);
-    return Math.max(1, Math.round(raw));
+    return priceQuantity(targetMoney, raw);
   }
 
   function sellForMoney() {
@@ -892,7 +924,7 @@
       $('[data-action="accept-offer"]').disabled = !state.proposedOffer.canAfford;
       refreshAffordabilityLine(state.proposedOffer);
     }
-    $('[data-trade-feedback]').textContent = `Sold ${units} ${label(resource)} for ${moneyRaised} ${label(targetMoney)}. This was just a money exchange, not the purchase.`;
+    $('[data-trade-feedback]').textContent = `Sold ${formatAmount(resource, units)} ${label(resource)} for ${formatAmount(targetMoney, moneyRaised)} ${label(targetMoney)}. This was just a money exchange, not the purchase.`;
     renderHumanPanel();
     syncTradeResourceAvailability();
     renderShellExchange(state.proposedOffer);
@@ -957,7 +989,7 @@
         return;
       }
       state.bankReserves[reserveCity] = Math.max(0, state.bankReserves[reserveCity] - 0.25);
-      state.ledgerEntries.push(`Paid ${proposal.payQty} signed slips in ${reserveCity} for ${proposal.receiveQty} ${label(proposal.receive)}.`);
+      state.ledgerEntries.push(`Paid ${formatAmount(proposal.pay, proposal.payQty)} signed slips in ${reserveCity} for ${formatAmount(proposal.receive, proposal.receiveQty)} ${label(proposal.receive)}.`);
     }
     if (state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1) {
       state.portabilityHits += 1;
@@ -968,7 +1000,7 @@
     player.inventory[proposal.pay] -= proposal.payQty;
     player.inventory[proposal.receive] = (player.inventory[proposal.receive] || 0) + proposal.receiveQty;
     state.successfulTrades += 1;
-    if (!(state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1)) feedback.textContent = `Accepted: you traded ${proposal.payQty} ${label(proposal.pay)} for ${proposal.receiveQty} ${label(proposal.receive)}.`;
+    if (!(state.mode === 'gold' && proposal.pay === 'gold' && proposal.payQty > 1)) feedback.textContent = `Accepted: you traded ${formatAmount(proposal.pay, proposal.payQty)} ${label(proposal.pay)} for ${formatAmount(proposal.receive, proposal.receiveQty)} ${label(proposal.receive)}.`;
     setCard('Offer accepted', offerLesson(), false);
     setLandingAction(null);
     maybeTriggerTradeEvent();
