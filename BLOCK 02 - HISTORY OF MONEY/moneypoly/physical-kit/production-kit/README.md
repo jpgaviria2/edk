@@ -17,29 +17,32 @@ Why this format:
 
 ## Recommended big-audience play model
 
-**Use this model for 80 people:**
-- each **table is its own mini-market / mini-board**
+**Primary recommended format:**
+- each **table is its own mini-board / mini-market**
 - each table has **5 teams of 2**
-- teams at a table trade mostly **within their own table**
-- the whole room moves through the same era at the same time
-- a banker manages two tables and resolves local effects
+- the **moderator on stage rolls for everyone at once**
+- all tables move in sync
+- each table resolves its own landing spaces locally
+- a banker or table captain enforces payouts, trades, and event effects
+
+This is now the preferred large-room format because it is faster, cleaner, and easier to moderate from stage.
+
+See also: `MODERATOR-MODE.md`
 
 ### What a table is not
 - not one single merchant stall for the whole room
 - not one individual player per table
+- not a fully free-roaming chaos market by default
 
 ### Best interpretation
-For a big meetup, the cleanest model is: **each table is its own self-contained market**.
+For a big meetup, the cleanest model is: **one central moderator rhythm, many parallel table boards**.
 
 ### Optional advanced variation
-If you want more drama, you can add **cross-table trading windows** during later eras:
-- commodity money: allow limited inter-table trade
-- gold: allow one inter-table exchange window
-- credit & ledgers: let branch slips travel between tables
-- bitcoin: let final settlement happen across tables
-
-That means **both** models are possible, but the recommended default is:
-**each table plays its own board first; occasional cross-table interactions are optional add-ons.**
+If you want more drama later, add **short cross-table trading windows** in advanced eras:
+- commodity money: limited inter-table trade
+- gold: one inter-table exchange window
+- credit & ledgers: branch slips can travel across tables
+- bitcoin: final settlement can happen across tables
 
 ## What is in this kit
 

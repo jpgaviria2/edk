@@ -6,10 +6,12 @@
 - one table banker covers two tables
 
 ## How to think about the room
-- each table is a **self-contained mini-market**
+- each table is a **self-contained mini-board and mini-market**
 - each team at the table represents a household, producer, or trader
+- the **moderator rolls once for the whole room**
+- all teams move at the same time on their own table board
 - teams mostly trade **within their own table**
-- the room stays synchronized by era, not by one giant shared board
+- the room stays synchronized by roll, era, and event reveal
 - optional: later eras can include short cross-table exchange windows
 
 ## Objective to say out loud
@@ -30,7 +32,7 @@ AV:
 - show countdown timer
 
 ### 0:05-0:13 — Phase 1: Barter
-Table teams trade directly.
+Moderator rolls for the whole room. Every team moves together on its own table board and resolves the landed trade directly.
 
 Facilitator prompts:
 - was trade easy?
@@ -39,6 +41,7 @@ Facilitator prompts:
 
 Bankers:
 - enforce direct barter only
+- issue GO payouts when teams pass GO
 - log failed trades roughly
 
 ### 0:13-0:19 — Phase 2: Changed needs
@@ -55,6 +58,7 @@ Prompt:
 Introduce shells first. Optionally show coffee beans and beads as competing monies.
 
 Actions:
+- moderator keeps synchronized dice movement live
 - tables begin accepting shells
 - bankers explain that not all tables must accept every commodity equally at first
 
@@ -117,6 +121,16 @@ Score teams and summarize:
 
 Close with:
 "Money is not just what helps you buy today. The deepest question is what preserves the fruits of your work across time." 
+
+## GO payout rule
+When a team passes or lands on GO, the table captain issues fixed production based on role:
+- Mango producer: +10 mangoes
+- Water producer: +5 water
+- Fish producer: +4 fish
+- Cow producer: +1 cow
+- Shelter producer: +1 shelter
+
+Use fixed payouts, not percentages.
 
 ## Banker logging rule
 You do not need perfect accounting. You need enough signal to compare:
