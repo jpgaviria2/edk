@@ -22,6 +22,7 @@ Designed for **8 tables × 10 people = 80 participants**. Recommended table role
 
 Files:
 
+- `bitcoin-transaction-demo/moderator.html` — projector/moderator console showing the action every table should follow
 - `bitcoin-transaction-demo/BITCOIN-TRANSACTION-DEMO-KIT.md`
 - `bitcoin-transaction-demo/BITCOIN-TRANSACTION-DEMO-KIT.pdf`
 - `bitcoin-transaction-demo/PACKING-LIST-8-TABLES.csv`

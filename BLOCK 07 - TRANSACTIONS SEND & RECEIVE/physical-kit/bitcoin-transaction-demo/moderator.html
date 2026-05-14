@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Block 7 Moderator Console · Bitcoin Transaction Demo</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050914;
+      --panel: rgba(16, 25, 43, .94);
+      --panel2: rgba(255, 255, 255, .055);
+      --text: #f7f9ff;
+      --muted: #b7c2d8;
+      --soft: #8390aa;
+      --orange: #f7931a;
+      --orange2: #ffc46b;
+      --blue: #55d6ff;
+      --green: #4ee28a;
+      --red: #ff6b6b;
+      --purple: #b69cff;
+      --border: rgba(255, 255, 255, .14);
+      --shadow: 0 30px 90px rgba(0,0,0,.38);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(247,147,26,.22), transparent 28rem),
+        radial-gradient(circle at top right, rgba(85,214,255,.13), transparent 30rem),
+        linear-gradient(180deg, #050914 0%, #081325 58%, #050914 100%);
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .app { width: min(1560px, 100%); margin: 0 auto; padding: 18px; }
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .brand {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(247,147,26,.18), rgba(16,25,43,.88));
+      box-shadow: var(--shadow);
+      padding: 18px 22px;
+    }
+    .eyebrow { color: var(--orange2); font-weight: 900; text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; }
+    h1 { margin: .18em 0 0; font-size: clamp(2rem, 4vw, 4.8rem); line-height: .92; letter-spacing: -.055em; }
+    .subtitle { color: var(--muted); margin: 8px 0 0; font-size: clamp(.98rem, 1.5vw, 1.25rem); }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      min-height: 44px;
+    }
+    .btn:hover { background: rgba(255,255,255,.13); }
+    .btn.primary { background: linear-gradient(135deg, var(--orange2), var(--orange)); color: #241200; border: 0; }
+    .btn.green { background: linear-gradient(135deg, #6df2a0, #22bd66); color: #03170b; border: 0; }
+    .btn.red { background: rgba(255,107,107,.18); border-color: rgba(255,107,107,.45); }
+    .btn:disabled { opacity: .38; cursor: not-allowed; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 340px) 1fr minmax(300px, 420px);
+      gap: 14px;
+      align-items: start;
+    }
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .panel h2, .panel h3 { margin: 0 0 12px; }
+    .panel h2 { font-size: 1.15rem; }
+    .panel h3 { color: var(--orange2); font-size: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+
+    .scenario-list { display: grid; gap: 8px; }
+    .scenario-button {
+      width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 16px;
+      background: rgba(255,255,255,.055); color: var(--text); padding: 12px;
+    }
+    .scenario-button strong { display: block; color: var(--text); }
+    .scenario-button span { color: var(--muted); font-size: .9rem; }
+    .scenario-button.active { border-color: rgba(247,147,26,.75); background: rgba(247,147,26,.18); }
+
+    .stage {
+      min-height: 72vh;
+      display: grid;
+      gap: 14px;
+    }
+    .hero-card {
+      border: 1px solid rgba(247,147,26,.42);
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(247,147,26,.16), rgba(85,214,255,.08)), var(--panel);
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 3vw, 34px);
+    }
+    .progress { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .dot { width: 36px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.16); }
+    .dot.done { background: var(--green); }
+    .dot.current { background: var(--orange); box-shadow: 0 0 0 4px rgba(247,147,26,.16); }
+    .step-label { color: var(--orange2); font-weight: 950; text-transform: uppercase; letter-spacing: .15em; font-size: .86rem; }
+    .main-action { font-size: clamp(2.4rem, 5vw, 6.2rem); line-height: .94; letter-spacing: -.065em; margin: 12px 0; font-weight: 950; }
+    .moderator-call {
+      font-size: clamp(1.18rem, 2vw, 2rem);
+      line-height: 1.35;
+      color: var(--text);
+      margin: 0;
+      border-left: 6px solid var(--orange);
+      padding: 12px 16px;
+      background: rgba(0,0,0,.2);
+      border-radius: 16px;
+    }
+
+    .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .action-card {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(255,255,255,.06);
+      padding: 16px;
+      min-height: 170px;
+    }
+    .action-card.wallet { border-color: rgba(85,214,255,.38); }
+    .action-card.node { border-color: rgba(78,226,138,.38); }
+    .action-card.mempool { border-color: rgba(182,156,255,.42); }
+    .action-card.miner { border-color: rgba(247,147,26,.46); }
+    .role-title { display: flex; gap: 8px; align-items: center; font-weight: 950; font-size: 1.15rem; margin-bottom: 8px; }
+    .badge { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 10px; background: rgba(255,255,255,.12); }
+    ul.clean { margin: 0; padding-left: 1.1rem; }
+    ul.clean li { color: var(--muted); margin: 6px 0; line-height: 1.35; }
+    .big-list li { font-size: clamp(1rem, 1.25vw, 1.2rem); }
+
+    .side-grid { display: grid; gap: 14px; }
+    .ledger-table, .utxo-table, .mempool-table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; font-size: .95rem; }
+    th { color: var(--orange2); font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; }
+    td { color: var(--muted); }
+    tr:last-child td { border-bottom: 0; }
+    .num { font-variant-numeric: tabular-nums; font-weight: 900; color: var(--text); }
+    .pill { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-size: .76rem; font-weight: 900; background: rgba(255,255,255,.09); color: var(--text); }
+    .pill.valid { background: rgba(78,226,138,.16); color: #95ffc0; }
+    .pill.reject { background: rgba(255,107,107,.17); color: #ffb1b1; }
+    .pill.pending { background: rgba(247,147,26,.18); color: #ffd08c; }
+
+    .script-box { border: 1px solid var(--border); border-radius: 18px; padding: 14px; background: rgba(0,0,0,.18); }
+    .script-box p { margin: 0; color: var(--muted); line-height: 1.45; }
+    .script-box strong { color: var(--text); }
+    .timer {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+      border: 1px solid rgba(85,214,255,.26); border-radius: 18px; padding: 12px; background: rgba(85,214,255,.08);
+    }
+    .time { font-size: 2.2rem; font-weight: 950; font-variant-numeric: tabular-nums; color: var(--blue); }
+    .timer-buttons { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .small-btn { border: 1px solid var(--border); background: rgba(255,255,255,.08); color: var(--text); border-radius: 10px; padding: 7px 9px; font-weight: 850; }
+
+    .bottom-nav {
+      position: sticky;
+      bottom: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      z-index: 5;
+      margin-top: 14px;
+    }
+    .bottom-nav .btn { padding: 16px 20px; font-size: 1.05rem; }
+    .center-note { text-align: center; color: var(--soft); font-weight: 800; }
+
+    .compact .layout { grid-template-columns: 1fr; }
+    .compact .left-col, .compact .right-col { display: none; }
+    .compact .stage { min-height: auto; }
+    .compact .main-action { font-size: clamp(3rem, 7vw, 7.5rem); }
+    .compact .moderator-call { font-size: clamp(1.4rem, 3vw, 2.6rem); }
+    .compact .actions-grid { grid-template-columns: 1fr 1fr; }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      .left-col { order: 2; }
+      .right-col { order: 3; }
+      .actions-grid { grid-template-columns: 1fr; }
+      .topbar { grid-template-columns: 1fr; }
+      .controls { justify-content: flex-start; }
+      .bottom-nav { grid-template-columns: 1fr; position: static; }
+      .center-note { order: -1; }
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      .controls, .left-col, .right-col, .bottom-nav, .global-home-button { display: none !important; }
+      .app { padding: 0; }
+      .hero-card, .action-card, .panel { box-shadow: none; border-color: #999; background: white; color: black; }
+      .main-action, .moderator-call, li, p, td { color: black !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="global-home-button" href="../../" aria-label="Back to Block 7" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(255,255,255,.18);background:rgba(7,17,31,.86);color:#fff;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px)">← Block 7</a>
+
+  <main class="app" id="app">
+    <header class="topbar">
+      <section class="brand">
+        <div class="eyebrow">Block 7 · Moderator Console</div>
+        <h1>Bitcoin Transaction Demo</h1>
+        <p class="subtitle">Center-stage script for 8 tables mirroring the same wallet → node → mempool → miner → block flow.</p>
+      </section>
+      <nav class="controls" aria-label="Moderator controls">
+        <button class="btn" id="compactBtn" type="button">Projector Mode</button>
+        <button class="btn" id="fullscreenBtn" type="button">Fullscreen</button>
+        <button class="btn red" id="resetBtn" type="button">Reset</button>
+        <a class="btn" href="BITCOIN-TRANSACTION-DEMO-KIT.pdf">PDF Kit</a>
+      </nav>
+    </header>
+
+    <section class="layout">
+      <aside class="panel left-col">
+        <h2>Scenario Queue</h2>
+        <div class="scenario-list" id="scenarioList"></div>
+      </aside>
+
+      <section class="stage" aria-live="polite">
+        <article class="hero-card">
+          <div class="progress" id="progressDots"></div>
+          <div class="step-label" id="stepLabel">Step</div>
+          <div class="main-action" id="mainAction">Loading…</div>
+          <p class="moderator-call" id="moderatorCall"></p>
+        </article>
+
+        <section class="actions-grid" id="actionsGrid"></section>
+      </section>
+
+      <aside class="side-grid right-col">
+        <section class="panel timer">
+          <div>
+            <h3>Round Timer</h3>
+            <div class="time" id="timerDisplay">02:00</div>
+          </div>
+          <div class="timer-buttons">
+            <button class="small-btn" data-time="60">1m</button>
+            <button class="small-btn" data-time="120">2m</button>
+            <button class="small-btn" data-time="180">3m</button>
+            <button class="small-btn" id="timerToggle">Start</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Projected Ledger</h2>
+          <table class="ledger-table" id="ledgerTable"></table>
+        </section>
+
+        <section class="panel">
+          <h2>Current UTXO Set</h2>
+          <table class="utxo-table" id="utxoTable"></table>
+        </section>
+
+        <section class="panel">
+          <h2>Mempool / Block Result</h2>
+          <table class="mempool-table" id="mempoolTable"></table>
+        </section>
+
+        <section class="panel">
+          <h2>Moderator Script</h2>
+          <div class="script-box" id="scriptBox"></div>
+        </section>
+      </aside>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Step navigation">
+      <button class="btn" id="prevBtn" type="button">← Previous</button>
+      <div class="center-note" id="positionNote">Scenario 1 · Step 1</div>
+      <button class="btn primary" id="nextBtn" type="button">Next →</button>
+    </nav>
+  </main>
+
+  <script>
+    const scenarios = [
+      {
+        id: 'setup',
+        title: 'Setup',
+        short: 'Assign roles and starting UTXOs',
+        status: 'pending',
+        ledger: { A: 5, B: 3, C: 2, 'Miner 1': 0, 'Miner 2': 0 },
+        utxos: [
+          ['A1', 'A', '5 BTC', 'unspent'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent']
+        ],
+        mempool: [],
+        steps: [
+          {
+            label: 'Room Setup',
+            action: 'Every table becomes a Bitcoin network',
+            call: 'Assign 3 wallets, 3 nodes, 2 miners, 1 mempool manager, and 1 table captain. Put UTXO cards A1, B1, and C1 on the table.',
+            script: 'Say: “The center ledger is the history we are all trying to independently verify. Your table should match it only after your nodes accept valid transactions and blocks.”',
+            roles: {
+              wallets: ['Wallet A receives UTXO A1 = 5 BTC.', 'Wallet B receives UTXO B1 = 3 BTC.', 'Wallet C receives UTXO C1 = 2 BTC.'],
+              nodes: ['Copy the starting UTXO set.', 'Your job is to reject anything invalid, even if the moderator says a wallet attempted it.'],
+              mempool: ['Keep basket empty until nodes pass you valid transaction cards.'],
+              miners: ['Hold dice. Do not mine until the moderator calls “Mining begins.”']
+            }
+          }
+        ]
+      },
+      {
+        id: 'valid-send',
+        title: '1 · Valid Send',
+        short: 'A sends 2 BTC to B, 1 BTC fee',
+        status: 'valid',
+        ledger: { A: 2, B: 5, C: 2, 'Miner 1': 7, 'Miner 2': 0 },
+        utxos: [
+          ['A1', 'A', '5 BTC', 'spent'],
+          ['A2', 'A', '2 BTC', 'unspent change'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['M1R1', 'Miner 1', '6 BTC reward + 1 BTC fee', 'unspent']
+        ],
+        mempool: [['TX1', 'A → B', '2 BTC', '1 BTC', 'mined']],
+        steps: [
+          {
+            label: 'Create Transaction',
+            action: 'Wallet A spends UTXO A1',
+            call: 'Wallet A sends 2 BTC to Wallet B with a 1 BTC miner fee. A must also create 2 BTC change back to A.',
+            script: 'Pause until every Wallet A has selected the A1 UTXO card. Emphasize: the whole 5 BTC UTXO is being consumed.',
+            roles: {
+              wallets: ['Wallet A takes UTXO A1 = 5 BTC.', 'Fill TX1: input A1, output 2 BTC to B, change 2 BTC to A, fee 1 BTC.', 'Sign TX1 with Wallet A private-key card/stamp.'],
+              nodes: ['Wait for signed TX1.', 'Do not accept it yet. You will verify it in the next step.'],
+              mempool: ['Basket stays empty until nodes approve TX1.'],
+              miners: ['Watch the fee. That 1 BTC is your incentive if you mine the block.']
+            }
+          },
+          {
+            label: 'Node Validation',
+            action: 'Nodes verify TX1',
+            call: 'Nodes: check signature, UTXO ownership, math, and double-spend risk. If valid, pass TX1 to the mempool.',
+            script: 'Ask one table: “What did the nodes check?” Expected: A owns A1, signature matches A, 2 + 2 + 1 = 5, A1 is unspent.',
+            roles: {
+              wallets: ['Hand signed TX1 to Node 1, then Node 2/3.'],
+              nodes: ['Check A controls A1.', 'Check A signature.', 'Check outputs + fee equal 5 BTC.', 'Mark TX1 valid and send to mempool.'],
+              mempool: ['Receive TX1 only after nodes mark it valid.'],
+              miners: ['Still waiting. No mining until transaction reaches mempool.']
+            }
+          },
+          {
+            label: 'Mempool + Mining',
+            action: 'TX1 enters mempool; miners roll',
+            call: 'Mempool: place TX1 in the basket. Miners: roll 3 dice. Low difficulty: at least one 6 finds the block.',
+            script: 'When a miner wins, have them shout “Block found!” The winning miner pulls TX1 from the mempool and adds a 6 BTC reward transaction.',
+            roles: {
+              wallets: ['Wait for confirmation. The transaction is not final until mined and accepted by nodes.'],
+              nodes: ['Watch miner dice result. Prepare to validate the candidate block.'],
+              mempool: ['Sort TX1 by fee. It is currently highest priority.'],
+              miners: ['Roll 3 dice until one miner gets at least one 6.', 'Winner builds Block 1: TX1 + coinbase reward 6 BTC.']
+            }
+          },
+          {
+            label: 'Block Accepted',
+            action: 'Update ledger and UTXOs',
+            call: 'Nodes validate the block. If valid, mark A1 spent, create A2 change, create B2 payment, and pay Miner 1 reward plus fee.',
+            script: 'Show expected result: A now has 2 BTC, B has 5 BTC, winning miner has 7 BTC. Tables compare against center ledger.',
+            roles: {
+              wallets: ['Wallet A keeps new change UTXO A2 = 2 BTC.', 'Wallet B receives new UTXO B2 = 2 BTC.'],
+              nodes: ['Mark A1 spent.', 'Add A2, B2, and miner reward/fee UTXO.', 'Update ledger totals.'],
+              mempool: ['Remove TX1 from mempool. It is confirmed.'],
+              miners: ['Winning miner receives 6 BTC block reward + 1 BTC fee.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'insufficient',
+        title: '2 · Insufficient Funds',
+        short: 'C tries to send 10 BTC but has 2',
+        status: 'reject',
+        ledger: { A: 2, B: 5, C: 2, 'Miner 1': 7, 'Miner 2': 0 },
+        utxos: [
+          ['A2', 'A', '2 BTC', 'unspent'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['M1R1', 'Miner 1', '7 BTC', 'unspent']
+        ],
+        mempool: [['TX2', 'C → A', '10 BTC', '1 BTC', 'rejected']],
+        steps: [
+          {
+            label: 'Invalid Attempt',
+            action: 'Wallet C attempts an impossible spend',
+            call: 'Wallet C tries to send 10 BTC to Wallet A with a 1 BTC fee. C only has UTXO C1 = 2 BTC.',
+            script: 'Let the wallet fill the card anyway. This shows wallets can request invalid things; nodes enforce reality.',
+            roles: {
+              wallets: ['Wallet C fills TX2: send 10 BTC to A, fee 1 BTC.', 'Sign with C private key.'],
+              nodes: ['Prepare to check C’s available UTXOs.'],
+              mempool: ['Do not accept TX2 unless nodes approve it.'],
+              miners: ['You cannot mine invalid transactions that never reach mempool.']
+            }
+          },
+          {
+            label: 'Node Rejection',
+            action: 'Nodes reject before mempool',
+            call: 'Nodes: reject TX2. C has 2 BTC but is trying to spend 11 BTC total. Mempool stays unchanged. Ledger stays unchanged.',
+            script: 'Teaching line: “A wallet can ask to do anything. Nodes decide what is valid.”',
+            roles: {
+              wallets: ['Wallet C receives rejected TX2 card back with reason: insufficient funds.'],
+              nodes: ['Write rejection reason: 2 BTC available, 11 BTC attempted.', 'Do not forward to mempool.'],
+              mempool: ['Reject TX2 at the basket. It never becomes pending.'],
+              miners: ['No fee is available from this invalid transaction.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'bad-signature',
+        title: '3 · Bad Signature',
+        short: 'B transaction signed by A',
+        status: 'reject',
+        ledger: { A: 2, B: 5, C: 2, 'Miner 1': 7, 'Miner 2': 0 },
+        utxos: [
+          ['A2', 'A', '2 BTC', 'unspent'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['M1R1', 'Miner 1', '7 BTC', 'unspent']
+        ],
+        mempool: [['TX3', 'B → C', '1 BTC', '1 BTC', 'rejected']],
+        steps: [
+          {
+            label: 'Wrong Key',
+            action: 'Wallet B transaction has A signature',
+            call: 'Wallet B tries to send 1 BTC to Wallet C, but the transaction is signed with Wallet A’s private key.',
+            script: 'Have Wallet B intentionally use the wrong stamp/card if possible. This makes private-key control visible.',
+            roles: {
+              wallets: ['Wallet B fills TX3: send 1 BTC to C, fee 1 BTC.', 'Use the wrong signature: Wallet A stamp/card.'],
+              nodes: ['Check whether the signature matches the owner of the UTXO being spent.'],
+              mempool: ['Wait for node approval.'],
+              miners: ['Observe: high fees do not matter if the signature is invalid.']
+            }
+          },
+          {
+            label: 'Reject Signature',
+            action: 'Nodes reject TX3',
+            call: 'Nodes: reject TX3. B’s UTXO cannot be spent with A’s signature. Mempool and ledger do not change.',
+            script: 'Teaching line: “Owning bitcoin means being able to produce the right signature for the specific UTXO.”',
+            roles: {
+              wallets: ['Wallet B gets TX3 back with reason: wrong signature.'],
+              nodes: ['Mark TX3 invalid: signature mismatch.'],
+              mempool: ['Do not accept TX3.'],
+              miners: ['Cannot earn a fee from an invalid transaction.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'fee-market',
+        title: '4 · Fee Market',
+        short: 'Higher-fee tx confirms first',
+        status: 'valid',
+        ledger: { A: 1, B: 5, C: 3, 'Miner 1': 7, 'Miner 2': 8 },
+        utxos: [
+          ['A3', 'A', '1 BTC', 'unspent change'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['C2', 'C', '1 BTC', 'unspent'],
+          ['M1R1', 'Miner 1', '7 BTC', 'unspent'],
+          ['M2R1', 'Miner 2', '8 BTC', 'unspent']
+        ],
+        mempool: [
+          ['TX4A', 'A → C', '1 BTC', '0 BTC', 'waiting'],
+          ['TX4B', 'A → C', '1 BTC', '2 BTC', 'mined first']
+        ],
+        steps: [
+          {
+            label: 'Two Valid Transactions',
+            action: 'Mempool sorts by fee',
+            call: 'Two valid transactions arrive. One pays 0 BTC fee. One pays 2 BTC fee. Block space only fits one transaction.',
+            script: 'This is simplified for teaching. The point: miners have an incentive to choose higher-fee transactions when block space is limited.',
+            roles: {
+              wallets: ['Create two valid transaction cards with different fees.'],
+              nodes: ['Validate both if signatures and UTXOs are correct.'],
+              mempool: ['Place 2 BTC fee transaction ahead of 0 BTC fee transaction.'],
+              miners: ['When mining begins, choose the higher-fee valid transaction first.']
+            }
+          },
+          {
+            label: 'Mine Highest Fee',
+            action: 'Winning miner earns reward + fee',
+            call: 'Miners roll. Winning miner includes the 2 BTC fee transaction first. The 0-fee transaction remains waiting.',
+            script: 'Ask: “Was the low-fee transaction invalid?” Answer: no. It was valid but not attractive when block space was scarce.',
+            roles: {
+              wallets: ['Low-fee sender waits for confirmation.'],
+              nodes: ['Validate the block includes only valid transactions.'],
+              mempool: ['Remove mined high-fee transaction; keep low-fee transaction pending.'],
+              miners: ['Winning miner collects 6 BTC reward + 2 BTC fee.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'double-spend',
+        title: '5 · Double Spend',
+        short: 'Same UTXO used twice',
+        status: 'reject',
+        ledger: { A: 1, B: 5, C: 3, 'Miner 1': 7, 'Miner 2': 8 },
+        utxos: [
+          ['A3', 'A', '1 BTC', 'unspent'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['C2', 'C', '1 BTC', 'unspent']
+        ],
+        mempool: [['TX5A', 'A → B', '1 BTC', '0 BTC', 'candidate'], ['TX5B', 'A → C', '1 BTC', '0 BTC', 'double spend rejected']],
+        steps: [
+          {
+            label: 'Two Claims',
+            action: 'A tries to spend A3 twice',
+            call: 'Wallet A creates two transactions using the same UTXO A3: one to B and one to C.',
+            script: 'This is the moment to point at the UTXO card. There is only one physical A3 card. It cannot honestly be in two places.',
+            roles: {
+              wallets: ['Wallet A fills TX5A and TX5B using the same A3 input.'],
+              nodes: ['Look for duplicate input A3.'],
+              mempool: ['If both arrive, flag conflict.'],
+              miners: ['A block cannot validly include both transactions.']
+            }
+          },
+          {
+            label: 'Reject Double Spend',
+            action: 'Only one spend can survive',
+            call: 'Nodes: only one transaction spending A3 can be valid. Once A3 is spent, the other transaction must be rejected.',
+            script: 'Teaching line: “Bitcoin prevents double spends because every node tracks whether each UTXO is already spent.”',
+            roles: {
+              wallets: ['Wallet A cannot keep both outcomes.'],
+              nodes: ['Accept at most one A3 spend; reject the other as a double spend.'],
+              mempool: ['Keep one candidate only if valid; remove the conflict.'],
+              miners: ['If your block includes both, nodes reject your whole block.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'empty-block',
+        title: '6 · Empty Block',
+        short: 'Reward-only block',
+        status: 'valid',
+        ledger: { A: 1, B: 5, C: 3, 'Miner 1': 13, 'Miner 2': 8 },
+        utxos: [
+          ['A3', 'A', '1 BTC', 'unspent'],
+          ['B1', 'B', '3 BTC', 'unspent'],
+          ['B2', 'B', '2 BTC', 'unspent'],
+          ['C1', 'C', '2 BTC', 'unspent'],
+          ['C2', 'C', '1 BTC', 'unspent'],
+          ['M1R2', 'Miner 1', '6 BTC reward', 'unspent']
+        ],
+        mempool: [],
+        steps: [
+          {
+            label: 'No Pending TXs',
+            action: 'Mempool is empty',
+            call: 'There are no valid transactions waiting, but miners are still trying to find the next block.',
+            script: 'Ask: “Should the network stop making blocks if no one is paying?” Answer: no. Blocks can still advance the chain.',
+            roles: {
+              wallets: ['No new transactions right now.'],
+              nodes: ['Confirm mempool is empty.'],
+              mempool: ['Show empty basket.'],
+              miners: ['Prepare to mine a reward-only block.']
+            }
+          },
+          {
+            label: 'Mine Empty Block',
+            action: 'Miner earns block reward only',
+            call: 'Miners roll. Winner creates a block with only the 6 BTC coinbase reward. Nodes accept it if the reward is correct.',
+            script: 'Final teaching line: “Miners propose blocks. Nodes decide whether those blocks are valid.”',
+            roles: {
+              wallets: ['Balances unchanged.'],
+              nodes: ['Validate dice result and correct 6 BTC reward.'],
+              mempool: ['Nothing removed; basket was empty.'],
+              miners: ['Winning miner receives 6 BTC reward and 0 fees.']
+            }
+          }
+        ]
+      },
+      {
+        id: 'debrief',
+        title: 'Debrief',
+        short: 'Make the learning explicit',
+        status: 'pending',
+        ledger: { A: 1, B: 5, C: 3, 'Miner 1': 13, 'Miner 2': 8 },
+        utxos: [],
+        mempool: [],
+        steps: [
+          {
+            label: 'Debrief',
+            action: 'What did each role learn?',
+            call: 'Tables: compare your final ledger to the center-stage ledger. If it differs, find the exact step where your table accepted something invalid or missed an update.',
+            script: 'Ask: Who creates transactions? Who enforces the rules? Can miners change the rules? Why do fees matter? What does the blockchain represent?',
+            roles: {
+              wallets: ['You learned: signing authorizes spending, but does not guarantee confirmation.'],
+              nodes: ['You learned: nodes enforce the rules and reject invalid transactions/blocks.'],
+              mempool: ['You learned: valid unconfirmed transactions wait and compete by fee.'],
+              miners: ['You learned: miners propose blocks and earn rewards/fees, but nodes can reject invalid blocks.']
+            }
+          }
+        ]
+      }
+    ];
+
+    const state = { scenario: 0, step: 0, compact: false, timerSeconds: 120, timerRunning: false, timerId: null };
+    const $ = (id) => document.getElementById(id);
+
+    function currentScenario() { return scenarios[state.scenario]; }
+    function currentStep() { return currentScenario().steps[state.step]; }
+
+    function statusPill(status) {
+      if (status === 'valid') return '<span class="pill valid">valid / accepted</span>';
+      if (status === 'reject') return '<span class="pill reject">invalid / rejected</span>';
+      return '<span class="pill pending">setup / pending</span>';
+    }
+
+    function renderScenarioList() {
+      $('scenarioList').innerHTML = scenarios.map((s, i) => `
+        <button class="scenario-button ${i === state.scenario ? 'active' : ''}" type="button" data-scenario="${i}">
+          <strong>${s.title}</strong>
+          <span>${s.short}</span>
+        </button>
+      `).join('');
+      document.querySelectorAll('[data-scenario]').forEach(btn => btn.addEventListener('click', () => {
+        state.scenario = Number(btn.dataset.scenario);
+        state.step = 0;
+        render();
+      }));
+    }
+
+    function renderProgress() {
+      const s = currentScenario();
+      $('progressDots').innerHTML = s.steps.map((_, i) => `<span class="dot ${i < state.step ? 'done' : i === state.step ? 'current' : ''}"></span>`).join('');
+    }
+
+    function roleCard(type, icon, title, items) {
+      return `
+        <article class="action-card ${type}">
+          <div class="role-title"><span class="badge">${icon}</span>${title}</div>
+          <ul class="clean big-list">${items.map(item => `<li>${item}</li>`).join('')}</ul>
+        </article>
+      `;
+    }
+
+    function renderActions() {
+      const r = currentStep().roles;
+      $('actionsGrid').innerHTML = [
+        roleCard('wallet', '👛', 'Wallets do this', r.wallets || []),
+        roleCard('node', '✅', 'Nodes do this', r.nodes || []),
+        roleCard('mempool', '🧺', 'Mempool does this', r.mempool || []),
+        roleCard('miner', '⛏️', 'Miners do this', r.miners || [])
+      ].join('');
+    }
+
+    function renderLedger() {
+      const rows = Object.entries(currentScenario().ledger || {});
+      $('ledgerTable').innerHTML = '<tr><th>Participant</th><th>Balance</th></tr>' + rows.map(([name, bal]) => `<tr><td>${name}</td><td class="num">${bal} BTC</td></tr>`).join('');
+    }
+
+    function renderUtxos() {
+      const rows = currentScenario().utxos || [];
+      $('utxoTable').innerHTML = '<tr><th>ID</th><th>Owner</th><th>Amount</th><th>Status</th></tr>' + (rows.length ? rows.map(([id, owner, amount, status]) => `<tr><td class="num">${id}</td><td>${owner}</td><td>${amount}</td><td>${status}</td></tr>`).join('') : '<tr><td colspan="4">No UTXO change shown for this step.</td></tr>');
+    }
+
+    function renderMempool() {
+      const rows = currentScenario().mempool || [];
+      $('mempoolTable').innerHTML = '<tr><th>TX</th><th>Route</th><th>Amount</th><th>Fee</th><th>Status</th></tr>' + (rows.length ? rows.map(([tx, route, amount, fee, status]) => `<tr><td class="num">${tx}</td><td>${route}</td><td>${amount}</td><td>${fee}</td><td>${status}</td></tr>`).join('') : '<tr><td colspan="5">Mempool empty.</td></tr>');
+    }
+
+    function renderTimer() {
+      const m = String(Math.floor(state.timerSeconds / 60)).padStart(2, '0');
+      const s = String(state.timerSeconds % 60).padStart(2, '0');
+      $('timerDisplay').textContent = `${m}:${s}`;
+      $('timerToggle').textContent = state.timerRunning ? 'Pause' : 'Start';
+    }
+
+    function render() {
+      const s = currentScenario();
+      const step = currentStep();
+      document.body.classList.toggle('compact', state.compact);
+      renderScenarioList();
+      renderProgress();
+      $('stepLabel').innerHTML = `${s.title} · ${step.label} · ${statusPill(s.status)}`;
+      $('mainAction').textContent = step.action;
+      $('moderatorCall').textContent = step.call;
+      $('scriptBox').innerHTML = `<p><strong>Say / watch for:</strong> ${step.script}</p>`;
+      renderActions();
+      renderLedger();
+      renderUtxos();
+      renderMempool();
+      $('positionNote').textContent = `Scenario ${state.scenario + 1} of ${scenarios.length} · Step ${state.step + 1} of ${s.steps.length}`;
+      $('prevBtn').disabled = state.scenario === 0 && state.step === 0;
+      $('nextBtn').textContent = (state.scenario === scenarios.length - 1 && state.step === s.steps.length - 1) ? 'Done' : 'Next →';
+      renderTimer();
+    }
+
+    function next() {
+      const s = currentScenario();
+      if (state.step < s.steps.length - 1) state.step += 1;
+      else if (state.scenario < scenarios.length - 1) { state.scenario += 1; state.step = 0; }
+      render();
+    }
+
+    function prev() {
+      if (state.step > 0) state.step -= 1;
+      else if (state.scenario > 0) { state.scenario -= 1; state.step = scenarios[state.scenario].steps.length - 1; }
+      render();
+    }
+
+    function resetAll() {
+      if (!confirm('Reset moderator console to the beginning?')) return;
+      state.scenario = 0; state.step = 0; state.timerSeconds = 120; stopTimer(); render();
+    }
+
+    function stopTimer() {
+      state.timerRunning = false;
+      if (state.timerId) clearInterval(state.timerId);
+      state.timerId = null;
+    }
+
+    function toggleTimer() {
+      if (state.timerRunning) { stopTimer(); renderTimer(); return; }
+      state.timerRunning = true;
+      state.timerId = setInterval(() => {
+        state.timerSeconds = Math.max(0, state.timerSeconds - 1);
+        if (state.timerSeconds === 0) stopTimer();
+        renderTimer();
+      }, 1000);
+      renderTimer();
+    }
+
+    $('nextBtn').addEventListener('click', next);
+    $('prevBtn').addEventListener('click', prev);
+    $('resetBtn').addEventListener('click', resetAll);
+    $('compactBtn').addEventListener('click', () => { state.compact = !state.compact; $('compactBtn').textContent = state.compact ? 'Console Mode' : 'Projector Mode'; render(); });
+    $('fullscreenBtn').addEventListener('click', async () => {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen?.();
+      else await document.exitFullscreen?.();
+    });
+    $('timerToggle').addEventListener('click', toggleTimer);
+    document.querySelectorAll('[data-time]').forEach(btn => btn.addEventListener('click', () => { state.timerSeconds = Number(btn.dataset.time); stopTimer(); renderTimer(); }));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); next(); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); prev(); }
+      if (event.key.toLowerCase() === 'p') { state.compact = !state.compact; render(); }
+      if (event.key.toLowerCase() === 't') toggleTimer();
+    });
+
+    render();
+  </script>
+</body>
+</html>

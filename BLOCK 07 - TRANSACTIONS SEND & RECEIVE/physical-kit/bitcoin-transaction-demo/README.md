@@ -4,6 +4,7 @@ Physical Block 7 kit for showing Bitcoin transactions live at 8 tables of 10 peo
 
 Files:
 
+- `moderator.html` — live projected moderator console showing each table exactly what to do
 - `BITCOIN-TRANSACTION-DEMO-KIT.md` — facilitator rules, review, run-of-show, packing guidance
 - `PACKING-LIST-8-TABLES.csv` — quantity checklist for procurement/assembly
 - `BITCOIN-TRANSACTION-DEMO-KIT.pdf` — print-friendly facilitator PDF

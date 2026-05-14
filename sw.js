@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v19';
+const CACHE_VERSION = 'history-money-pwa-v20';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [
@@ -19,7 +19,11 @@ const CORE_ASSETS = [
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/moneypoly.css',
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/game-data.js',
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/moneypoly.js',
-  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/physical-kit/FACILITATOR-KIT.pdf'
+  '/BLOCK 02 - HISTORY OF MONEY/moneypoly/physical-kit/FACILITATOR-KIT.pdf',
+  '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/',
+  '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/index.html',
+  '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/physical-kit/bitcoin-transaction-demo/moderator.html',
+  '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/physical-kit/bitcoin-transaction-demo/BITCOIN-TRANSACTION-DEMO-KIT.pdf'
 ];
 
 const toCacheRequest = (url) => new Request(encodeURI(url), { cache: 'reload' });
