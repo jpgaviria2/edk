@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Moneypoly" />
-  <link rel="manifest" href="/manifest.webmanifest?v=13" />
+  <link rel="manifest" href="/manifest.webmanifest?v=14" />
   <link rel="icon" href="/assets/icons/moneypoly-icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <title>History of Money · EDK</title>
@@ -87,7 +87,8 @@
           <h2>Moneypoly: Barter Market</h2>
           <p>Start with mangoes, cows, water, and shelter. Survive the essentials first, then test which form of money can preserve generational wealth through floods, droughts, pests, policy shocks, and money printing.</p>
           <a class="btn primary" href="./moneypoly/">Launch the game</a>
-          <a class="btn ghost" href="./moneypoly/physical-kit/FACILITATOR-KIT.md">Physical facilitator kit</a>
+          <a class="btn ghost" href="./moneypoly/physical-kit/FACILITATOR-KIT.pdf">Printable facilitator kit PDF</a>
+          <a class="btn ghost" href="./moneypoly/physical-kit/FACILITATOR-KIT.md">Facilitator kit source</a>
         </article>
         <article class="panel quiz" data-quiz>
           <span class="pill green">Try it</span>
@@ -99,6 +100,29 @@
             <button class="btn choice" data-answer="wrong">A fee market</button>
           </div>
           <p class="feedback"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="resources">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Resources</span>
+          <h2>Printable workshop materials.</h2>
+        </div>
+      </div>
+      <div class="grid two">
+        <article class="panel">
+          <span class="pill gold">PDF</span>
+          <h2>Moneypoly Physical Workshop Facilitator Kit</h2>
+          <p>Letter-size, print-ready facilitator guide for running the live History of Money workshop with groups.</p>
+          <a class="btn primary" href="./moneypoly/physical-kit/FACILITATOR-KIT.pdf">Download printable PDF</a>
+        </article>
+        <article class="panel">
+          <span class="pill green">Source</span>
+          <h2>Editable facilitator kit</h2>
+          <p>Markdown source for future edits, facilitator notes, and remixing.</p>
+          <a class="btn ghost" href="./moneypoly/physical-kit/FACILITATOR-KIT.md">Open source file</a>
         </article>
       </div>
     </section>
@@ -142,7 +166,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=18').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=19').catch(() => {});
       });
     }
   </script>

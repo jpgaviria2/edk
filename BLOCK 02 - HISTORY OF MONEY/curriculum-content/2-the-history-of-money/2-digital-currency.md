@@ -13,6 +13,9 @@ The currencies we use are becoming more and more digital; today, only a small fr
 ##### Resources
 
 
+[📄 Moneypoly Physical Workshop Facilitator Kit PDF](../../moneypoly/physical-kit/FACILITATOR-KIT.pdf)
+
+
 [▶ YouTube](https://www.youtube.com/watch?app=desktop&v=-nZkP2b-4vo)
 
 
