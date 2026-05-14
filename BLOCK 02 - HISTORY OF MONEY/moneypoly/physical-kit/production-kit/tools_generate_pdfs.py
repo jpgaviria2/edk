@@ -26,24 +26,159 @@ ROLES = [
     ("Fisher", "Start: 8 fish, 1 water", ["Needs now: shelter, mangoes", "Next generation: accepted money"]),
 ]
 
-EVENTS = [
-    ("Drought", "Water price doubles this round.", RED),
-    ("Flood", "Shelter supply is reduced.", BLUE),
-    ("Pest Outbreak", "Food supply is cut.", GREEN),
-    ("Shell Rush", "More shells enter. Shell prices rise.", GOLD),
-    ("Counterfeit Scare", "Gold verification required.", GOLD),
-    ("Bank Run", "Slips redeem only if reserves exist.", PURPLE),
-    ("Freeze Order", "Selected fiat balances cannot move this round.", BLUE),
-    ("Money Printer", "Fiat supply expands. Adjust prices up.", RED),
-    ("Confiscation", "Exposed gold can be seized.", RED),
-    ("Wrong City", "Slip fails unless redeemable at this branch.", PURPLE),
-    ("Lost Phone", "Hot-wallet team loses spending access this round.", BLUE),
-    ("Seed Phrase Check", "Cold-storage teams keep savings if phrase retained.", GREEN),
-    ("Node Verification", "Fake sats claim is rejected.", GOLD),
-    ("Bandit Pass", "Carried gold is at risk.", RED),
-    ("Stimulus", "Some tables get new notes first.", BLUE),
-    ("Money Printer Fails", "No effect on sats supply.", GREEN),
-]
+ERA_EVENTS = {
+    "Barter": {
+        "accent": RED,
+        "cards": [
+            ("Drought", "Water is scarce. Water trades cost double this round."),
+            ("Flood", "Shelter is damaged. Remove one shelter from each affected table."),
+            ("Pest Outbreak", "Food spoils. Lose one food good before trading."),
+            ("Cattle Sickness", "Cows become scarce and harder to trade."),
+            ("Builder Shortage", "Shelter makers are overwhelmed. Shelter asks rise."),
+            ("Spoiled Goods", "Perishable goods lose value if not traded now."),
+            ("Changed Appetite", "One needed good changes at your table immediately."),
+            ("Trade Rumor", "A trader refuses your usual good this round."),
+            ("Long Walk", "You lose one turn reaching the next trading partner."),
+            ("Family Emergency", "Secure one survival good now or lose points later."),
+            ("Storage Rot", "Stored food weakens as savings. Discard one food token."),
+            ("Sudden Feast", "One food good becomes less urgent for a single round."),
+            ("Broken Bridge", "Trading across tables pauses until the next cue."),
+            ("Storm Delay", "All new trades freeze for one minute."),
+            ("Double Wants Fail", "A nearly good trade still fails if wants do not match exactly."),
+            ("No Small Change", "A big good cannot be divided for a small need."),
+            ("Trader Absent", "One role at your table cannot trade this round."),
+            ("Seasonal Glut", "One common good floods the market and loses bargaining power."),
+            ("Scarcity Panic", "Everyone wants the same survival good at once."),
+            ("Next-Generation Pressure", "Declare what you are saving for before your next trade.")
+        ]
+    },
+    "Commodity Money": {
+        "accent": GOLD,
+        "cards": [
+            ("Shell Acceptance", "All sellers at this table now accept shells."),
+            ("Shell Rush", "More shells enter the market. Shell prices rise."),
+            ("Bean Spoilage", "Coffee beans lose quality and some traders reject them."),
+            ("Bead Mistrust", "Colored beads are no longer accepted everywhere."),
+            ("Small Change Win", "Commodity money solves a trade barter could not complete."),
+            ("Commodity Tax", "Pay one shell or equivalent to keep trading."),
+            ("Beach Harvest", "Fresh shell supply appears and weakens old holders."),
+            ("Coffee Mold", "Stored beans lose status as money at one table."),
+            ("Fashion Boom", "Beads briefly surge in acceptance for one round."),
+            ("Acceptance Split", "Half the market accepts shells, half prefers beans."),
+            ("Tray Spill", "Loose commodity money is lost in transit."),
+            ("Hoarding Wave", "Players pull shells out of circulation to save them."),
+            ("Exchange Premium", "Swap goods into shells, but lose a small fee."),
+            ("Mixed Basket Confusion", "Too many money options slow pricing and trust."),
+            ("Merchant Preference", "A seller only wants the most saleable commodity now."),
+            ("Counterfeit Shell", "A fake shell scare makes traders inspect payments."),
+            ("Standard Weight", "Only equal-size units are accepted this round."),
+            ("Long-Distance Trader", "An outsider accepts shells but not local barter goods."),
+            ("Commodity Shortage", "One money good becomes harder to find than expected."),
+            ("Market Standardization", "One commodity clearly wins as the table standard.")
+        ]
+    },
+    "Gold": {
+        "accent": GOLD,
+        "cards": [
+            ("Purity Check", "Large gold trades require verification before settlement."),
+            ("Bandit Pass", "Carried gold is exposed to theft on the road."),
+            ("Clipped Coin", "A shaved coin is discounted by cautious traders."),
+            ("Making Change", "A gold coin is too large for a small purchase."),
+            ("Vault Fee", "Safe storage costs one small fee this round."),
+            ("Assay Success", "Verified gold gets a trust premium in trade."),
+            ("Hidden Stash", "A careful saver protects gold from open theft."),
+            ("Ruler Tribute", "Pay one gold unit or equivalent to authority."),
+            ("Gold Shortage", "Hard money is scarce. Prices in gold feel tighter."),
+            ("Travel Burden", "Heavy wealth slows movement and trade speed."),
+            ("Merchant Premium", "Trusted gold buys priority access to scarce goods."),
+            ("Fake Coin Panic", "Suspicion spreads. Gold trades slow until checked."),
+            ("Mine Discovery", "New gold enters and softens scarcity slightly."),
+            ("Border Toll", "Moving gold between zones costs a fee."),
+            ("Wedding Demand", "Gold demand spikes for status and ceremony."),
+            ("Inheritance Chest", "Protected gold is easier to pass to heirs."),
+            ("Confiscation Order", "Visible gold at the table can be seized."),
+            ("Reserve Exchange", "Trade many smaller monies into gold with a premium."),
+            ("Weighed Payment", "Only exact measured payments are accepted now."),
+            ("Secure Vault", "Gold in storage survives the next shock better.")
+        ]
+    },
+    "Credit & Ledgers": {
+        "accent": PURPLE,
+        "cards": [
+            ("Trusted Branch", "A respected branch increases slip acceptance."),
+            ("Wrong City", "A slip fails unless redeemable at this branch."),
+            ("Bank Run", "Too many redeemers arrive. Reserves are tested."),
+            ("Double-Entry Check", "A clean ledger boosts trust and speed."),
+            ("Late Courier", "Inter-city settlement is delayed one round."),
+            ("Forged Signature", "Unsigned or mismatched slips are rejected."),
+            ("Reserve Reveal", "A branch must show backing before people trust it."),
+            ("Fee Hike", "Deposit and transfer fees rise this round."),
+            ("Account Freeze", "A branch pauses one player's withdrawals temporarily."),
+            ("Debt Call", "A borrower must settle quickly or lose trust."),
+            ("Quiet Transfer", "A paper claim moves value without moving gold."),
+            ("Ledger Fire", "A damaged record creates confusion until verified."),
+            ("Branch Merger", "Two banks align rules and widen acceptance."),
+            ("Merchant Acceptance", "A shop now accepts signed slips directly."),
+            ("Stamp Required", "Only stamped claims count as valid this round."),
+            ("Political Pressure", "Authority leans on the bank to favor one group."),
+            ("Reserve Shortage", "More claims exist than easy reserves available."),
+            ("Redemption Window", "Slips must be redeemed before the timer ends."),
+            ("Audit Day", "Careful books restore confidence."),
+            ("Trusted Network", "Strong ledgers let value move faster than gold.")
+        ]
+    },
+    "Fiat": {
+        "accent": BLUE,
+        "cards": [
+            ("Stimulus", "Some tables receive new notes first."),
+            ("Freeze Order", "Selected fiat balances cannot move this round."),
+            ("Money Printer", "New fiat enters. Adjust prices upward."),
+            ("Price Controls", "Official prices lag reality and distort trade."),
+            ("Salary Lag", "Wages stay flat while costs move higher."),
+            ("Rent Repricing", "Shelter costs jump before incomes do."),
+            ("Bank Holiday", "Withdrawals pause unexpectedly."),
+            ("Favored Recipients", "Those closest to issuance spend first."),
+            ("Surprise Tax", "One portion of fiat savings is removed."),
+            ("Confiscation Notice", "A visible fiat balance is restricted."),
+            ("Black Market Premium", "Scarce goods cost more off the official board."),
+            ("Wage Illusion", "Nominal gains hide weaker purchasing power."),
+            ("Debt Relief", "Borrowers cheer, savers lose ground."),
+            ("Bank Fees", "Holding or moving fiat costs more now."),
+            ("Note Redesign", "Old notes must be exchanged under new rules."),
+            ("Inflation Panic", "People rush to spend before prices rise again."),
+            ("Interest Cut", "Saving in fiat becomes less attractive."),
+            ("Merchant Repricing", "Sellers mark up goods mid-round."),
+            ("Subsidy Coupon", "One good is temporarily cheaper by policy."),
+            ("Cash Limit", "Large payments need permission or split settlement.")
+        ]
+    },
+    "Bitcoin": {
+        "accent": GREEN,
+        "cards": [
+            ("Node Verification", "Fake sats claims are rejected by the rules."),
+            ("Money Printer Fails", "No event can increase the sats supply."),
+            ("Lost Phone", "A hot-wallet team loses spending access this round."),
+            ("Seed Phrase Check", "Cold-storage teams keep savings if the phrase is safe."),
+            ("Lightning Instant", "A small payment settles immediately."),
+            ("Mempool Spike", "Urgent on-chain settlement becomes more expensive."),
+            ("Phishing Attempt", "Careless custody loses funds; careful users avoid it."),
+            ("Self-Custody Win", "Local seizure fails against properly held keys."),
+            ("Confiscation Attempt", "Goods can be taken, but self-custodied sats remain controlled by the owner."),
+            ("Watch-Only Audit", "You can verify balances without spending them."),
+            ("Miner Inclusion", "A confirmed transaction clears uncertainty."),
+            ("Fee Estimation", "Paying wisely improves settlement priority."),
+            ("Power Outage", "Local devices fail, but the network rules remain."),
+            ("Backup Restored", "A well-kept backup recovers access."),
+            ("Hot Wallet Convenience", "Fast spending helps daily trade, but raises exposure."),
+            ("Cold Storage Patience", "Savings stay safer, but are slower to move."),
+            ("Inheritance Plan", "Clear recovery steps improve wealth transfer."),
+            ("Merchant Sats Discount", "A seller prefers final bitcoin payment."),
+            ("Recovery Failure", "Poor backup practice makes funds unreachable."),
+            ("Global Liquidity", "Bitcoin value moves across distance without moving physical goods.")
+        ]
+    }
+}
+
 
 SEEDS = [
     "orange river market shell cattle light field paper future stone mango ember",
@@ -200,14 +335,20 @@ def save_event_cards():
     p = OUT / "event-cards.pdf"
     c = canvas.Canvas(str(p), pagesize=letter)
     pos = grid_positions(*letter, 2, 4)
-    for i in range(0, len(EVENTS), 8):
-        page(c, "Event Cards", RED)
-        for (title, body, accent), (x, y, w, h) in zip(EVENTS[i:i+8], pos):
-            rounded_card(c, x, y, w, h, accent)
-            c.setFont("Helvetica-Bold", 18)
-            c.drawString(x + 12, y + h - 42, title)
-            draw_lines(c, x + 12, y + h - 68, w - 24, [body], size=12, leading=16)
-        c.showPage()
+    for era, meta in ERA_EVENTS.items():
+        cards = [(era, title, body, meta["accent"]) for title, body in meta["cards"]]
+        for i in range(0, len(cards), 8):
+            page(c, f"{era} Event Cards", meta["accent"])
+            for (era_name, title, body, accent), (x, y, w, h) in zip(cards[i:i+8], pos):
+                rounded_card(c, x, y, w, h, accent)
+                c.setFont("Helvetica-Bold", 9)
+                c.setFillColor(MUTED)
+                c.drawString(x + 12, y + h - 34, era_name.upper())
+                c.setFillColor(INK)
+                c.setFont("Helvetica-Bold", 15)
+                c.drawString(x + 12, y + h - 50, title)
+                draw_lines(c, x + 12, y + h - 70, w - 24, [body], size=10, leading=13)
+            c.showPage()
     c.save(); return p
 
 
