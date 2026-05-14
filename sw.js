@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v20';
+const CACHE_VERSION = 'history-money-pwa-v21';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [
@@ -20,6 +20,10 @@ const CORE_ASSETS = [
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/game-data.js',
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/moneypoly.js',
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/physical-kit/FACILITATOR-KIT.pdf',
+  '/BLOCK 02 - HISTORY OF MONEY/fedi-sats-market/',
+  '/BLOCK 02 - HISTORY OF MONEY/fedi-sats-market/index.html',
+  '/BLOCK 02 - HISTORY OF MONEY/fedi-sats-market/sats-market.css',
+  '/BLOCK 02 - HISTORY OF MONEY/fedi-sats-market/sats-market.js',
   '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/',
   '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/index.html',
   '/BLOCK 07 - TRANSACTIONS SEND & RECEIVE/physical-kit/bitcoin-transaction-demo/moderator.html',
