@@ -8,33 +8,25 @@
 </head>
 <body>
   <main class="board-page">
-    <header class="hero">
-      <div>
+    <section class="board-stage">
+      <div class="stage-head">
         <span class="eyebrow">Moneypoly · Moderator Mode</span>
         <h1>24-Space Table Board</h1>
-        <p>Same board. Same goal. Different money. Run the exact same loop through barter, shells, gold, slips, fiat, and sats.</p>
+        <p>Same board. Same goal. Different money.</p>
       </div>
-      <div class="hero-pills">
-        <span>Up to 8 players/teams</span>
-        <span>Moderator rolls for the room</span>
-        <span>Table captains resolve locally</span>
-      </div>
-    </header>
 
-    <section class="board-shell">
       <div class="moneypoly-board board-24" aria-label="24-space Moneypoly board preview">
         <div class="board-center">
-          <span class="eyebrow">Core rule</span>
+          <span class="eyebrow">Core objective</span>
           <h2>Moneypoly</h2>
-          <p>The board stays the same. The human needs stay the same. Only the method of trading changes.</p>
-          <div class="goal-strip"><span>Goal: secure food + water + shelter + savings</span></div>
-          <div class="score-strip">
-            <span>Era 1: Barter</span>
-            <span>Era 2: Shells</span>
-            <span>Era 3: Gold</span>
-            <span>Era 4: Slips</span>
-            <span>Era 5: Fiat</span>
-            <span>Era 6: Sats</span>
+          <div class="goal-chip">Secure food + water + shelter + savings</div>
+          <div class="era-stack">
+            <span>Barter</span>
+            <span>Shells</span>
+            <span>Gold</span>
+            <span>Slips</span>
+            <span>Fiat</span>
+            <span>Sats</span>
           </div>
         </div>
 
@@ -68,59 +60,34 @@
       </div>
     </section>
 
-    <section class="info-grid">
-      <article class="info-card">
-        <span class="eyebrow">Objective</span>
-        <h3>Win condition</h3>
-        <ul>
-          <li>Secure food</li>
-          <li>Secure water</li>
-          <li>Secure shelter</li>
-          <li>Set aside at least 1 savings asset</li>
-        </ul>
-      </article>
-
-      <article class="info-card">
-        <span class="eyebrow">Turn loop</span>
-        <h3>How each round works</h3>
-        <ol>
-          <li>Moderator rolls for everyone</li>
-          <li>All teams move the same number of spaces</li>
-          <li>Each table resolves landed spaces locally</li>
-          <li>Teams passing GO collect production</li>
-          <li>Moderator reveals next roll or event</li>
-        </ol>
-      </article>
-
-      <article class="info-card">
-        <span class="eyebrow">GO payouts</span>
-        <h3>Fixed production</h3>
-        <ul>
-          <li>Mango +10</li>
-          <li>Water +5</li>
-          <li>Fish +4</li>
-          <li>Cow +1</li>
-          <li>Shelter +1</li>
-          <li>Coffee +6</li>
-          <li>Shell Collector +4 shells</li>
-          <li>Merchant = choose 1 small good</li>
-        </ul>
-      </article>
-
-      <article class="info-card wide">
-        <span class="eyebrow">Space rule</span>
-        <h3>Constant board, changing money</h3>
-        <p>The Water Trade space is always the Water Trade space. What changes is how you pay there:</p>
-        <div class="era-lines">
-          <span><b>Barter:</b> goods only</span>
-          <span><b>Commodity:</b> goods or shells</span>
-          <span><b>Gold:</b> goods, shells, or gold</span>
-          <span><b>Ledgers:</b> goods, gold, or valid slips</span>
-          <span><b>Fiat:</b> goods or paper notes</span>
-          <span><b>Bitcoin:</b> goods or sats</span>
-        </div>
-      </article>
-    </section>
+    <details class="guide-card">
+      <summary>Board notes</summary>
+      <div class="guide-grid">
+        <article>
+          <h3>Goal</h3>
+          <ul>
+            <li>Secure food</li>
+            <li>Secure water</li>
+            <li>Secure shelter</li>
+            <li>Set aside 1 savings asset</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Turn loop</h3>
+          <ol>
+            <li>Moderator rolls</li>
+            <li>Everyone moves</li>
+            <li>Resolve landed space</li>
+            <li>Collect GO if passed</li>
+          </ol>
+        </article>
+        <article>
+          <h3>Money ladder</h3>
+          <p>Same spaces, same needs, different trade method:</p>
+          <p>Barter → Shells → Gold → Slips → Fiat → Sats</p>
+        </article>
+      </div>
+    </details>
   </main>
 </body>
 </html>
