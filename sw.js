@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'history-money-pwa-v21';
+const CACHE_VERSION = 'history-money-pwa-v22';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
 const CORE_ASSETS = [
@@ -12,6 +12,10 @@ const CORE_ASSETS = [
   '/assets/icons/apple-touch-icon.png',
   '/assets/edk.css',
   '/assets/edk.js',
+  '/fedi/',
+  '/fedi/index.html',
+  '/fedi/style.css',
+  '/fedi/app.js',
   '/BLOCK 02 - HISTORY OF MONEY/',
   '/BLOCK 02 - HISTORY OF MONEY/index.html',
   '/BLOCK 02 - HISTORY OF MONEY/moneypoly/',
