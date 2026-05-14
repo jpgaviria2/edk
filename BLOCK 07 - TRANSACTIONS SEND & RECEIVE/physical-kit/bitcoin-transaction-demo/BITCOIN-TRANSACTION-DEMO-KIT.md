@@ -41,21 +41,218 @@ Recommended fixes before using it live:
 
 ## Recommended Live Format for 8 Tables
 
-Each table runs an identical miniature Bitcoin network.
+Use a **center-stage mirrored network**. The moderator demonstrates one canonical transaction flow at the front of the room. Every table recreates the same process at the same time using its own cards, wallets, nodes, mempool, miners, and ledger.
+
+This is stronger than letting every table improvise because:
+
+- all 80 participants learn the same sequence
+- the moderator can introduce one variation at a time
+- table captains can check whether their table matches the center-stage ledger
+- invalid transactions become obvious teachable moments
+- the room feels like many independent nodes verifying the same shared history
+
+### Room Structure
+
+| Area | Role | What happens |
+|---|---|---|
+| Center stage | Lead moderator + projected ledger | Announces the transaction scenario, demonstrates card movement, shows expected balances, calls mining rounds. |
+| 8 participant tables | Mini Bitcoin networks | Recreate the same transaction flow with local roles and materials. |
+| Roaming facilitators | Support/checking | Help tables stay synchronized, answer questions, and spot mistakes. |
 
 ### Roles per Table: 10 People
 
+Use fixed roles so the table behaves like a tiny Bitcoin network.
+
 | Count | Role | What they do |
 |---:|---|---|
-| 4 | Wallets A–D | Create and sign transactions. Try to pay/receive BTC. |
-| 2 | Nodes | Validate signatures, balances, and block contents. |
-| 2 | Miners | Roll dice to find blocks and collect rewards/fees. |
-| 1 | Mempool / Fee Market | Receives valid transactions, sorts by fee, announces top transactions. |
-| 1 | Table Captain / Auditor | Keeps time, resolves disputes, maintains public ledger, reports final result. |
+| 2–3 | Wallets | Hold UTXO cards, create transactions, sign with private-key card/stamp. Suggested: Wallet A, B, C. |
+| 2–3 | Nodes | Verify signatures, UTXO ownership, balances, double-spends, and block validity. |
+| 2–3 | Miners | Roll dice, choose transactions from the mempool, build candidate blocks, earn reward + fees. |
+| 1 | Mempool Manager | Holds valid unconfirmed transactions and sorts by fee. |
+| 1 | Table Captain / Auditor | Keeps the table ledger aligned with the projected stage ledger. |
 
-If you want everyone to experience every role, rotate roles after Round 2.
+Recommended for 10 participants: **3 wallets, 3 nodes, 2 miners, 1 mempool manager, 1 table captain.**
+
+If a table has 8 participants: use 2 wallets, 2 nodes, 2 miners, 1 mempool, 1 captain.
+
+If a table has 12 participants: add Wallet D and Miner 3.
 
 ---
+
+## Center-Stage Mirroring Method
+
+The moderator leads the room through a transaction script. Each table performs the same action locally.
+
+### The Basic Call-and-Response Pattern
+
+1. **Moderator announces the ledger state.**  
+   Example: “Wallet A has 5 BTC. Wallet B has 3 BTC. Wallet C has 2 BTC.”
+
+2. **Moderator announces a transaction attempt.**  
+   Example: “Wallet A wants to send 2 BTC to Wallet B with a 1 BTC miner fee.”
+
+3. **Wallet A at each table builds the transaction.**  
+   Wallet A takes one or more UTXO cards, fills a transaction card, adds the recipient, amount, fee, and change output if needed, then signs it with the private-key stamp/card.
+
+4. **Transaction goes to the first node.**  
+   Node checks: Is it complete? Is it signed by A? Does A control the UTXO? Is the amount + fee valid?
+
+5. **Transaction passes through other nodes.**  
+   Other nodes independently verify. If valid, they pass it to the mempool. If invalid, they reject it and explain why.
+
+6. **Mempool manager sorts it by fee.**  
+   Valid transaction card goes into the mempool basket/fee strip. Higher fees move to the front.
+
+7. **Moderator calls mining.**  
+   Miners roll dice. The winning miner chooses the highest-fee valid transactions, adds a coinbase reward transaction, and creates a candidate block.
+
+8. **Nodes validate the block.**  
+   Nodes verify the dice result, included transactions, signatures, UTXOs, fees, and reward.
+
+9. **Table updates the blockchain and ledger.**  
+   If valid, block is attached to the table chain. Wallet balances/UTXO set update. Miner receives reward + fees.
+
+10. **Moderator shows expected result.**  
+    Tables compare their ledger to the center-stage ledger. If they differ, they find the mistake.
+
+### Why UTXO Cards Matter
+
+For this version, use physical **UTXO cards** instead of only balances. This shows that Bitcoin spends previous outputs, not an account balance like a bank.
+
+A UTXO card should show:
+
+- UTXO ID: `A1`, `A2`, `B1`, etc.
+- Owner wallet: `A / B / C`
+- Amount: `____ BTC`
+- Status: `unspent / spent`
+
+When Wallet A spends a 5 BTC UTXO to pay B 2 BTC with a 1 BTC fee, the transaction consumes the 5 BTC UTXO and creates:
+
+- 2 BTC output to B
+- 2 BTC change output back to A
+- 1 BTC fee to the miner once mined
+
+This is the most important upgrade to the demonstration. It makes double-spend prevention visible.
+
+---
+
+## Center-Stage Transaction Script
+
+Run these scenarios in order. Every table mirrors the same action.
+
+### Starting UTXO Set
+
+| Wallet | Starting UTXOs | Total |
+|---|---|---:|
+| Wallet A | A1 = 5 BTC | 5 BTC |
+| Wallet B | B1 = 3 BTC | 3 BTC |
+| Wallet C | C1 = 2 BTC | 2 BTC |
+| Miner 1 | none | 0 BTC |
+| Miner 2 | none | 0 BTC |
+
+### Transaction 1: Valid Send
+
+**Moderator call:** “Wallet A sends 2 BTC to Wallet B with a 1 BTC fee.”
+
+Table action:
+
+- Wallet A selects UTXO `A1 = 5 BTC`
+- Wallet A creates transaction:
+  - input: `A1 5 BTC`
+  - output: `2 BTC to B`
+  - change: `2 BTC back to A`
+  - fee: `1 BTC`
+- Wallet A signs
+- Nodes validate
+- Mempool accepts
+- Miners roll
+- Winning miner includes it in a block
+- Nodes validate block
+- Ledger updates
+
+Expected after block:
+
+| Participant | Result |
+|---|---:|
+| Wallet A | 2 BTC change UTXO |
+| Wallet B | 3 BTC old + 2 BTC new = 5 BTC |
+| Winning miner | 6 BTC reward + 1 BTC fee = 7 BTC |
+
+### Transaction 2: Insufficient Funds Rejection
+
+**Moderator call:** “Wallet C tries to send 10 BTC to Wallet A with a 1 BTC fee.”
+
+Table action:
+
+- Wallet C only has `C1 = 2 BTC`
+- Wallet C creates the transaction anyway
+- Nodes check the UTXO set
+- Nodes reject it before mempool
+
+Expected result:
+
+- Transaction never enters mempool
+- No miner can include it
+- Ledger does not change
+
+Teaching line:
+
+> “A wallet can ask to do anything. Nodes enforce what is actually valid.”
+
+### Transaction 3: Bad Signature Rejection
+
+**Moderator call:** “Wallet B sends 1 BTC to Wallet C, but the card is signed with Wallet A’s private key.”
+
+Expected result:
+
+- Nodes reject: wrong signature
+- Transaction does not enter mempool
+- Ledger does not change
+
+Teaching line:
+
+> “Owning bitcoin means being able to produce the right signature for the UTXO you are spending.”
+
+### Transaction 4: Fee Market
+
+**Moderator call:** “Two valid transactions enter the mempool. One pays a 0 BTC fee. One pays a 2 BTC fee. Block space only fits one.”
+
+Expected result:
+
+- Mempool sorts higher fee first
+- Miner selects the higher-fee transaction
+- Low-fee transaction waits
+
+Teaching line:
+
+> “The mempool is not first-in-first-out. Fees matter when block space is scarce.”
+
+### Transaction 5: Double Spend Attempt
+
+**Moderator call:** “Wallet A tries to spend the same UTXO twice: once to B and once to C.”
+
+Expected result:
+
+- Nodes may see both attempts
+- Only one can be valid in a block
+- Once the UTXO is spent, the second transaction becomes invalid
+
+Teaching line:
+
+> “Double spending is stopped because nodes track which outputs are already spent.”
+
+### Transaction 6: Empty Block / Reward Only
+
+**Moderator call:** “No transactions are waiting, but miners are still mining.”
+
+Expected result:
+
+- Winning miner creates a block with only the coinbase reward
+- Nodes accept it if reward is correct
+
+Teaching line:
+
+> “Mining secures the chain even if the block has no user transactions.”
 
 ## Learning Outcomes
 
