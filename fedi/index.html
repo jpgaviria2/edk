@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#100905" />
   <title>Sats Market for Fedi · History of Money</title>
-  <link rel="stylesheet" href="./style.css?v=1" />
+  <link rel="stylesheet" href="./style.css?v=2" />
 </head>
 <body>
   <main class="app">
@@ -14,94 +14,92 @@
         <a class="brand" href="/">₿ History of Money</a>
         <span class="status" data-env>Checking Fedi…</span>
       </div>
-      <h1>Sats Market for Fedi</h1>
-      <p>Real Lightning payments between two Fedi wallets. One wallet creates the invoice, the other wallet pays it.</p>
+      <h1>Sats Market</h1>
+      <p>Join a live room, see who is online, request trades, accept offers, and settle with real Fedi Lightning payments.</p>
       <div class="identity-card">
         <div class="avatar" data-avatar>?</div>
         <div>
-          <span class="eyebrow">Active Fedi wallet/profile</span>
+          <span class="eyebrow">Active wallet/profile</span>
           <h2 data-alias>Not connected yet</h2>
-          <p data-pubkey>Open this page inside Fedi to use wallet + identity APIs.</p>
+          <p data-pubkey>Open inside Fedi to use wallet + Nostr identity.</p>
         </div>
       </div>
     </header>
 
     <section class="notice">
-      <strong>Two-wallet test:</strong> open <code>historyofmoney.me/fedi</code> in Wallet A to create an invoice, then open it in Wallet B to paste/pay that invoice. Every payment uses Fedi’s real approval screen.
+      <strong>How rooms work:</strong> online status, offers, requests, invoices, paid receipts, and moderator crisis events are signed Nostr events on the room relay. Payments still use Fedi’s real WebLN approval screens.
+    </section>
+
+    <section class="panel setup-panel">
+      <span class="eyebrow">Room setup</span>
+      <div class="form-grid">
+        <label>Room code <input data-room value="history-money-room" /></label>
+        <label>Relay <input data-relay value="wss://relay.anmore.me" /></label>
+        <label>Your display name <input data-name value="JP" /></label>
+        <label>You sell
+          <select data-item>
+            <option value="Water refill|water|15">Water refill · 15 sats</option>
+            <option value="Shelter repair|shelter|35">Shelter repair · 35 sats</option>
+            <option value="Fresh mangoes|mangoes|20">Fresh mangoes · 20 sats</option>
+            <option value="Fish dinner|fish|25">Fish dinner · 25 sats</option>
+            <option value="Cattle transport|cattle|45">Cattle transport · 45 sats</option>
+            <option value="Lightning wallet help|savings|35">Lightning wallet help · 35 sats</option>
+          </select>
+        </label>
+      </div>
+      <div class="inventory-grid" data-inventory></div>
+      <div class="button-row">
+        <button class="primary" data-action="join-room">Join room / publish status</button>
+        <button data-action="show-trade">Show me a trade</button>
+      </div>
+      <p class="feedback" data-room-feedback>Join the room from two devices to see each other online.</p>
     </section>
 
     <section class="tabs" role="tablist">
-      <button class="tab active" data-tab="sell">1 · Sell / create invoice</button>
-      <button class="tab" data-tab="buy">2 · Buy / pay invoice</button>
+      <button class="tab active" data-tab="market">Market</button>
+      <button class="tab" data-tab="requests">Requests</button>
+      <button class="tab" data-tab="moderator">Moderator</button>
       <button class="tab" data-tab="receipts">Receipts</button>
     </section>
 
-    <section class="panel" data-panel="sell">
-      <span class="eyebrow">Seller wallet</span>
-      <h2>Create a real Lightning invoice</h2>
-      <p class="muted">Use this on your first Fedi wallet. Pick what you are selling, set a sats price, and approve invoice creation in Fedi.</p>
-      <div class="form-grid">
-        <label>Seller name <input data-seller-name value="JP Seller Wallet" /></label>
-        <label>Good / skill / service
-          <select data-item>
-            <option value="Lightning wallet setup help|Savings|35">Lightning wallet setup help · 35 sats</option>
-            <option value="Fix a flat tire|Transportation|35">Fix a flat tire · 35 sats</option>
-            <option value="Fresh bread|Food|25">Fresh bread · 25 sats</option>
-            <option value="Phone charging cable|Communication|40">Phone charging cable · 40 sats</option>
-            <option value="Water refill|Water|15">Water refill · 15 sats</option>
-            <option value="Math tutoring sprint|Education|30">Math tutoring sprint · 30 sats</option>
-          </select>
-        </label>
-        <label>Price in sats <input type="number" min="1" step="1" data-amount value="35" /></label>
-        <label>Buyer need solved <input data-category value="Savings" /></label>
+    <section class="panel" data-panel="market">
+      <div class="section-headline">
+        <div><span class="eyebrow">Online now</span><h2>Pick a person and make an offer</h2></div>
+        <span class="pill" data-online-count>0 online</span>
       </div>
-      <button class="primary" data-action="make-invoice">Create real Fedi invoice</button>
-      <p class="feedback" data-sell-feedback>Invoice will appear here after Fedi approves it.</p>
-      <article class="invoice-card" data-invoice-card hidden>
-        <span class="eyebrow">Invoice for buyer wallet</span>
-        <h3 data-offer-title>Offer</h3>
-        <p data-offer-summary></p>
-        <textarea readonly data-invoice></textarea>
-        <div class="button-row">
-          <button data-action="copy-invoice">Copy invoice</button>
-          <button data-action="share-invoice">Share invoice</button>
-          <button data-action="open-lightning">Open lightning link</button>
-        </div>
-      </article>
+      <div class="people" data-people></div>
     </section>
 
-    <section class="panel hidden" data-panel="buy">
-      <span class="eyebrow">Buyer wallet</span>
-      <h2>Pay a real invoice</h2>
-      <p class="muted">Use this on your second Fedi wallet. Paste the seller invoice, review Fedi’s confirmation screen, then approve the payment.</p>
-      <label>Paste BOLT11 invoice <textarea data-pay-invoice placeholder="lnbc..."></textarea></label>
+    <section class="panel hidden" data-panel="requests">
+      <span class="eyebrow">Trade notifications</span>
+      <h2>Incoming and outgoing offers</h2>
+      <div class="requests" data-requests></div>
+    </section>
+
+    <section class="panel hidden" data-panel="moderator">
+      <span class="eyebrow">Moderator controls</span>
+      <h2>Crisis events</h2>
+      <p class="muted">Paste the moderator pubkey/npub. Only events signed by that key are applied by players.</p>
+      <label>Moderator pubkey or npub <input data-moderator placeholder="hex pubkey or npub..." /></label>
       <div class="button-row">
-        <button class="primary" data-action="pay-invoice">Pay with Fedi wallet</button>
-        <button data-action="paste-invoice">Paste from clipboard</button>
+        <button data-action="save-moderator">Save moderator key</button>
+        <button class="danger" data-crisis="fire">Fire: halve cattle</button>
+        <button class="danger" data-crisis="flood">Flood: mangoes become zero</button>
+        <button class="danger" data-crisis="drought">Drought: water becomes scarce</button>
       </div>
-      <p class="feedback" data-buy-feedback>No payment has been sent yet.</p>
-      <article class="lesson-card">
-        <h3>What this teaches</h3>
-        <ul>
-          <li>The seller can request payment without exposing private keys.</li>
-          <li>The buyer keeps control and must approve the spend.</li>
-          <li>Sats settle the trade even when the two people do not want each other’s goods directly.</li>
-        </ul>
-      </article>
+      <p class="feedback" data-mod-feedback>Moderator controls unlock when this wallet’s Nostr pubkey matches the saved key.</p>
     </section>
 
     <section class="panel hidden" data-panel="receipts">
-      <span class="eyebrow">Trade log</span>
-      <h2>Receipts and identity proof</h2>
-      <p class="muted">Receipts stay on this device. If Fedi exposes Nostr identity, the app can also sign a trade note for proof-of-participation.</p>
+      <span class="eyebrow">Receipts</span>
+      <h2>Trade log</h2>
       <div class="button-row">
-        <button data-action="sign-receipt">Sign latest receipt with Nostr</button>
         <button data-action="export-receipts">Export JSON</button>
         <button data-action="clear-receipts">Clear</button>
       </div>
       <div class="receipts" data-receipts></div>
     </section>
   </main>
-  <script src="./app.js?v=1"></script>
+  <script src="./app.js?v=2"></script>
 </body>
 </html>
