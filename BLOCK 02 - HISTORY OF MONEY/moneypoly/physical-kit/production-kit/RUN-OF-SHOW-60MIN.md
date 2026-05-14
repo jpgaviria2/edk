@@ -5,6 +5,13 @@
 - 5 teams of 2 per table
 - one table banker covers two tables
 
+## How to think about the room
+- each table is a **self-contained mini-market**
+- each team at the table represents a household, producer, or trader
+- teams mostly trade **within their own table**
+- the room stays synchronized by era, not by one giant shared board
+- optional: later eras can include short cross-table exchange windows
+
 ## Objective to say out loud
 
 "Your job is not just to survive today. Your job is to secure food, water, and shelter, preserve savings through crises, and leave something durable for the next generation." 

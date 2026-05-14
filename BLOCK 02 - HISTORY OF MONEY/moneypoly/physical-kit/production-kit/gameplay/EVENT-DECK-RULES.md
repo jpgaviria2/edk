@@ -79,3 +79,17 @@ Do not try to use all 20 cards in a single session. The larger deck gives variet
 - hot vs cold tradeoffs
 - verification
 - resilience against monetary debasement
+
+
+## Event card writing rule
+Every event card should be readable in under 10 seconds and should contain exactly two parts:
+
+1. **Event** — what just happened in the world
+2. **Consequence** — what players must do right now
+
+### Recommended event card format
+**EVENT:** Drought
+**WHAT IT MEANS:** Water becomes scarce.
+**CONSEQUENCE:** Water costs double this round.
+
+Avoid vague flavor text without a playable instruction. If a banker cannot apply the effect immediately, the card is not clear enough.

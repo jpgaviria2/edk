@@ -15,6 +15,32 @@ Why this format:
 - makes debriefs tighter
 - lets each table complete the same arc together
 
+## Recommended big-audience play model
+
+**Use this model for 80 people:**
+- each **table is its own mini-market / mini-board**
+- each table has **5 teams of 2**
+- teams at a table trade mostly **within their own table**
+- the whole room moves through the same era at the same time
+- a banker manages two tables and resolves local effects
+
+### What a table is not
+- not one single merchant stall for the whole room
+- not one individual player per table
+
+### Best interpretation
+For a big meetup, the cleanest model is: **each table is its own self-contained market**.
+
+### Optional advanced variation
+If you want more drama, you can add **cross-table trading windows** during later eras:
+- commodity money: allow limited inter-table trade
+- gold: allow one inter-table exchange window
+- credit & ledgers: let branch slips travel between tables
+- bitcoin: let final settlement happen across tables
+
+That means **both** models are possible, but the recommended default is:
+**each table plays its own board first; occasional cross-table interactions are optional add-ons.**
+
 ## What is in this kit
 
 ### Operations

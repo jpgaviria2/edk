@@ -341,13 +341,17 @@ def save_event_cards():
             page(c, f"{era} Event Cards", meta["accent"])
             for (era_name, title, body, accent), (x, y, w, h) in zip(cards[i:i+8], pos):
                 rounded_card(c, x, y, w, h, accent)
+                c.setFont("Helvetica-Bold", 8)
+                c.setFillColor(MUTED)
+                c.drawString(x + 12, y + h - 32, f"ERA: {era_name.upper()}")
+                c.setFillColor(INK)
+                c.setFont("Helvetica-Bold", 11)
+                c.drawString(x + 12, y + h - 48, f"EVENT: {title}")
                 c.setFont("Helvetica-Bold", 9)
                 c.setFillColor(MUTED)
-                c.drawString(x + 12, y + h - 34, era_name.upper())
+                c.drawString(x + 12, y + h - 64, "CONSEQUENCE:")
                 c.setFillColor(INK)
-                c.setFont("Helvetica-Bold", 15)
-                c.drawString(x + 12, y + h - 50, title)
-                draw_lines(c, x + 12, y + h - 70, w - 24, [body], size=10, leading=13)
+                draw_lines(c, x + 12, y + h - 78, w - 24, [body], size=9.5, leading=12)
             c.showPage()
     c.save(); return p
 
