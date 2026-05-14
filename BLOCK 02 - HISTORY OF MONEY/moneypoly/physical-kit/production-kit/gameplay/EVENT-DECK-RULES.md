@@ -93,3 +93,17 @@ Every event card should be readable in under 10 seconds and should contain exact
 **CONSEQUENCE:** Water costs double this round.
 
 Avoid vague flavor text without a playable instruction. If a banker cannot apply the effect immediately, the card is not clear enough.
+
+## Clarity standard
+Every event must be immediately testable at the table.
+
+Bad: "Cattle become harder to trade."
+Good: "All cow trades require 2 extra food tokens this round."
+
+Bad: "Trust falls."
+Good: "Unsigned slips are void immediately."
+
+Bad: "Inflation rises."
+Good: "Give every team 3 notes and raise all fiat prices by 2 notes."
+
+If a banker cannot resolve the card in one sentence and one action, rewrite the card.
