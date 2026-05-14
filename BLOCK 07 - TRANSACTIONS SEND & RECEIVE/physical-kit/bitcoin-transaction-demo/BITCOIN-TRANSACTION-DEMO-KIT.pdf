@@ -1,0 +1,426 @@
+%PDF-1.4
+% MiniPDF
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Length 3978 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F2 20 Tf 42.0 742.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F1 10.5 Tf 42.0 710.0 Td (Live-event kit for Block 7: Transactions - Send & Receive.) Tj ET
+BT /F1 10.5 Tf 42.0 688.0 Td (Audience format: 8 tables x 10 people = 80 participants) Tj ET
+BT /F1 10.5 Tf 42.0 670.0 Td (Session length: 25-35 minutes inside a larger event, or 45 minutes as a standalone activity) Tj ET
+BT /F1 10.5 Tf 42.0 652.0 Td (Core idea: people physically create transactions, nodes validate them, the mempool orders them) Tj ET
+BT /F1 10.5 Tf 42.0 638.0 Td ( by fees, miners compete to create blocks, and everyone updates the ledger.) Tj ET
+42.0 606.0 m 570.0 606.0 l S
+BT /F2 15 Tf 42.0 589.0 Td (Facilitator Review of the Original Game Plan) Tj ET
+BT /F1 10.5 Tf 42.0 563.0 Td (The concept is strong. The practical demo is exactly the right improvement over a purely) Tj ET
+BT /F1 10.5 Tf 42.0 549.0 Td ( explanatory setup because people feel the system: waiting in the mempool, fee competition,) Tj ET
+BT /F1 10.5 Tf 42.0 535.0 Td ( validation, mining randomness, and ledger updates.) Tj ET
+BT /F1 10.5 Tf 42.0 513.0 Td (Recommended fixes before using it live:) Tj ET
+BT /F1 10.2 Tf 56.0 491.0 Td (- Use "signature cards," not actual locked boxes for every transaction.) Tj ET
+BT /F1 10.5 Tf 42.0 474.0 Td (Lockable boxes are memorable but slow for 80 people. Use one fake private-key envelope/stamp) Tj ET
+BT /F1 10.5 Tf 42.0 460.0 Td ( per wallet. A signed transaction must include the wallet's matching stamp/sticker/secret word.) Tj ET
+BT /F1 10.5 Tf 42.0 446.0 Td ( Keep one lockbox at the front as a quick self-custody prop.) Tj ET
+BT /F1 10.2 Tf 56.0 424.0 Td (- Separate validation from mining clearly.) Tj ET
+BT /F1 10.5 Tf 42.0 407.0 Td (Nodes validate transactions before mempool entry. Nodes then validate the winning block again) Tj ET
+BT /F1 10.5 Tf 42.0 393.0 Td ( before it is added, mainly to catch stale balances and double-spends.) Tj ET
+BT /F1 10.2 Tf 56.0 371.0 Td (- Track balances with one table ledger, not independent node ledgers only.) Tj ET
+BT /F1 10.5 Tf 42.0 354.0 Td (Each node keeps a sheet, but table captain also maintains the "public ledger" so disputes) Tj ET
+BT /F1 10.5 Tf 42.0 340.0 Td ( don't eat the round.) Tj ET
+BT /F1 10.2 Tf 56.0 318.0 Td (- Treat fees as a visible market.) Tj ET
+BT /F1 10.5 Tf 42.0 301.0 Td (The mempool role should physically sort transactions from highest fee to lowest and explain:) Tj ET
+BT /F1 10.5 Tf 42.0 287.0 Td ( "Miners usually pick the most profitable transactions first.") Tj ET
+BT /F1 10.2 Tf 56.0 265.0 Td (- Adjust dice difficulty for live pacing.) Tj ET
+BT /F1 10.2 Tf 56.0 248.0 Td (- Low difficulty: roll at least one 6 with 3 dice. Expected win is very fast.) Tj ET
+BT /F1 10.2 Tf 56.0 231.0 Td (- Medium difficulty: roll at least two 6s with 3 dice. Better for a 1-2 minute mining race.) Tj ET
+BT /F1 10.2 Tf 56.0 214.0 Td (- High difficulty: roll three 6s with 3 dice. This is a great demonstration of difficulty, but) Tj ET
+BT /F1 10.2 Tf 56.0 201.0 Td ( too slow for normal rounds. Use only as a 30-second "wow, blocks got harder" demo, then lower) Tj ET
+BT /F1 10.2 Tf 56.0 188.0 Td ( it or allow both miners to keep cumulative sixes.) Tj ET
+BT /F1 10.2 Tf 56.0 167.0 Td (- Make block rewards explicit as a coinbase transaction.) Tj ET
+BT /F1 10.5 Tf 42.0 150.0 Td (The miner does not just "get tokens"; the block contains a special reward transaction: NEW BTC) Tj ET
+BT /F1 10.5 Tf 42.0 136.0 Td ( -> Miner.) Tj ET
+BT /F1 10.2 Tf 56.0 114.0 Td (- Do not let wallets pre-check perfectly.) Tj ET
+BT /F1 10.5 Tf 42.0 97.0 Td (Allow one or two invalid transactions on purpose: insufficient funds, fake signature, low-fee) Tj ET
+BT /F1 10.5 Tf 42.0 83.0 Td ( stuck transaction, double spend. That makes nodes valuable.) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 1) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Length 3978 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+42.0 742.0 m 570.0 742.0 l S
+BT /F2 15 Tf 42.0 725.0 Td (Recommended Live Format for 8 Tables) Tj ET
+BT /F1 10.5 Tf 42.0 699.0 Td (Each table runs an identical miniature Bitcoin network.) Tj ET
+BT /F2 12.5 Tf 42.0 677.0 Td (Roles per Table: 10 People) Tj ET
+q 0.969 0.576 0.102 rg 39.0 652.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 655.0 Td (Count | Role | What they do) Tj ET
+BT /F1 9.2 Tf 42.0 641.0 Td (  4 | Wallets A-D | Create and sign transactions. Try to pay/receive BTC.) Tj ET
+BT /F1 9.2 Tf 42.0 630.0 Td (  2 | Nodes | Validate signatures, balances, and block contents.) Tj ET
+BT /F1 9.2 Tf 42.0 619.0 Td (  2 | Miners | Roll dice to find blocks and collect rewards/fees.) Tj ET
+BT /F1 9.2 Tf 42.0 608.0 Td (  1 | Mempool / Fee Market | Receives valid transactions, sorts by fee, announces top transactions.) Tj ET
+BT /F1 9.2 Tf 42.0 597.0 Td (  1 | Table Captain / Auditor | Keeps time, resolves disputes, maintains public ledger, reports final result.) Tj ET
+BT /F1 10.5 Tf 42.0 574.0 Td (If you want everyone to experience every role, rotate roles after Round 2.) Tj ET
+42.0 542.0 m 570.0 542.0 l S
+BT /F2 15 Tf 42.0 525.0 Td (Learning Outcomes) Tj ET
+BT /F1 10.5 Tf 42.0 499.0 Td (By the end, participants should be able to explain:) Tj ET
+BT /F1 10.2 Tf 56.0 477.0 Td (- Wallets create and sign transactions; they do not "send coins through the internet" like) Tj ET
+BT /F1 10.2 Tf 56.0 464.0 Td ( objects.) Tj ET
+BT /F1 10.2 Tf 56.0 447.0 Td (- Nodes enforce the rules before transactions and blocks are accepted.) Tj ET
+BT /F1 10.2 Tf 56.0 430.0 Td (- The mempool is a waiting room for valid, unconfirmed transactions.) Tj ET
+BT /F1 10.2 Tf 56.0 413.0 Td (- Fees influence which transactions miners include first.) Tj ET
+BT /F1 10.2 Tf 56.0 396.0 Td (- Mining is a probabilistic race to produce the next valid block.) Tj ET
+BT /F1 10.2 Tf 56.0 379.0 Td (- Difficulty adjusts so blocks do not come too quickly or too slowly.) Tj ET
+BT /F1 10.2 Tf 56.0 362.0 Td (- The blockchain is the shared history after nodes accept valid blocks.) Tj ET
+BT /F1 10.2 Tf 56.0 345.0 Td (- A miner can mine an empty block and still receive the block reward.) Tj ET
+BT /F1 10.2 Tf 56.0 328.0 Td (- Invalid transactions and invalid blocks are rejected even if a miner proposes them.) Tj ET
+42.0 297.0 m 570.0 297.0 l S
+BT /F2 15 Tf 42.0 280.0 Td (Table Kit Contents) Tj ET
+BT /F2 12.5 Tf 42.0 254.0 Td (Per Table Kit) Tj ET
+BT /F1 10.5 Tf 42.0 232.0 Td (Pack each table in a labelled bin or large envelope.) Tj ET
+q 0.969 0.576 0.102 rg 39.0 207.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 210.0 Td (Item | Quantity per table | Purpose) Tj ET
+BT /F1 9.2 Tf 42.0 196.0 Td (  Table sign | 1 | Table 1-8) Tj ET
+BT /F1 9.2 Tf 42.0 185.0 Td (  Role cards | 10 | Wallets, nodes, miners, mempool, captain) Tj ET
+BT /F1 9.2 Tf 42.0 174.0 Td (  Wallet balance cards | 4 | Starting balances for Wallets A-D) Tj ET
+BT /F1 9.2 Tf 42.0 163.0 Td (  Wallet private-key envelopes/stamps | 4 | Fake signing authority) Tj ET
+BT /F1 9.2 Tf 42.0 152.0 Td (  Transaction cards | 40 | Enough for 4-5 rounds) Tj ET
+BT /F1 9.2 Tf 42.0 141.0 Td (  Invalid transaction cards | 4 | Seeded teachable moments) Tj ET
+BT /F1 9.2 Tf 42.0 130.0 Td (  Node validation checklist | 2 | One per node) Tj ET
+BT /F1 9.2 Tf 42.0 119.0 Td (  Node ledger sheets | 2 | Node copy of balances) Tj ET
+BT /F1 9.2 Tf 42.0 108.0 Td (  Public table ledger | 1 | Table captain source of truth) Tj ET
+BT /F1 9.2 Tf 42.0 97.0 Td (  Mempool basket/tray | 1 | Physical waiting room) Tj ET
+BT /F1 9.2 Tf 42.0 86.0 Td (  Fee sorting strip | 1 | High fee -> low fee line) Tj ET
+BT /F1 9.2 Tf 42.0 75.0 Td (  Block envelopes/boxes | 6 | One per mined block) Tj ET
+BT /F1 9.2 Tf 42.0 64.0 Td (  Blockchain string/tape strip | 1 | Connect block envelopes in order) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 2) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Length 3497 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F1 9.2 Tf 42.0 742.0 Td (  Dice | 6 | 3 dice per miner) Tj ET
+BT /F1 9.2 Tf 42.0 731.0 Td (  Miner reward cards | 8 | Coinbase transaction cards) Tj ET
+BT /F1 9.2 Tf 42.0 720.0 Td (  BTC tokens/sats tokens | 80-120 | Optional tactile accounting) Tj ET
+BT /F1 9.2 Tf 42.0 709.0 Td (  Pens/markers | 6 | Transactions and ledgers) Tj ET
+BT /F1 9.2 Tf 42.0 698.0 Td (  Round timer card | 1 | Pacing reminder) Tj ET
+BT /F1 9.2 Tf 42.0 687.0 Td (  Debrief card | 1 | Final discussion prompts) Tj ET
+BT /F2 12.5 Tf 42.0 664.0 Td (Whole-Room Extras) Tj ET
+q 0.969 0.576 0.102 rg 39.0 639.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 642.0 Td (Item | Quantity | Purpose) Tj ET
+BT /F1 9.2 Tf 42.0 628.0 Td (  Lead facilitator script | 1 | Main stage pacing) Tj ET
+BT /F1 9.2 Tf 42.0 617.0 Td (  Projected timer | 1 | Keeps 8 tables synchronized) Tj ET
+BT /F1 9.2 Tf 42.0 606.0 Td (  Front-of-room demo lockbox | 1 | Memorable "private key" prop) Tj ET
+BT /F1 9.2 Tf 42.0 595.0 Td (  Giant mempool basket | 1 | Optional stage visual) Tj ET
+BT /F1 9.2 Tf 42.0 584.0 Td (  Giant block box | 1 | Optional stage visual) Tj ET
+BT /F1 9.2 Tf 42.0 573.0 Td (  Spare transaction cards | 80 | Backup) Tj ET
+BT /F1 9.2 Tf 42.0 562.0 Td (  Spare dice | 16 | Backup) Tj ET
+BT /F1 9.2 Tf 42.0 551.0 Td (  Tape rolls | 8-12 | Blockchain strips and signs) Tj ET
+BT /F1 9.2 Tf 42.0 540.0 Td (  Clipboards | 8-12 | Captains/nodes) Tj ET
+42.0 507.0 m 570.0 507.0 l S
+BT /F2 15 Tf 42.0 490.0 Td (Suggested Starting Balances) Tj ET
+BT /F1 10.5 Tf 42.0 464.0 Td (Use whole numbers so the room can do the math quickly.) Tj ET
+q 0.969 0.576 0.102 rg 39.0 439.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 442.0 Td (Wallet | Starting balance | Personality prompt) Tj ET
+BT /F1 9.2 Tf 42.0 428.0 Td (  Wallet A | 10 BTC | Wants to buy coffee from B) Tj ET
+BT /F1 9.2 Tf 42.0 417.0 Td (  Wallet B | 10 BTC | Sells coffee, pays rent to C) Tj ET
+BT /F1 9.2 Tf 42.0 406.0 Td (  Wallet C | 10 BTC | Runs the venue, pays staff D) Tj ET
+BT /F1 9.2 Tf 42.0 395.0 Td (  Wallet D | 10 BTC | Staff member, sends money to A) Tj ET
+BT /F1 9.2 Tf 42.0 384.0 Td (  Miner 1 | 0 BTC | Earns rewards and fees) Tj ET
+BT /F1 9.2 Tf 42.0 373.0 Td (  Miner 2 | 0 BTC | Earns rewards and fees) Tj ET
+BT /F1 10.5 Tf 42.0 350.0 Td (Block reward: 6 BTC for demo math.) Tj ET
+BT /F1 10.5 Tf 42.0 332.0 Td (Block size limit: 4 transactions.) Tj ET
+BT /F1 10.5 Tf 42.0 314.0 Td (Fee options: 0, 1, 2, or 3 BTC. High fee confirms first; zero-fee may wait.) Tj ET
+BT /F1 10.5 Tf 42.0 292.0 Td (Note: real Bitcoin does not use whole BTC fees like this. This is intentionally simplified.) Tj ET
+42.0 260.0 m 570.0 260.0 l S
+BT /F2 15 Tf 42.0 243.0 Td (Transaction Card Fields) Tj ET
+BT /F1 10.5 Tf 42.0 217.0 Td (Every card should include:) Tj ET
+BT /F1 10.2 Tf 56.0 195.0 Td (- Transaction ID: T____) Tj ET
+BT /F1 10.2 Tf 56.0 178.0 Td (- From wallet: A / B / C / D) Tj ET
+BT /F1 10.2 Tf 56.0 161.0 Td (- To wallet: A / B / C / D / Miner 1 / Miner 2) Tj ET
+BT /F1 10.2 Tf 56.0 144.0 Td (- Amount: ____ BTC) Tj ET
+BT /F1 10.2 Tf 56.0 127.0 Td (- Fee: 0 / 1 / 2 / 3 BTC) Tj ET
+BT /F1 10.2 Tf 56.0 110.0 Td (- Total cost to sender: amount + fee) Tj ET
+BT /F1 10.2 Tf 56.0 93.0 Td (- Signature mark: sticker/stamp/secret word) Tj ET
+BT /F1 10.2 Tf 56.0 76.0 Td (- Node status: valid / invalid) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 3) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Length 2966 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F1 10.2 Tf 56.0 742.0 Td (- Reason if invalid: bad signature / insufficient funds / double spend / malformed) Tj ET
+42.0 711.0 m 570.0 711.0 l S
+BT /F2 15 Tf 42.0 694.0 Td (Round Structure) Tj ET
+BT /F1 10.5 Tf 42.0 668.0 Td (Run 4 rounds for a 25-30 minute demo. Run 6 rounds for a 45 minute version.) Tj ET
+BT /F2 12.5 Tf 42.0 646.0 Td (Round 0: Setup and Explainer - 5 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 624.0 Td (Lead facilitator says:) Tj ET
+BT /F2 11 Tf 52.0 602.0 Td ("Each table is a tiny Bitcoin network. Wallets create transactions. Nodes check the) Tj ET
+BT /F2 11 Tf 52.0 587.0 Td ( rules. Valid transactions wait in the mempool. Miners compete to build the next block.) Tj ET
+BT /F2 11 Tf 52.0 572.0 Td ( Nodes decide whether that block becomes part of the chain.") Tj ET
+BT /F1 10.5 Tf 42.0 549.0 Td (Table captains confirm:) Tj ET
+BT /F1 10.2 Tf 56.0 527.0 Td (- wallets have balances) Tj ET
+BT /F1 10.2 Tf 56.0 510.0 Td (- nodes have ledger sheets) Tj ET
+BT /F1 10.2 Tf 56.0 493.0 Td (- mempool has basket) Tj ET
+BT /F1 10.2 Tf 56.0 476.0 Td (- miners have dice) Tj ET
+BT /F1 10.2 Tf 56.0 459.0 Td (- block envelopes are ready) Tj ET
+BT /F2 12.5 Tf 42.0 438.0 Td (Step 1: Wallets Create Transactions - 2 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 416.0 Td (Wallets fill transaction cards and sign them using their private-key envelope/stamp.) Tj ET
+BT /F1 10.5 Tf 42.0 394.0 Td (Rules:) Tj ET
+BT /F1 10.2 Tf 56.0 372.0 Td (- Sender must pay amount + fee.) Tj ET
+BT /F1 10.2 Tf 56.0 355.0 Td (- Wallets may create more than one transaction, but risky double-spends may be rejected.) Tj ET
+BT /F1 10.2 Tf 56.0 338.0 Td (- Encourage varied fees so the mempool has something to sort.) Tj ET
+BT /F2 12.5 Tf 42.0 317.0 Td (Step 2: Nodes Validate Transactions - 2 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 295.0 Td (Nodes check:) Tj ET
+BT /F1 10.2 Tf 56.0 273.0 Td (- Is the transaction complete?) Tj ET
+BT /F1 10.2 Tf 56.0 256.0 Td (- Does the signature match the sender?) Tj ET
+BT /F1 10.2 Tf 56.0 239.0 Td (- Does sender have enough balance for amount + fee?) Tj ET
+BT /F1 10.2 Tf 56.0 222.0 Td (- Has this same balance already been committed to another pending transaction?) Tj ET
+BT /F1 10.5 Tf 42.0 201.0 Td (Valid transactions go to the mempool. Invalid transactions are returned face-up with a reason.) Tj ET
+BT /F2 12.5 Tf 42.0 179.0 Td (Step 3: Mempool Sorts by Fee - 1 minute) Tj ET
+BT /F1 10.5 Tf 42.0 157.0 Td (Mempool manager places valid transactions in order:) Tj ET
+BT /F1 10.5 Tf 42.0 135.0 Td (3 BTC fee -> 2 BTC fee -> 1 BTC fee -> 0 BTC fee) Tj ET
+BT /F1 10.5 Tf 42.0 113.0 Td (Then announces:) Tj ET
+BT /F2 11 Tf 52.0 91.0 Td ("Block space is limited. The next miner can include up to 4 transactions. Highest fees) Tj ET
+BT /F2 11 Tf 52.0 76.0 Td ( are first.") Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 4) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Length 2809 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F2 12.5 Tf 42.0 742.0 Td (Step 4: Miners Mine - 1-3 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 720.0 Td (Miners roll 3 dice repeatedly.) Tj ET
+BT /F1 10.5 Tf 42.0 698.0 Td (Recommended pacing:) Tj ET
+BT /F1 10.2 Tf 56.0 676.0 Td (- Round 1: Low difficulty, at least one 6.) Tj ET
+BT /F1 10.2 Tf 56.0 659.0 Td (- Round 2: Medium difficulty, at least two 6s.) Tj ET
+BT /F1 10.2 Tf 56.0 642.0 Td (- Round 3: High difficulty demo, three 6s. Time cap at 45 seconds; if no one wins, difficulty) Tj ET
+BT /F1 10.2 Tf 56.0 629.0 Td ( adjusts down.) Tj ET
+BT /F1 10.2 Tf 56.0 612.0 Td (- Round 4+: Choose difficulty based on room energy.) Tj ET
+BT /F1 10.5 Tf 42.0 591.0 Td (When a miner wins, they shout: "Block found!") Tj ET
+BT /F1 10.5 Tf 42.0 569.0 Td (Winning miner builds a block:) Tj ET
+BT /F1 10.2 Tf 56.0 547.0 Td (- up to 4 highest-fee mempool transactions) Tj ET
+BT /F1 10.2 Tf 56.0 530.0 Td (- one coinbase/reward transaction: NEW BTC -> Miner, 6 BTC) Tj ET
+BT /F1 10.5 Tf 42.0 509.0 Td (If the mempool is empty, miner builds an empty block with only the reward.) Tj ET
+BT /F2 12.5 Tf 42.0 487.0 Td (Step 5: Nodes Validate the Block - 2 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 465.0 Td (Nodes check:) Tj ET
+BT /F1 10.2 Tf 56.0 443.0 Td (- Did the miner meet the dice difficulty?) Tj ET
+BT /F1 10.2 Tf 56.0 426.0 Td (- Are all transactions from the mempool?) Tj ET
+BT /F1 10.2 Tf 56.0 409.0 Td (- Are signatures valid?) Tj ET
+BT /F1 10.2 Tf 56.0 392.0 Td (- Are balances still sufficient in block order?) Tj ET
+BT /F1 10.2 Tf 56.0 375.0 Td (- Is the block reward correct?) Tj ET
+BT /F1 10.2 Tf 56.0 358.0 Td (- Are fees paid to the miner correctly?) Tj ET
+BT /F1 10.5 Tf 42.0 337.0 Td (If valid: attach block to chain and update ledgers.) Tj ET
+BT /F1 10.5 Tf 42.0 319.0 Td (If invalid: discard block, return transactions to mempool if still valid, mine again.) Tj ET
+BT /F2 12.5 Tf 42.0 297.0 Td (Step 6: Update Balances - 2 minutes) Tj ET
+BT /F1 10.5 Tf 42.0 275.0 Td (For each transaction in the accepted block:) Tj ET
+BT /F1 10.2 Tf 56.0 253.0 Td (- subtract amount + fee from sender) Tj ET
+BT /F1 10.2 Tf 56.0 236.0 Td (- add amount to receiver) Tj ET
+BT /F1 10.2 Tf 56.0 219.0 Td (- add fee to winning miner) Tj ET
+BT /F1 10.2 Tf 56.0 202.0 Td (- add 6 BTC block reward to winning miner) Tj ET
+BT /F1 10.5 Tf 42.0 181.0 Td (Unconfirmed transactions remain in the mempool.) Tj ET
+42.0 149.0 m 570.0 149.0 l S
+BT /F2 15 Tf 42.0 132.0 Td (Difficulty Adjustment Script) Tj ET
+BT /F1 10.5 Tf 42.0 106.0 Td (After every 2 rounds, lead facilitator asks:) Tj ET
+BT /F2 11 Tf 52.0 84.0 Td ("Were blocks coming too fast or too slow?") Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 5) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Length 3274 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F1 10.5 Tf 42.0 742.0 Td (Then says:) Tj ET
+BT /F1 10.2 Tf 56.0 720.0 Td (- "Too fast? The network raises difficulty.") Tj ET
+BT /F1 10.2 Tf 56.0 703.0 Td (- "Too slow? The network lowers difficulty.") Tj ET
+BT /F1 10.2 Tf 56.0 686.0 Td (- "The goal is predictable block timing, not easy winning.") Tj ET
+BT /F1 10.5 Tf 42.0 665.0 Td (For the live demo:) Tj ET
+q 0.969 0.576 0.102 rg 39.0 640.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 643.0 Td (Difficulty | Dice rule | Use case) Tj ET
+BT /F1 9.2 Tf 42.0 629.0 Td (  Low | At least one 6 on 3 dice | First round, fast success) Tj ET
+BT /F1 9.2 Tf 42.0 618.0 Td (  Medium | At least two 6s on 3 dice | Main live setting) Tj ET
+BT /F1 9.2 Tf 42.0 607.0 Td (  High | Three 6s on 3 dice | Short demonstration only) Tj ET
+BT /F1 9.2 Tf 42.0 596.0 Td (  High, cumulative | Collect three 6s across multiple rolls | If you want high difficulty but still finish) Tj ET
+42.0 563.0 m 570.0 563.0 l S
+BT /F2 15 Tf 42.0 546.0 Td (Seeded Teachable Moments) Tj ET
+BT /F1 10.5 Tf 42.0 520.0 Td (Give each table captain four optional "incident cards." Use 1-2 only.) Tj ET
+BT /F1 10.2 Tf 56.0 498.0 Td (- Insufficient Funds) Tj ET
+BT /F1 10.5 Tf 42.0 481.0 Td (Wallet A tries to send 9 BTC with a 3 BTC fee while only holding 10 BTC.) Tj ET
+BT /F1 10.2 Tf 56.0 459.0 Td (- Bad Signature) Tj ET
+BT /F1 10.5 Tf 42.0 442.0 Td (Wallet C transaction has Wallet B's signature mark.) Tj ET
+BT /F1 10.2 Tf 56.0 420.0 Td (- Low Fee Delay) Tj ET
+BT /F1 10.5 Tf 42.0 403.0 Td (Wallet D sends a valid 0-fee transaction. It stays in the mempool while higher-fee) Tj ET
+BT /F1 10.5 Tf 42.0 389.0 Td ( transactions confirm.) Tj ET
+BT /F1 10.2 Tf 56.0 367.0 Td (- Double Spend Attempt) Tj ET
+BT /F1 10.5 Tf 42.0 350.0 Td (Wallet B creates two transactions spending the same balance. Nodes must catch or block) Tj ET
+BT /F1 10.5 Tf 42.0 336.0 Td ( validation must reject the second.) Tj ET
+BT /F1 10.2 Tf 56.0 314.0 Td (- Empty Block) Tj ET
+BT /F1 10.5 Tf 42.0 297.0 Td (If a miner wins before transactions arrive, they may mine an empty block and still receive the) Tj ET
+BT /F1 10.5 Tf 42.0 283.0 Td ( reward.) Tj ET
+42.0 251.0 m 570.0 251.0 l S
+BT /F2 15 Tf 42.0 234.0 Td (30-Minute Run of Show) Tj ET
+q 0.969 0.576 0.102 rg 39.0 205.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 208.0 Td (Time | Activity) Tj ET
+BT /F1 9.2 Tf 42.0 194.0 Td (  0:00-0:05 | Explain roles and table setup) Tj ET
+BT /F1 9.2 Tf 42.0 183.0 Td (  0:05-0:11 | Round 1: easy block, simple successful transactions) Tj ET
+BT /F1 9.2 Tf 42.0 172.0 Td (  0:11-0:18 | Round 2: fee market and medium difficulty) Tj ET
+BT /F1 9.2 Tf 42.0 161.0 Td (  0:18-0:23 | Round 3: invalid transaction/double-spend + block validation) Tj ET
+BT /F1 9.2 Tf 42.0 150.0 Td (  0:23-0:27 | Difficulty adjustment demo / empty block if useful) Tj ET
+BT /F1 9.2 Tf 42.0 139.0 Td (  0:27-0:30 | Debrief: wallet vs node vs miner vs blockchain) Tj ET
+42.0 116.0 m 570.0 116.0 l S
+BT /F2 15 Tf 42.0 99.0 Td (45-Minute Run of Show) Tj ET
+q 0.969 0.576 0.102 rg 39.0 70.0 534.0 14.0 re f Q
+BT /F2 9.2 Tf 42.0 73.0 Td (Time | Activity) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 6) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Length 2736 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F1 9.2 Tf 42.0 742.0 Td (  0:00-0:06 | Explain roles and self-custody prop) Tj ET
+BT /F1 9.2 Tf 42.0 731.0 Td (  0:06-0:13 | Round 1: valid transactions, low difficulty) Tj ET
+BT /F1 9.2 Tf 42.0 720.0 Td (  0:13-0:21 | Round 2: fee competition, medium difficulty) Tj ET
+BT /F1 9.2 Tf 42.0 709.0 Td (  0:21-0:29 | Round 3: bad signature / insufficient funds) Tj ET
+BT /F1 9.2 Tf 42.0 698.0 Td (  0:29-0:36 | Round 4: double-spend and block validation) Tj ET
+BT /F1 9.2 Tf 42.0 687.0 Td (  0:36-0:41 | Difficulty adjustment and empty block demo) Tj ET
+BT /F1 9.2 Tf 42.0 676.0 Td (  0:41-0:45 | Debrief and table report-outs) Tj ET
+42.0 643.0 m 570.0 643.0 l S
+BT /F2 15 Tf 42.0 626.0 Td (Debrief Questions) Tj ET
+BT /F1 10.5 Tf 42.0 600.0 Td (Ask the room:) Tj ET
+BT /F1 10.2 Tf 56.0 578.0 Td (- Who created transactions?) Tj ET
+BT /F1 10.2 Tf 56.0 561.0 Td (- Who decided whether a transaction was valid?) Tj ET
+BT /F1 10.2 Tf 56.0 544.0 Td (- Did miners get to change the rules?) Tj ET
+BT /F1 10.2 Tf 56.0 527.0 Td (- Why did high-fee transactions confirm first?) Tj ET
+BT /F1 10.2 Tf 56.0 510.0 Td (- What happened to transactions that did not fit in the block?) Tj ET
+BT /F1 10.2 Tf 56.0 493.0 Td (- Why might a miner mine an empty block?) Tj ET
+BT /F1 10.2 Tf 56.0 476.0 Td (- What did the blockchain represent at your table?) Tj ET
+BT /F1 10.2 Tf 56.0 459.0 Td (- What would happen if one node lied but the rest rejected the block?) Tj ET
+BT /F1 10.2 Tf 56.0 442.0 Td (- How is this different from a bank updating a private ledger?) Tj ET
+BT /F1 10.2 Tf 56.0 425.0 Td (- What was the private key in this demo, and why did it matter?) Tj ET
+42.0 394.0 m 570.0 394.0 l S
+BT /F2 15 Tf 42.0 377.0 Td (Print Pack Checklist) Tj ET
+BT /F1 10.5 Tf 42.0 351.0 Td (For 8 tables, print:) Tj ET
+BT /F1 10.2 Tf 56.0 329.0 Td (- 8 table signs) Tj ET
+BT /F1 10.2 Tf 56.0 312.0 Td (- 80 role cards) Tj ET
+BT /F1 10.2 Tf 56.0 295.0 Td (- 32 wallet balance cards) Tj ET
+BT /F1 10.2 Tf 56.0 278.0 Td (- 320 transaction cards minimum; 400 preferred) Tj ET
+BT /F1 10.2 Tf 56.0 261.0 Td (- 32 invalid/incident cards) Tj ET
+BT /F1 10.2 Tf 56.0 244.0 Td (- 16 node validation checklists) Tj ET
+BT /F1 10.2 Tf 56.0 227.0 Td (- 16 node ledger sheets) Tj ET
+BT /F1 10.2 Tf 56.0 210.0 Td (- 8 public table ledgers) Tj ET
+BT /F1 10.2 Tf 56.0 193.0 Td (- 8 mempool fee sorting strips) Tj ET
+BT /F1 10.2 Tf 56.0 176.0 Td (- 48 block labels/envelopes) Tj ET
+BT /F1 10.2 Tf 56.0 159.0 Td (- 16 miner reward sheets/cards) Tj ET
+BT /F1 10.2 Tf 56.0 142.0 Td (- 8 debrief cards) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 7) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Length 2600 >>
+stream
+q 0.969 0.576 0.102 rg 0.0 762.0 612.0 30.0 re f Q
+BT /F2 13 Tf 42.0 773.0 Td (Bitcoin Transaction Demo Kit) Tj ET
+BT /F2 20 Tf 42.0 742.0 Td (Packing List: 8 Tables of 10) Tj ET
+q 0.969 0.576 0.102 rg 39.0 711.0 534.0 14.0 re f Q
+BT /F2 8.2 Tf 42.0 714.0 Td (item | per_table | total_for_8_tables | notes) Tj ET
+BT /F1 8.2 Tf 42.0 700.0 Td (  Table sign | 1 | 8 | Large visible Table 1-8) Tj ET
+BT /F1 8.2 Tf 42.0 689.0 Td (  Role cards | 10 | 80 | 4 wallets 2 nodes 2 miners 1 mempool 1 captain) Tj ET
+BT /F1 8.2 Tf 42.0 678.0 Td (  Wallet balance cards | 4 | 32 | Wallets A-D) Tj ET
+BT /F1 8.2 Tf 42.0 667.0 Td (  Private-key envelopes or stamps | 4 | 32 | Fake signing authority; do not use real keys) Tj ET
+BT /F1 8.2 Tf 42.0 656.0 Td (  Transaction cards | 40 | 320 | 50 per table preferred if longer session) Tj ET
+BT /F1 8.2 Tf 42.0 645.0 Td (  Incident cards | 4 | 32 | Insufficient funds bad signature low fee double spend) Tj ET
+BT /F1 8.2 Tf 42.0 634.0 Td (  Node validation checklist | 2 | 16 | One per node) Tj ET
+BT /F1 8.2 Tf 42.0 623.0 Td (  Node ledger sheet | 2 | 16 | Node copies of wallet/miner balances) Tj ET
+BT /F1 8.2 Tf 42.0 612.0 Td (  Public table ledger | 1 | 8 | Table captain source of truth) Tj ET
+BT /F1 8.2 Tf 42.0 601.0 Td (  Mempool basket/tray | 1 | 8 | Physical waiting room) Tj ET
+BT /F1 8.2 Tf 42.0 590.0 Td (  Fee sorting strip | 1 | 8 | High fee to low fee) Tj ET
+BT /F1 8.2 Tf 42.0 579.0 Td (  Block envelopes or small boxes | 6 | 48 | One per accepted block) Tj ET
+BT /F1 8.2 Tf 42.0 568.0 Td (  Blockchain string/tape strip | 1 | 8 | Attach blocks in order) Tj ET
+BT /F1 8.2 Tf 42.0 557.0 Td (  Dice | 6 | 48 | 3 dice per miner) Tj ET
+BT /F1 8.2 Tf 42.0 546.0 Td (  Miner reward cards | 8 | 64 | Coinbase/reward transaction cards) Tj ET
+BT /F1 8.2 Tf 42.0 535.0 Td (  BTC/sats tokens | 100 | 800 | Optional tactile accounting) Tj ET
+BT /F1 8.2 Tf 42.0 524.0 Td (  Pens/markers | 6 | 48 | Plus spares) Tj ET
+BT /F1 8.2 Tf 42.0 513.0 Td (  Clipboards | 3 | 24 | Captain and nodes) Tj ET
+BT /F1 8.2 Tf 42.0 502.0 Td (  Tape roll | 1 | 8 | Plus 4 room spares) Tj ET
+BT /F1 8.2 Tf 42.0 491.0 Td (  Lead facilitator script | 0.125 | 1 | Whole room) Tj ET
+BT /F1 8.2 Tf 42.0 480.0 Td (  Projected timer | 0.125 | 1 | Whole room) Tj ET
+BT /F1 8.2 Tf 42.0 469.0 Td (  Demo lockbox | 0.125 | 1 | Whole room self-custody prop) Tj ET
+BT /F1 8.2 Tf 42.0 458.0 Td (  Spare dice | 2 | 16 | Whole room backup) Tj ET
+BT /F1 8.2 Tf 42.0 447.0 Td (  Spare transaction cards | 10 | 80 | Whole room backup) Tj ET
+BT /F1 8 Tf 517.0 22.0 Td (Block 7 Physical Kit � page 8) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+12 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 4 0 R >>
+endobj
+13 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+14 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 6 0 R >>
+endobj
+15 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 7 0 R >>
+endobj
+16 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 8 0 R >>
+endobj
+17 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 9 0 R >>
+endobj
+18 0 obj
+<< /Type /Page /Parent 19 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 10 0 R >>
+endobj
+19 0 obj
+<< /Type /Pages /Kids [ 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R ] /Count 8 >>
+endobj
+20 0 obj
+<< /Type /Catalog /Pages 19 0 R >>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000019 00000 n 
+0000000089 00000 n 
+0000000164 00000 n 
+0000004194 00000 n 
+0000008224 00000 n 
+0000011773 00000 n 
+0000014791 00000 n 
+0000017652 00000 n 
+0000020978 00000 n 
+0000023766 00000 n 
+0000026419 00000 n 
+0000026557 00000 n 
+0000026695 00000 n 
+0000026833 00000 n 
+0000026971 00000 n 
+0000027109 00000 n 
+0000027247 00000 n 
+0000027385 00000 n 
+0000027524 00000 n 
+0000027634 00000 n 
+trailer
+<< /Size 21 /Root 20 0 R >>
+startxref
+27685
+%%EOF

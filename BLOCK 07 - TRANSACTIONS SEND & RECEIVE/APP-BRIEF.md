@@ -31,3 +31,8 @@ See `CONTENT-PLAN.md` and the copied `curriculum-content/` folder inside this bl
 - Mobile-first.
 - Works as a standalone GitHub Pages path.
 - Includes attribution to My First Bitcoin.
+
+
+## Physical live-event kit
+
+A Bitcoin Transaction Demo physical kit is available at `physical-kit/bitcoin-transaction-demo/`. It supports 8 tables of 10 participants and demonstrates wallet signing, node validation, mempool fee prioritization, dice-based mining, block validation, confirmations, and ledger updates.

@@ -1,0 +1,25 @@
+item,per_table,total_for_8_tables,notes
+Table sign,1,8,Large visible Table 1-8
+Role cards,10,80,4 wallets 2 nodes 2 miners 1 mempool 1 captain
+Wallet balance cards,4,32,Wallets A-D
+Private-key envelopes or stamps,4,32,Fake signing authority; do not use real keys
+Transaction cards,40,320,50 per table preferred if longer session
+Incident cards,4,32,Insufficient funds bad signature low fee double spend
+Node validation checklist,2,16,One per node
+Node ledger sheet,2,16,Node copies of wallet/miner balances
+Public table ledger,1,8,Table captain source of truth
+Mempool basket/tray,1,8,Physical waiting room
+Fee sorting strip,1,8,High fee to low fee
+Block envelopes or small boxes,6,48,One per accepted block
+Blockchain string/tape strip,1,8,Attach blocks in order
+Dice,6,48,3 dice per miner
+Miner reward cards,8,64,Coinbase/reward transaction cards
+BTC/sats tokens,100,800,Optional tactile accounting
+Pens/markers,6,48,Plus spares
+Clipboards,3,24,Captain and nodes
+Tape roll,1,8,Plus 4 room spares
+Lead facilitator script,0.125,1,Whole room
+Projected timer,0.125,1,Whole room
+Demo lockbox,0.125,1,Whole room self-custody prop
+Spare dice,2,16,Whole room backup
+Spare transaction cards,10,80,Whole room backup
