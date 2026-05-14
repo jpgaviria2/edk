@@ -1,0 +1,6 @@
+role,starting_goods,needs_now,needs_next_generation,save_goal
+Mango Farmer,8 mangoes;1 cow,water;shelter,gold or sats,durable savings
+Cattle Herder,7 cows;1 shelter,water;mangoes,portable value,wealth transfer
+Water Keeper,8 water;1 fish,cows;shelter,store of value,trade flexibility
+Builder,7 shelter;1 cow,mangoes;water,wealth preservation,security
+Fisher,8 fish;1 water,shelter;mangoes,accepted money,future savings
