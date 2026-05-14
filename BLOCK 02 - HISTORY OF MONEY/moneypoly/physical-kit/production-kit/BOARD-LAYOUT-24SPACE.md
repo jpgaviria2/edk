@@ -8,6 +8,8 @@ This is the recommended live board for **moderator mode**.
 - one shared board per table
 - all tables use the same layout
 - moderator rolls once for the whole room
+- the board stays the same across all eras
+- only the trade method changes from barter → shells → gold → slips → fiat → sats
 
 ## Why 24 spaces
 This is the sweet spot:
@@ -179,12 +181,16 @@ Every landed space should give a player **2 to 4 clear options max**.
 ## Recommended posted trades
 The game runs better if the trade spaces use **posted menus**, not endless negotiation.
 
-Examples:
-- 2 water for 1 fish
-- 10 mangoes for 1 cow
-- 1 cow for 1 shelter
-- 1 gold for 2 shelter
-- 100 sats for 1 water
+The important rule is: **the space stays the same, but the payment method evolves by era.**
+
+Examples at the exact same Water Trade space:
+- barter era: 10 mangoes for 1 water bundle
+- commodity era: 10 mangoes **or** 2 shells for 1 water bundle
+- gold era: 10 mangoes **or** 2 shells **or** 1 gold fraction for 1 water bundle
+- fiat era: 10 mangoes **or** dollars for 1 water bundle
+- bitcoin era: sats for 1 water bundle
+
+That means the educational lesson is always visible: same need, same trade location, different money tool.
 
 ## Recommended table roles for up to 8 players
 Use up to 8 distinct producer identities:
@@ -215,3 +221,7 @@ If a space invites open-ended bargaining every time, it is too slow for stage mo
 
 ## Recommendation
 This **24-space perimeter board** should become the default master board for the large meetup version.
+
+See also:
+- `CORE-GAME-LOOP.md`
+- printable board PDF: `printables/pdf/table-board-24space.pdf`

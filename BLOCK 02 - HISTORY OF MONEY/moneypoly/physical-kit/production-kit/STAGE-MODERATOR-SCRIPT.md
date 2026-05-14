@@ -30,5 +30,8 @@ Example:
 ## Era transition line
 "Same board. Same human needs. Different money system."
 
+## Core teaching line
+"You are still trying to secure food, water, shelter, and future savings. The board did not change. The goal did not change. Only the method of trading changed."
+
 ## Close
 "The lesson is not just about making trades. The lesson is about what kind of money lets people preserve the value of their work over time."
