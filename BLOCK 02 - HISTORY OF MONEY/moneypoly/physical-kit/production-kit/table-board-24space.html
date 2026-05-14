@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Moneypoly Table Board · 24 Space Moderator Mode</title>
+  <link rel="stylesheet" href="./table-board-24space.css" />
+</head>
+<body>
+  <main class="board-page">
+    <header class="hero">
+      <div>
+        <span class="eyebrow">Moneypoly · Moderator Mode</span>
+        <h1>24-Space Table Board</h1>
+        <p>Same board. Same goal. Different money. Run the exact same loop through barter, shells, gold, slips, fiat, and sats.</p>
+      </div>
+      <div class="hero-pills">
+        <span>Up to 8 players/teams</span>
+        <span>Moderator rolls for the room</span>
+        <span>Table captains resolve locally</span>
+      </div>
+    </header>
+
+    <section class="board-shell">
+      <div class="moneypoly-board board-24" aria-label="24-space Moneypoly board preview">
+        <div class="board-center">
+          <span class="eyebrow">Core rule</span>
+          <h2>Moneypoly</h2>
+          <p>The board stays the same. The human needs stay the same. Only the method of trading changes.</p>
+          <div class="goal-strip"><span>Goal: secure food + water + shelter + savings</span></div>
+          <div class="score-strip">
+            <span>Era 1: Barter</span>
+            <span>Era 2: Shells</span>
+            <span>Era 3: Gold</span>
+            <span>Era 4: Slips</span>
+            <span>Era 5: Fiat</span>
+            <span>Era 6: Sats</span>
+          </div>
+        </div>
+
+        <div class="board-space corner top left go"><span class="color-bar"></span><strong>GO</strong><small>Production</small></div>
+        <div class="board-space top trade water"><span class="color-bar"></span><strong>Water Trade</strong></div>
+        <div class="board-space top trade market"><span class="color-bar"></span><strong>Open Market A</strong></div>
+        <div class="board-space top trade food"><span class="color-bar"></span><strong>Food Trade</strong></div>
+        <div class="board-space top event"><span class="color-bar"></span><strong>Crisis A</strong></div>
+        <div class="board-space top trade commodity"><span class="color-bar"></span><strong>Commodity Exchange</strong></div>
+        <div class="board-space corner top right water"><span class="color-bar"></span><strong>Community Well</strong></div>
+
+        <div class="board-space right trade shelter"><span class="color-bar"></span><strong>Shelter Trade</strong></div>
+        <div class="board-space right trade market"><span class="color-bar"></span><strong>Open Market B</strong></div>
+        <div class="board-space right trade food"><span class="color-bar"></span><strong>Fish Trade</strong></div>
+        <div class="board-space right trade gold"><span class="color-bar"></span><strong>Gold Market</strong></div>
+        <div class="board-space right event"><span class="color-bar"></span><strong>Government Levy</strong></div>
+
+        <div class="board-space corner bottom right route"><span class="color-bar"></span><strong>Trade Route</strong></div>
+        <div class="board-space bottom trade bank"><span class="color-bar"></span><strong>Medici Bank</strong></div>
+        <div class="board-space bottom trade market"><span class="color-bar"></span><strong>Open Market C</strong></div>
+        <div class="board-space bottom trade food"><span class="color-bar"></span><strong>Cattle Trade</strong></div>
+        <div class="board-space bottom event"><span class="color-bar"></span><strong>Crisis B</strong></div>
+        <div class="board-space bottom trade fiat"><span class="color-bar"></span><strong>Central Bank</strong></div>
+
+        <div class="board-space corner bottom left vault"><span class="color-bar"></span><strong>Vault</strong><small>Treasury</small></div>
+        <div class="board-space left trade bitcoin"><span class="color-bar"></span><strong>Bitcoin Savings</strong></div>
+        <div class="board-space left trade lightning"><span class="color-bar"></span><strong>Lightning Payment</strong></div>
+        <div class="board-space left trade market"><span class="color-bar"></span><strong>Open Market D</strong></div>
+        <div class="board-space left trade wealth"><span class="color-bar"></span><strong>Generational Wealth</strong></div>
+        <div class="board-space left event"><span class="color-bar"></span><strong>Ruler / Policy</strong></div>
+      </div>
+    </section>
+
+    <section class="info-grid">
+      <article class="info-card">
+        <span class="eyebrow">Objective</span>
+        <h3>Win condition</h3>
+        <ul>
+          <li>Secure food</li>
+          <li>Secure water</li>
+          <li>Secure shelter</li>
+          <li>Set aside at least 1 savings asset</li>
+        </ul>
+      </article>
+
+      <article class="info-card">
+        <span class="eyebrow">Turn loop</span>
+        <h3>How each round works</h3>
+        <ol>
+          <li>Moderator rolls for everyone</li>
+          <li>All teams move the same number of spaces</li>
+          <li>Each table resolves landed spaces locally</li>
+          <li>Teams passing GO collect production</li>
+          <li>Moderator reveals next roll or event</li>
+        </ol>
+      </article>
+
+      <article class="info-card">
+        <span class="eyebrow">GO payouts</span>
+        <h3>Fixed production</h3>
+        <ul>
+          <li>Mango +10</li>
+          <li>Water +5</li>
+          <li>Fish +4</li>
+          <li>Cow +1</li>
+          <li>Shelter +1</li>
+          <li>Coffee +6</li>
+          <li>Shell Collector +4 shells</li>
+          <li>Merchant = choose 1 small good</li>
+        </ul>
+      </article>
+
+      <article class="info-card wide">
+        <span class="eyebrow">Space rule</span>
+        <h3>Constant board, changing money</h3>
+        <p>The Water Trade space is always the Water Trade space. What changes is how you pay there:</p>
+        <div class="era-lines">
+          <span><b>Barter:</b> goods only</span>
+          <span><b>Commodity:</b> goods or shells</span>
+          <span><b>Gold:</b> goods, shells, or gold</span>
+          <span><b>Ledgers:</b> goods, gold, or valid slips</span>
+          <span><b>Fiat:</b> goods or paper notes</span>
+          <span><b>Bitcoin:</b> goods or sats</span>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

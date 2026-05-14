@@ -53,6 +53,8 @@ If you want more drama later, add **short cross-table trading windows** in advan
 - `SUPPLY-LIST.md`
 - `TABLE-KIT-ASSEMBLY.md`
 - `AV-SCRIPT.md`
+- `table-board-24space.html`
+- `table-board-24space.css`
 
 ### Print pack
 HTML source:
