@@ -190,7 +190,7 @@
     const ids = [...new Set([...state.requests.values()].map((r) => r.id))];
     const summaries = ids.map((id) => {
       const events = tradeEvents(id);
-      return events.paid || events.invoice || events.reject || events.request;
+      return events.paid || events.invoice || events.accept || events.reject || events.request;
     }).filter(Boolean).sort((a, b) => b.createdAt - a.createdAt);
     $('[data-requests]').innerHTML = summaries.length ? summaries.map((r) => requestCard(r)).join('') : '<p class="muted">No trade notifications yet.</p>';
   }
@@ -200,14 +200,19 @@
     const events = tradeEvents(r.id);
     const paid = Boolean(events.paid);
     const rejected = Boolean(events.reject);
+    const accepted = Boolean(events.accept);
     const invoiced = Boolean(events.invoice);
-    const incoming = r.sellerPubkey === mine && r.type === 'request' && !invoiced && !paid && !rejected;
+    const incoming = r.sellerPubkey === mine && r.type === 'request' && !accepted && !invoiced && !paid && !rejected;
+    const ecashForMe = r.buyerPubkey === mine && r.type === 'accept' && !paid && !rejected;
     const invoiceForMe = r.buyerPubkey === mine && r.type === 'invoice' && !paid && !rejected;
-    const status = paid ? 'Paid' : rejected ? 'Rejected' : invoiced ? 'Invoice created' : 'Open';
-    return `<article class="request ${r.type} ${paid || rejected || invoiced ? 'handled' : ''}"><strong>${escapeHtml(r.title)}</strong><p>${escapeHtml(r.copy)}</p><small>${new Date(r.createdAt).toLocaleTimeString()} · ${status}</small><div class="button-row">
-      ${incoming ? `<button class="primary" data-action="accept-request" data-id="${r.id}">Accept + create invoice</button><button data-action="reject-request" data-id="${r.id}">Reject</button>` : ''}
+    const handled = paid || rejected || (invoiced && r.type === 'request') || (accepted && r.type === 'request');
+    const status = paid ? 'Paid' : rejected ? 'Rejected' : accepted ? 'Accepted' : invoiced ? 'Invoice created' : 'Open';
+    const method = ecashAvailable() ? 'ecash' : 'invoice';
+    return `<article class="request ${r.type} ${handled ? 'handled' : ''}"><strong>${escapeHtml(r.title)}</strong><p>${escapeHtml(r.copy)}</p><small>${new Date(r.createdAt).toLocaleTimeString()} · ${status}</small><div class="button-row">
+      ${incoming ? `<button class="primary" data-action="accept-request" data-id="${r.id}">Accept ${method === 'ecash' ? 'trade' : '+ create invoice'}</button><button data-action="reject-request" data-id="${r.id}">Reject</button>` : ''}
+      ${ecashForMe ? `<button class="primary" data-action="pay-ecash" data-id="${r.id}">Pay with ecash</button>` : ''}
       ${invoiceForMe ? `<button class="primary" data-action="pay-request-invoice" data-id="${r.id}">Pay invoice</button>` : ''}
-      ${paid ? '<span class="pill">Paid</span>' : invoiced && r.type === 'request' ? '<span class="pill">Waiting for buyer</span>' : rejected ? '<span class="pill">Rejected</span>' : ''}
+      ${paid ? '<span class="pill">Paid</span>' : invoiced && r.type === 'request' ? '<span class="pill">Waiting for buyer</span>' : accepted && r.type === 'request' ? '<span class="pill">Accepted</span>' : rejected ? '<span class="pill">Rejected</span>' : ''}
     </div></article>`;
   }
 
@@ -225,6 +230,7 @@
   function tradeEvents(id) {
     return {
       request: [...state.requests.values()].find((r) => r.id === id && r.type === 'request'),
+      accept: [...state.requests.values()].find((r) => r.id === id && r.type === 'accept'),
       invoice: [...state.requests.values()].find((r) => r.id === id && r.type === 'invoice'),
       paid: [...state.requests.values()].find((r) => r.id === id && r.type === 'paid'),
       reject: [...state.requests.values()].find((r) => r.id === id && r.type === 'reject')
@@ -240,7 +246,8 @@
       seen.add(r.id);
       const events = tradeEvents(r.id);
       if (events.paid || events.reject) continue;
-      if (events.request?.sellerPubkey === mine && !events.invoice) actions.push(events.request);
+      if (events.request?.sellerPubkey === mine && !events.invoice && !events.accept) actions.push(events.request);
+      if (events.accept?.buyerPubkey === mine) actions.push(events.accept);
       if (events.invoice?.buyerPubkey === mine) actions.push(events.invoice);
     }
     return actions;
@@ -402,11 +409,13 @@
     if (content.type === 'presence') {
       state.online.set(event.pubkey, { pubkey: event.pubkey, name: content.name || short(event.pubkey), offer: content.offer || {}, inventory: content.inventory || {}, seenAt: content.seenAt || now() });
     }
-    if (['request', 'invoice', 'paid', 'reject'].includes(content.type)) {
+    if (['request', 'accept', 'invoice', 'paid', 'ecash', 'reject'].includes(content.type)) {
       const id = content.requestId || event.id;
       state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
       if (content.type === 'request' && content.sellerPubkey === state.profile.pubkey) { state.notice = { title: 'New trade request', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
+      if (content.type === 'accept' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Trade accepted', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
       if (content.type === 'invoice' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Invoice ready', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
+      if (content.type === 'ecash' && content.sellerPubkey === state.profile.pubkey) receiveEcashPayment(content);
       if (content.type === 'paid') applyTradeInventory(content);
     }
     if (content.type === 'crisis') applyCrisisIfValid(event, content);
@@ -435,7 +444,15 @@
 
   async function acceptRequest(id) {
     const req = [...state.requests.values()].find((r) => r.id === id && r.type === 'request');
-    if (!req || tradeEvents(id).invoice || tradeEvents(id).paid || tradeEvents(id).reject) return;
+    if (!req || tradeEvents(id).invoice || tradeEvents(id).accept || tradeEvents(id).paid || tradeEvents(id).reject) return;
+    if (ecashAvailable()) {
+      await signAndPublish('accept', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, amount: req.amount, title: `Trade accepted`, copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':accept', { id, type: 'accept', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, amount: req.amount, title: 'Trade accepted', copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.`, createdAt: now() });
+      state.notice = { title: 'Trade accepted', copy: 'Waiting for buyer to pay with ecash.', target: 'requests' };
+      addReceipt('accept', 'Accepted trade', `Waiting for ${req.amount} sats ecash payment.`);
+      renderAll();
+      return;
+    }
     state.notice = { title: 'Creating invoice…', copy: 'Approve invoice creation in Fedi.', target: 'requests' };
     renderAll();
     try {
@@ -446,6 +463,63 @@
       state.notice = { title: 'Invoice created', copy: 'Waiting for buyer to pay.', target: 'requests' };
       addReceipt('invoice', 'Accepted trade + created invoice', `${req.amount} sats invoice sent to buyer.`);
     } catch (error) { addReceipt('fail', 'Invoice failed', error.message || 'Could not create invoice.'); }
+  }
+
+  function ecashAvailable() { return Boolean(window.fedi?.generateEcash && window.fedi?.receiveEcash); }
+
+  async function generateEcash(amount) {
+    const result = await window.fedi.generateEcash({ amount });
+    return result?.notes || result?.ecash || result?.token || result;
+  }
+
+  async function receiveEcash(notes) {
+    try { return await window.fedi.receiveEcash({ notes }); }
+    catch (_) { return window.fedi.receiveEcash(notes); }
+  }
+
+  async function encryptFor(pubkey, payload) {
+    const text = JSON.stringify(payload);
+    if (window.nostr?.nip44?.encrypt) return { scheme: 'nip44', ciphertext: await window.nostr.nip44.encrypt(pubkey, text) };
+    if (window.nostr?.nip04?.encrypt) return { scheme: 'nip04', ciphertext: await window.nostr.nip04.encrypt(pubkey, text) };
+    return { scheme: 'plain', ciphertext: text };
+  }
+
+  async function decryptFrom(pubkey, wrapped) {
+    if (wrapped?.scheme === 'nip44' && window.nostr?.nip44?.decrypt) return JSON.parse(await window.nostr.nip44.decrypt(pubkey, wrapped.ciphertext));
+    if (wrapped?.scheme === 'nip04' && window.nostr?.nip04?.decrypt) return JSON.parse(await window.nostr.nip04.decrypt(pubkey, wrapped.ciphertext));
+    return JSON.parse(wrapped?.ciphertext || '{}');
+  }
+
+  async function payAcceptedEcash(id) {
+    const accepted = [...state.requests.values()].find((r) => r.id === id && r.type === 'accept');
+    if (!accepted || tradeEvents(id).paid || tradeEvents(id).reject) return;
+    state.notice = { title: 'Generating ecash…', copy: 'Approve ecash generation in Fedi.', target: 'requests' };
+    renderAll();
+    try {
+      const notes = await generateEcash(Number(accepted.amount));
+      const wrapped = await encryptFor(accepted.sellerPubkey, { notes, requestId: id, amount: accepted.amount, item: accepted.item, category: accepted.category });
+      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category });
+      await signAndPublish('ecash', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, amount: accepted.amount, wrapped, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.` }, [['p', accepted.sellerPubkey]]);
+      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, amount: accepted.amount, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.`, createdAt: now() });
+      state.notice = { title: 'Ecash sent', copy: `${accepted.item} inventory updated.`, target: 'market' };
+      addReceipt('paid', 'Sent ecash', `${accepted.amount} sats sent for ${accepted.item}.`);
+      await publishPresence();
+    } catch (error) { addReceipt('fail', 'Ecash payment failed', error.message || 'Ecash generation/send failed.'); state.notice = { title: 'Ecash failed', copy: error.message || 'Payment cancelled.', target: 'requests' }; renderAll(); }
+  }
+
+  async function receiveEcashPayment(content) {
+    if (content.sellerPubkey !== state.profile.pubkey || tradeEvents(content.requestId).paid) return;
+    try {
+      const payload = await decryptFrom(content.buyerPubkey, content.wrapped);
+      await receiveEcash(payload.notes);
+      applyTradeInventory(content);
+      await signAndPublish('paid', { requestId: content.requestId, buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.` }, [['p', content.buyerPubkey]]);
+      state.requests.set(content.requestId + ':paid', { id: content.requestId, type: 'paid', buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.`, createdAt: now() });
+      state.notice = { title: 'Ecash received', copy: `${content.item} inventory updated.`, target: 'market' };
+      addReceipt('paid', 'Received ecash', `${content.amount} sats received for ${content.item}.`);
+      await refreshWalletBalance();
+      await publishPresence();
+    } catch (error) { addReceipt('fail', 'Receive ecash failed', error.message || 'Could not receive ecash.'); }
   }
 
   async function payRequestInvoice(id) {
@@ -553,6 +627,7 @@
     if (action === 'accept-request') acceptRequest(event.target.dataset.id);
     if (action === 'reject-request') rejectRequest(event.target.dataset.id);
     if (action === 'pay-request-invoice') payRequestInvoice(event.target.dataset.id);
+    if (action === 'pay-ecash') payAcceptedEcash(event.target.dataset.id);
     if (action === 'save-moderator') saveModerator();
     if (action === 'export-receipts') exportReceipts();
     if (action === 'clear-receipts') { state.receipts = []; saveJson(receiptsKey, state.receipts); renderReceipts(); }
