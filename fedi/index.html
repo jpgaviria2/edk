@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#100905" />
   <title>Sats Market for Fedi · History of Money</title>
-  <link rel="stylesheet" href="./style.css?v=12" />
+  <link rel="stylesheet" href="./style.css?v=14" />
 </head>
 <body>
   <main class="app">
@@ -38,6 +38,10 @@
           <input data-name value="Fedi wallet" readonly />
           <small class="help">To change this name, change your profile/name in the Fedi app, then reopen this mini app.</small>
         </label>
+        <label>Moderator key (optional)
+          <input data-moderator placeholder="hex pubkey or npub..." />
+          <small class="help">Set this before joining if you are the moderator.</small>
+        </label>
       </div>
       <input type="hidden" data-relay value="wss://relay.anmore.me,wss://relay.damus.io,wss://nos.lol,wss://relay.primal.net" />
       <select data-item hidden></select>
@@ -60,13 +64,6 @@
       <button data-action="open-next-action">Open next action</button>
     </section>
 
-    <section class="tabs" role="tablist">
-      <button class="tab active" data-tab="market">Market <span data-market-badge></span></button>
-      <button class="tab" data-tab="requests">Requests <span data-request-badge></span></button>
-      <button class="tab" data-tab="moderator">Moderator</button>
-      <button class="tab" data-tab="receipts">Receipts</button>
-    </section>
-
     <section class="panel" data-panel="market">
       <div class="section-headline">
         <div><span class="eyebrow">Speed dating market</span><h2>One player card at a time</h2></div>
@@ -77,40 +74,40 @@
         <h3 data-match-title>No match yet</h3>
         <p data-match-copy>Tap Show me a trade. Review one player card, then Accept, Reject, or Make offer.</p>
         <div class="match-options" data-match-options></div>
+        <div class="bid-box hidden" data-bid-box>
+          <span class="eyebrow">Make an offer</span>
+          <label>Offer amount <input type="number" min="0" step="1" data-bid-amount value="1" /></label>
+          <label>Offer with
+            <select data-bid-resource>
+              <option value="barter">My good/service</option>
+              <option value="shells">Shells</option>
+              <option value="gold">Gold</option>
+              <option value="claims">Paper claims</option>
+              <option value="dollars">Dollars</option>
+              <option value="sats">Bitcoin sats</option>
+            </select>
+          </label>
+          <div class="button-row"><button class="primary" data-action="send-bid">Send offer</button><button data-action="cancel-bid">Cancel</button></div>
+        </div>
       </article>
+      <section class="feed-card">
+        <div class="section-headline"><div><span class="eyebrow">Room feed</span><h2>Offers, trades, receipts</h2></div></div>
+        <div class="requests" data-requests></div>
+        <div class="receipts" data-receipts></div>
+      </section>
+      <details class="moderator-feed" data-moderator-controls>
+        <summary>Moderator crisis controls</summary>
+        <div class="button-row">
+          <button data-action="save-moderator">Save moderator key</button>
+          <button class="danger" data-crisis="fire">Fire: halve cattle</button>
+          <button class="danger" data-crisis="flood">Flood: mangoes become zero</button>
+          <button class="danger" data-crisis="drought">Drought: water becomes scarce</button>
+        </div>
+        <p class="feedback" data-mod-feedback>Moderator controls unlock when this wallet’s Nostr pubkey matches the saved key.</p>
+      </details>
       <div class="people" data-people></div>
     </section>
-
-    <section class="panel hidden" data-panel="requests">
-      <span class="eyebrow">Trade notifications</span>
-      <h2>Incoming and outgoing offers</h2>
-      <div class="requests" data-requests></div>
-    </section>
-
-    <section class="panel hidden" data-panel="moderator">
-      <span class="eyebrow">Moderator controls</span>
-      <h2>Crisis events</h2>
-      <p class="muted">Paste the moderator pubkey/npub. Only events signed by that key are applied by players.</p>
-      <label>Moderator pubkey or npub <input data-moderator placeholder="hex pubkey or npub..." /></label>
-      <div class="button-row">
-        <button data-action="save-moderator">Save moderator key</button>
-        <button class="danger" data-crisis="fire">Fire: halve cattle</button>
-        <button class="danger" data-crisis="flood">Flood: mangoes become zero</button>
-        <button class="danger" data-crisis="drought">Drought: water becomes scarce</button>
-      </div>
-      <p class="feedback" data-mod-feedback>Moderator controls unlock when this wallet’s Nostr pubkey matches the saved key.</p>
-    </section>
-
-    <section class="panel hidden" data-panel="receipts">
-      <span class="eyebrow">Receipts</span>
-      <h2>Trade log</h2>
-      <div class="button-row">
-        <button data-action="export-receipts">Export JSON</button>
-        <button data-action="clear-receipts">Clear</button>
-      </div>
-      <div class="receipts" data-receipts></div>
-    </section>
   </main>
-  <script src="./app.js?v=14"></script>
+  <script src="./app.js?v=16"></script>
 </body>
 </html>

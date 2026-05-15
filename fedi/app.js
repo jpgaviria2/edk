@@ -27,6 +27,7 @@
     appliedTrades: new Set(loadJson('history-fedi-applied-trades-v4', [])),
     notice: { title: 'Ready', copy: 'Join the room, then tap Show me a trade.', target: 'market' },
     currentMatch: null,
+    bidOpen: false,
     moneyEra: loadJson('history-fedi-money-era-v1', 'bitcoin')
   };
 
@@ -209,6 +210,7 @@
       $('[data-match-title]').textContent = 'Waiting for a match';
       $('[data-match-copy]').textContent = 'Tap Show me a trade. You will get one player card at a time.';
       $('[data-match-options]').innerHTML = '<button class="primary" data-action="show-trade">Show me a trade</button>';
+      const bidBox = $('[data-bid-box]'); if (bidBox) bidBox.classList.add('hidden');
       return;
     }
     const mode = tradeModeFor(match);
@@ -220,8 +222,16 @@
     $('[data-match-options]').innerHTML = `
       <button class="primary" data-action="accept-match" data-pubkey="${match.pubkey}">Accept</button>
       <button data-action="reject-match">Reject</button>
-      <button data-action="request-trade" data-pubkey="${match.pubkey}">Make offer</button>
+      <button data-action="open-bid">Make offer</button>
     `;
+    const bidBox = $('[data-bid-box]');
+    if (bidBox) {
+      bidBox.classList.toggle('hidden', !state.bidOpen);
+      const amount = $('[data-bid-amount]');
+      if (amount && !amount.dataset.touched) amount.value = mode === 'barter' ? 1 : (theirOffer.amount || 1);
+      const resource = $('[data-bid-resource]');
+      if (resource && !resource.dataset.touched) resource.value = mode === 'barter' ? 'barter' : (moneyEras[mode]?.resource || 'sats');
+    }
   }
 
   function moneyButtons() {
@@ -299,8 +309,10 @@
   function renderActionTray() {
     const actions = actionableRequests();
     const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS);
-    $('[data-request-badge]').textContent = actions.length ? ` ${actions.length}` : '';
-    $('[data-market-badge]').textContent = people.length ? ` ${people.length}` : '';
+    const requestBadge = $('[data-request-badge]');
+    const marketBadge = $('[data-market-badge]');
+    if (requestBadge) requestBadge.textContent = actions.length ? ` ${actions.length}` : '';
+    if (marketBadge) marketBadge.textContent = people.length ? ` ${people.length}` : '';
     if (actions.length) {
       const next = actions[0];
       state.notice = { title: next.type === 'invoice' ? 'Invoice ready' : 'Trade request', copy: next.copy || next.title, target: 'requests' };
@@ -454,7 +466,7 @@
     }
     if (['request', 'accept', 'invoice', 'paid', 'ecash', 'reject'].includes(content.type)) {
       const id = content.requestId || event.id;
-      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, offeredItem: content.offeredItem, offeredCategory: content.offeredCategory, mode: content.mode, quantity: content.quantity || 1, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
+      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, offeredItem: content.offeredItem, offeredCategory: content.offeredCategory, mode: content.mode, bidResource: content.bidResource, quantity: content.quantity || 1, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
       if (content.type === 'request' && content.sellerPubkey === state.profile.pubkey) { state.notice = { title: 'New trade request', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
       if (content.type === 'accept' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Trade accepted', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
       if (content.type === 'invoice' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Invoice ready', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
@@ -465,10 +477,13 @@
     renderAll();
   }
 
-  async function requestTrade(pubkey) {
+  async function requestTrade(pubkey, bid = null) {
     const target = state.online.get(pubkey);
     if (!target) return;
     const requestId = crypto.randomUUID();
+    const mode = bid?.mode || tradeModeFor(target);
+    const bidAmount = Number.isFinite(Number(bid?.amount)) ? Number(bid.amount) : tradeAmount(target);
+    const bidResource = bid?.resource || moneyEras[mode]?.resource || (mode === 'barter' ? 'barter' : 'sats');
     await signAndPublish('request', {
       requestId,
       buyerPubkey: state.profile.pubkey,
@@ -477,16 +492,18 @@
       category: target.offer.category,
       offeredItem: selectedOffer().item,
       offeredCategory: selectedOffer().category,
-      amount: tradeAmount(target),
+      amount: bidAmount,
+      bidResource,
       quantity: 1,
-      mode: tradeModeFor(target),
+      mode,
       title: `${myDisplayName()} wants to trade for ${target.offer.item}`,
-      copy: tradeCopy(target)
+      copy: tradeCopy(target, { mode, amount: bidAmount, resource: bidResource })
     }, [['p', pubkey]]);
-    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, offeredItem: selectedOffer().item, offeredCategory: selectedOffer().category, amount: tradeAmount(target), quantity: 1, mode: tradeModeFor(target), title: `${myDisplayName()} wants to trade for ${target.offer.item}`, copy: tradeCopy(target), createdAt: now() });
+    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, offeredItem: selectedOffer().item, offeredCategory: selectedOffer().category, amount: bidAmount, bidResource, quantity: 1, mode, title: `${myDisplayName()} wants to trade for ${target.offer.item}`, copy: tradeCopy(target, { mode, amount: bidAmount, resource: bidResource }), createdAt: now() });
     state.notice = { title: 'Offer sent', copy: `Waiting for ${target.name} to accept.`, target: 'requests' };
     setTab('requests');
-    addReceipt('request', 'Trade request sent', tradeCopy(target));
+    addReceipt('request', 'Trade request sent', tradeCopy(target, { mode, amount: bidAmount, resource: bidResource }));
+    state.bidOpen = false;
   }
 
   function tradeAmount(peer) {
@@ -495,16 +512,18 @@
     return Number(peer.offer?.amount || 0);
   }
 
-  function tradeCopy(peer) {
-    const mode = tradeModeFor(peer);
-    if (mode === 'barter') return `${myDisplayName()} proposes barter: ${selectedOffer().item} for ${peer.offer.item}.`;
-    return `${myDisplayName()} offers ${peer.offer.amount} sats worth of ${moneyEras[mode].label} for ${peer.offer.item}.`;
+  function tradeCopy(peer, bid = {}) {
+    const mode = bid.mode || tradeModeFor(peer);
+    const resource = bid.resource || moneyEras[mode]?.resource || 'sats';
+    const amount = Number.isFinite(Number(bid.amount)) ? Number(bid.amount) : peer.offer.amount;
+    if (mode === 'barter' || resource === 'barter') return `${myDisplayName()} proposes barter: ${selectedOffer().item} for ${peer.offer.item}.`;
+    return `${myDisplayName()} offers ${amount} ${resource} for ${peer.offer.item}.`;
   }
 
   async function acceptRequest(id) {
     const req = [...state.requests.values()].find((r) => r.id === id && r.type === 'request');
     if (!req || tradeEvents(id).invoice || tradeEvents(id).accept || tradeEvents(id).paid || tradeEvents(id).reject) return;
-    if (req.mode === 'barter' || Number(req.amount || 0) === 0) {
+    if (req.mode === 'barter' || req.bidResource === 'barter' || Number(req.amount || 0) === 0) {
       const trade = { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, mode: 'barter', quantity: req.quantity || 1, amount: 0, title: 'Barter complete', copy: `Barter accepted: ${req.offeredItem || 'offered good'} for ${req.item}.` };
       applyTradeInventory(trade);
       await signAndPublish('paid', trade, [['p', req.buyerPubkey]]);
@@ -515,9 +534,21 @@
       await publishPresence();
       return;
     }
+    if ((req.mode && req.mode !== 'bitcoin') || (req.bidResource && req.bidResource !== 'sats')) {
+      const resource = req.bidResource || moneyEras[req.mode]?.resource;
+      const trade = { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, moneyResource: resource, moneyAmount: Number(req.amount || 0), mode: req.mode, quantity: req.quantity || 1, amount: req.amount, title: 'Trade complete', copy: `Accepted ${req.amount} ${resource} for ${req.item}.` };
+      applyTradeInventory(trade);
+      await signAndPublish('paid', trade, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':paid', { id, type: 'paid', ...trade, createdAt: now() });
+      state.notice = { title: 'Trade complete', copy: trade.copy, target: 'market' };
+      addReceipt('paid', 'Trade complete', trade.copy);
+      renderAll();
+      await publishPresence();
+      return;
+    }
     if (ecashAvailable()) {
-      await signAndPublish('accept', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, title: `Trade accepted`, copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.` }, [['p', req.buyerPubkey]]);
-      state.requests.set(id + ':accept', { id, type: 'accept', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, title: 'Trade accepted', copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.`, createdAt: now() });
+      await signAndPublish('accept', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, bidResource: req.bidResource, mode: req.mode, title: `Trade accepted`, copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':accept', { id, type: 'accept', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, bidResource: req.bidResource, mode: req.mode, title: 'Trade accepted', copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.`, createdAt: now() });
       state.notice = { title: 'Trade accepted', copy: 'Waiting for buyer to pay with ecash.', target: 'requests' };
       addReceipt('accept', 'Accepted trade', `Waiting for ${req.amount} sats ecash payment.`);
       renderAll();
@@ -528,8 +559,8 @@
     try {
       await window.webln.enable();
       const response = await window.webln.makeInvoice({ amount: req.amount, defaultMemo: `Sats Market: ${req.title}` });
-      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
-      state.requests.set(id + ':invoice', { id, type: 'invoice', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.`, createdAt: now() });
+      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, bidResource: req.bidResource, mode: req.mode, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':invoice', { id, type: 'invoice', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, offeredItem: req.offeredItem, offeredCategory: req.offeredCategory, quantity: req.quantity || 1, amount: req.amount, bidResource: req.bidResource, mode: req.mode, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.`, createdAt: now() });
       state.notice = { title: 'Invoice created', copy: 'Waiting for buyer to pay.', target: 'requests' };
       addReceipt('invoice', 'Accepted trade + created invoice', `${req.amount} sats invoice sent to buyer.`);
     } catch (error) { addReceipt('fail', 'Invoice failed', error.message || 'Could not create invoice.'); }
@@ -640,17 +671,21 @@
     const quantity = Math.max(1, Number(trade.quantity || 1));
     if (!state.inventory) state.inventory = {};
     const offeredResource = trade.offeredCategory || '';
+    const moneyResource = trade.moneyResource;
+    const moneyAmount = Math.max(0, Number(trade.moneyAmount || 0));
     if (trade.buyerPubkey === state.profile.pubkey) {
       state.inventory[resource] = Number(state.inventory[resource] || 0) + quantity;
       if (trade.mode === 'barter' && offeredResource && offeredResource !== 'savings') {
         state.inventory[offeredResource] = Math.max(0, Number(state.inventory[offeredResource] || 0) - quantity);
       }
+      if (moneyResource && moneyResource !== 'sats') state.inventory[moneyResource] = Math.max(0, Number(state.inventory[moneyResource] || 0) - moneyAmount);
     }
     if (trade.sellerPubkey === state.profile.pubkey) {
       state.inventory[resource] = Math.max(0, Number(state.inventory[resource] || 0) - quantity);
       if (trade.mode === 'barter' && offeredResource && offeredResource !== 'savings') {
         state.inventory[offeredResource] = Number(state.inventory[offeredResource] || 0) + quantity;
       }
+      if (moneyResource && moneyResource !== 'sats') state.inventory[moneyResource] = Number(state.inventory[moneyResource] || 0) + moneyAmount;
     }
     state.appliedTrades.add(key);
     saveJson('history-fedi-applied-trades-v4', [...state.appliedTrades]);
@@ -723,8 +758,7 @@
   }
 
   function setTab(tab) {
-    $$('[data-tab]').forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
-    $$('[data-panel]').forEach((panel) => panel.classList.toggle('hidden', panel.dataset.panel !== tab));
+    if (tab === 'requests') document.querySelector('.feed-card')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   function exportReceipts() {
@@ -739,9 +773,21 @@
     if (tab) setTab(tab);
     if (action === 'join-room') joinRoom();
     if (action === 'show-trade') showTrade();
-    if (action === 'request-trade') requestTrade(event.target.dataset.pubkey);
+    if (action === 'request-trade') { state.bidOpen = true; $('[data-bid-amount]')?.removeAttribute('data-touched'); $('[data-bid-resource]')?.removeAttribute('data-touched'); renderMatch(); }
     if (action === 'accept-match') requestTrade(event.target.dataset.pubkey);
     if (action === 'reject-match') rejectMatch();
+    if (action === 'open-bid') { state.bidOpen = true; renderMatch(); }
+    if (action === 'cancel-bid') { state.bidOpen = false; renderMatch(); }
+    if (action === 'send-bid') {
+      const match = state.currentMatch ? state.online.get(state.currentMatch.pubkey) : null;
+      if (match) {
+        const resource = $('[data-bid-resource]').value;
+        const amount = Number($('[data-bid-amount]').value || 0);
+        const mode = resource === 'barter' ? 'barter' : resource === 'sats' ? 'bitcoin' : Object.entries(moneyEras).find(([, era]) => era.resource === resource)?.[0] || state.moneyEra;
+        requestTrade(match.pubkey, { resource, amount, mode });
+      }
+    }
+
     if (action === 'select-person') { state.selectedPubkey = event.target.dataset.pubkey; state.currentMatch = { pubkey: event.target.dataset.pubkey, at: now() }; renderAll(); }
     if (action === 'accept-request') acceptRequest(event.target.dataset.id);
     if (action === 'reject-request') rejectRequest(event.target.dataset.id);
@@ -750,7 +796,7 @@
     if (action === 'save-moderator') saveModerator();
     if (action === 'export-receipts') exportReceipts();
     if (action === 'clear-receipts') { state.receipts = []; saveJson(receiptsKey, state.receipts); renderReceipts(); }
-    if (action === 'open-next-action') setTab(state.notice.target || 'requests');
+    if (action === 'open-next-action') document.querySelector('.feed-card')?.scrollIntoView({ behavior: 'smooth' });
     const moneyEra = event.target?.dataset?.moneyEra;
     if (moneyEra) { state.moneyEra = moneyEra; saveJson('history-fedi-money-era-v1', state.moneyEra); renderAll(); }
     if (crisis) publishCrisis(crisis);
