@@ -66,7 +66,7 @@
     $('[data-item]').innerHTML = `<option value="${state.role.item}|${state.role.category}|${state.role.amount}">${state.role.item}</option>`;
   }
 
-  function selectedOffer() { return { item: state.role.item, category: state.role.category, amount: Number(state.role.amount), needs: state.role.needs || [] }; }
+  function selectedOffer() { return { item: state.role.item, category: state.role.category, amount: Number(state.role.amount), quantity: 1, needs: state.role.needs || [] }; }
   function myDisplayName() { return $('[data-name]').value.trim() || state.profile.alias || 'Player'; }
 
   async function initIdentity() {
@@ -457,7 +457,7 @@
     }
     if (['request', 'accept', 'invoice', 'paid', 'ecash', 'reject'].includes(content.type)) {
       const id = content.requestId || event.id;
-      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
+      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, quantity: content.quantity || 1, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
       if (content.type === 'request' && content.sellerPubkey === state.profile.pubkey) { state.notice = { title: 'New trade request', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
       if (content.type === 'accept' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Trade accepted', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
       if (content.type === 'invoice' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Invoice ready', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
@@ -479,11 +479,12 @@
       item: target.offer.item,
       category: target.offer.category,
       amount: tradeAmount(target),
+      quantity: 1,
       mode: tradeModeFor(target),
       title: `${myDisplayName()} wants to trade for ${target.offer.item}`,
       copy: tradeCopy(target)
     }, [['p', pubkey]]);
-    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, amount: tradeAmount(target), mode: tradeModeFor(target), title: `${myDisplayName()} wants to trade for ${target.offer.item}`, copy: tradeCopy(target), createdAt: now() });
+    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, amount: tradeAmount(target), quantity: 1, mode: tradeModeFor(target), title: `${myDisplayName()} wants to trade for ${target.offer.item}`, copy: tradeCopy(target), createdAt: now() });
     state.notice = { title: 'Offer sent', copy: `Waiting for ${target.name} to accept.`, target: 'requests' };
     setTab('requests');
     addReceipt('request', 'Trade request sent', tradeCopy(target));
@@ -505,8 +506,8 @@
     const req = [...state.requests.values()].find((r) => r.id === id && r.type === 'request');
     if (!req || tradeEvents(id).invoice || tradeEvents(id).accept || tradeEvents(id).paid || tradeEvents(id).reject) return;
     if (ecashAvailable()) {
-      await signAndPublish('accept', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, amount: req.amount, title: `Trade accepted`, copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.` }, [['p', req.buyerPubkey]]);
-      state.requests.set(id + ':accept', { id, type: 'accept', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, amount: req.amount, title: 'Trade accepted', copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.`, createdAt: now() });
+      await signAndPublish('accept', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, quantity: req.quantity || 1, amount: req.amount, title: `Trade accepted`, copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':accept', { id, type: 'accept', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, quantity: req.quantity || 1, amount: req.amount, title: 'Trade accepted', copy: `Seller accepted ${req.item}. Buyer can pay with Fedi ecash now.`, createdAt: now() });
       state.notice = { title: 'Trade accepted', copy: 'Waiting for buyer to pay with ecash.', target: 'requests' };
       addReceipt('accept', 'Accepted trade', `Waiting for ${req.amount} sats ecash payment.`);
       renderAll();
@@ -517,8 +518,8 @@
     try {
       await window.webln.enable();
       const response = await window.webln.makeInvoice({ amount: req.amount, defaultMemo: `Sats Market: ${req.title}` });
-      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
-      state.requests.set(id + ':invoice', { id, type: 'invoice', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.`, createdAt: now() });
+      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, quantity: req.quantity || 1, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':invoice', { id, type: 'invoice', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, quantity: req.quantity || 1, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.`, createdAt: now() });
       state.notice = { title: 'Invoice created', copy: 'Waiting for buyer to pay.', target: 'requests' };
       addReceipt('invoice', 'Accepted trade + created invoice', `${req.amount} sats invoice sent to buyer.`);
     } catch (error) { addReceipt('fail', 'Invoice failed', error.message || 'Could not create invoice.'); }
@@ -556,12 +557,13 @@
     renderAll();
     try {
       const notes = await generateEcash(Number(accepted.amount));
-      const wrapped = await encryptFor(accepted.sellerPubkey, { notes, requestId: id, amount: accepted.amount, item: accepted.item, category: accepted.category });
-      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category });
-      await signAndPublish('ecash', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, amount: accepted.amount, wrapped, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.` }, [['p', accepted.sellerPubkey]]);
-      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, amount: accepted.amount, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.`, createdAt: now() });
+      const wrapped = await encryptFor(accepted.sellerPubkey, { notes, requestId: id, amount: accepted.amount, item: accepted.item, category: accepted.category, quantity: accepted.quantity || 1 });
+      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, quantity: accepted.quantity || 1 });
+      await signAndPublish('ecash', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, quantity: accepted.quantity || 1, amount: accepted.amount, wrapped, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.` }, [['p', accepted.sellerPubkey]]);
+      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: accepted.sellerPubkey, item: accepted.item, category: accepted.category, quantity: accepted.quantity || 1, amount: accepted.amount, title: 'Ecash sent', copy: `${myDisplayName()} sent ${accepted.amount} sats ecash for ${accepted.item}.`, createdAt: now() });
       state.notice = { title: 'Ecash sent', copy: `${accepted.item} inventory updated.`, target: 'market' };
       addReceipt('paid', 'Sent ecash', `${accepted.amount} sats sent for ${accepted.item}.`);
+      renderAll();
       await publishPresence();
     } catch (error) { addReceipt('fail', 'Ecash payment failed', error.message || 'Ecash generation/send failed.'); state.notice = { title: 'Ecash failed', copy: error.message || 'Payment cancelled.', target: 'requests' }; renderAll(); }
   }
@@ -572,10 +574,11 @@
       const payload = await decryptFrom(content.buyerPubkey, content.wrapped);
       await receiveEcash(payload.notes);
       applyTradeInventory(content);
-      await signAndPublish('paid', { requestId: content.requestId, buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.` }, [['p', content.buyerPubkey]]);
-      state.requests.set(content.requestId + ':paid', { id: content.requestId, type: 'paid', buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.`, createdAt: now() });
+      await signAndPublish('paid', { requestId: content.requestId, buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, quantity: content.quantity || 1, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.` }, [['p', content.buyerPubkey]]);
+      state.requests.set(content.requestId + ':paid', { id: content.requestId, type: 'paid', buyerPubkey: content.buyerPubkey, sellerPubkey: state.profile.pubkey, item: content.item, category: content.category, quantity: content.quantity || 1, amount: content.amount, title: 'Trade paid', copy: `${content.amount} sats ecash received for ${content.item}.`, createdAt: now() });
       state.notice = { title: 'Ecash received', copy: `${content.item} inventory updated.`, target: 'market' };
       addReceipt('paid', 'Received ecash', `${content.amount} sats received for ${content.item}.`);
+      renderAll();
       await refreshWalletBalance();
       await publishPresence();
     } catch (error) { addReceipt('fail', 'Receive ecash failed', error.message || 'Could not receive ecash.'); }
@@ -590,11 +593,12 @@
       await window.webln.enable();
       const response = await window.webln.sendPayment(invoice.invoice);
       await refreshWalletBalance();
-      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category });
-      await signAndPublish('paid', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, amount: invoice.amount, preimage: response.preimage || '', title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.` }, [['p', invoice.sellerPubkey]]);
-      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, amount: invoice.amount, title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.`, createdAt: now() });
+      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, quantity: invoice.quantity || 1 });
+      await signAndPublish('paid', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, quantity: invoice.quantity || 1, amount: invoice.amount, preimage: response.preimage || '', title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.` }, [['p', invoice.sellerPubkey]]);
+      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, quantity: invoice.quantity || 1, amount: invoice.amount, title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.`, createdAt: now() });
       state.notice = { title: 'Trade complete', copy: `${invoice.item} inventory updated.`, target: 'market' };
       addReceipt('paid', 'Paid trade invoice', `${invoice.amount} sats sent for ${invoice.item}.`);
+      renderAll();
       await publishPresence();
     } catch (error) { addReceipt('fail', 'Payment failed', error.message || 'Payment rejected or failed.'); }
   }
@@ -607,20 +611,35 @@
     renderAll();
   }
 
+  function resourceFromTrade(trade) {
+    if (trade.category) return trade.category;
+    const item = String(trade.item || '').toLowerCase();
+    if (item.includes('mango')) return 'mangoes';
+    if (item.includes('water')) return 'water';
+    if (item.includes('shelter')) return 'shelter';
+    if (item.includes('fish')) return 'fish';
+    if (item.includes('cattle')) return 'cattle';
+    return '';
+  }
+
   function applyTradeInventory(trade) {
     const key = trade.requestId || trade.id;
-    if (!key || state.appliedTrades.has(key)) return;
-    const category = trade.category;
-    if (!category || category === 'savings') return;
+    if (!key || state.appliedTrades.has(key)) return false;
+    const resource = resourceFromTrade(trade);
+    if (!resource || resource === 'savings') return false;
+    const quantity = Math.max(1, Number(trade.quantity || 1));
+    if (!state.inventory) state.inventory = {};
     if (trade.buyerPubkey === state.profile.pubkey) {
-      state.inventory[category] = Number(state.inventory[category] || 0) + 1;
+      state.inventory[resource] = Number(state.inventory[resource] || 0) + quantity;
     }
     if (trade.sellerPubkey === state.profile.pubkey) {
-      state.inventory[category] = Math.max(0, Number(state.inventory[category] || 0) - 1);
+      state.inventory[resource] = Math.max(0, Number(state.inventory[resource] || 0) - quantity);
     }
     state.appliedTrades.add(key);
     saveJson('history-fedi-applied-trades-v4', [...state.appliedTrades]);
     saveJson('history-fedi-inventory-v3', state.inventory);
+    renderInventory();
+    return true;
   }
 
   function showTrade() {
