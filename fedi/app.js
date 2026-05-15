@@ -22,8 +22,10 @@
     settings: loadJson(settingsKey, {}),
     walletBalanceSats: null,
     walletBalanceSource: '',
-    role: loadJson('history-fedi-role-v3', null),
-    inventory: loadJson('history-fedi-inventory-v3', null)
+    role: null,
+    inventory: null,
+    appliedTrades: new Set(loadJson('history-fedi-applied-trades-v4', [])),
+    notice: { title: 'Ready', copy: 'Join the room, then tap Show me a trade.', target: 'market' }
   };
 
   function loadJson(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch (_) { return fallback; } }
@@ -40,14 +42,24 @@
     { item: 'Lightning wallet help', category: 'savings', amount: 35, inventory: { water: 1, shelter: 1, mangoes: 1, fish: 1, cattle: 0 } }
   ];
 
+  function randomRole() {
+    const last = localStorage.getItem('history-fedi-last-role-item') || '';
+    const choices = roles.filter((role) => role.item !== last);
+    const bytes = new Uint32Array(1);
+    crypto.getRandomValues(bytes);
+    return choices[bytes[0] % choices.length] || roles[bytes[0] % roles.length];
+  }
+
+  function assignNewRole() {
+    state.role = randomRole();
+    state.inventory = { ...state.role.inventory };
+    localStorage.setItem('history-fedi-last-role-item', state.role.item);
+    saveJson('history-fedi-inventory-v3', state.inventory);
+    $('[data-item]').innerHTML = `<option value="${state.role.item}|${state.role.category}|${state.role.amount}">${state.role.item}</option>`;
+  }
+
   function ensureRole() {
-    if (!state.role) {
-      state.role = roles[Math.floor(Math.random() * roles.length)];
-      state.inventory = { ...state.role.inventory };
-      saveJson('history-fedi-role-v3', state.role);
-      saveJson('history-fedi-inventory-v3', state.inventory);
-    }
-    if (!state.inventory) state.inventory = { ...state.role.inventory };
+    if (!state.role || !state.inventory) assignNewRole();
     $('[data-item]').innerHTML = `<option value="${state.role.item}|${state.role.category}|${state.role.amount}">${state.role.item}</option>`;
   }
 
@@ -175,19 +187,27 @@
   }
 
   function renderRequests() {
-    const requests = [...state.requests.values()].sort((a, b) => b.createdAt - a.createdAt);
-    $('[data-requests]').innerHTML = requests.length ? requests.map((r) => requestCard(r)).join('') : '<p class="muted">No trade notifications yet.</p>';
+    const ids = [...new Set([...state.requests.values()].map((r) => r.id))];
+    const summaries = ids.map((id) => {
+      const events = tradeEvents(id);
+      return events.paid || events.invoice || events.reject || events.request;
+    }).filter(Boolean).sort((a, b) => b.createdAt - a.createdAt);
+    $('[data-requests]').innerHTML = summaries.length ? summaries.map((r) => requestCard(r)).join('') : '<p class="muted">No trade notifications yet.</p>';
   }
 
   function requestCard(r) {
     const mine = state.profile.pubkey;
-    const incoming = r.sellerPubkey === mine && r.type === 'request';
-    const invoiceForMe = r.buyerPubkey === mine && r.type === 'invoice';
-    const paidForMe = r.sellerPubkey === mine && r.type === 'paid';
-    return `<article class="request ${r.type}"><strong>${escapeHtml(r.title)}</strong><p>${escapeHtml(r.copy)}</p><small>${new Date(r.createdAt).toLocaleTimeString()}</small><div class="button-row">
+    const events = tradeEvents(r.id);
+    const paid = Boolean(events.paid);
+    const rejected = Boolean(events.reject);
+    const invoiced = Boolean(events.invoice);
+    const incoming = r.sellerPubkey === mine && r.type === 'request' && !invoiced && !paid && !rejected;
+    const invoiceForMe = r.buyerPubkey === mine && r.type === 'invoice' && !paid && !rejected;
+    const status = paid ? 'Paid' : rejected ? 'Rejected' : invoiced ? 'Invoice created' : 'Open';
+    return `<article class="request ${r.type} ${paid || rejected || invoiced ? 'handled' : ''}"><strong>${escapeHtml(r.title)}</strong><p>${escapeHtml(r.copy)}</p><small>${new Date(r.createdAt).toLocaleTimeString()} · ${status}</small><div class="button-row">
       ${incoming ? `<button class="primary" data-action="accept-request" data-id="${r.id}">Accept + create invoice</button><button data-action="reject-request" data-id="${r.id}">Reject</button>` : ''}
       ${invoiceForMe ? `<button class="primary" data-action="pay-request-invoice" data-id="${r.id}">Pay invoice</button>` : ''}
-      ${paidForMe ? '<span class="pill">Paid</span>' : ''}
+      ${paid ? '<span class="pill">Paid</span>' : invoiced && r.type === 'request' ? '<span class="pill">Waiting for buyer</span>' : rejected ? '<span class="pill">Rejected</span>' : ''}
     </div></article>`;
   }
 
@@ -202,7 +222,45 @@
     $('[data-receipts]').innerHTML = state.receipts.length ? state.receipts.map((r) => `<article class="receipt ${r.type === 'fail' ? 'fail' : ''}"><strong>${escapeHtml(r.title)}</strong><span>${escapeHtml(r.details)}</span><small>${new Date(r.at).toLocaleString()}</small></article>`).join('') : '<p class="muted">No receipts yet.</p>';
   }
 
-  function renderAll() { renderIdentity(); renderInventory(); renderPeople(); renderRequests(); renderModerator(); renderReceipts(); }
+  function tradeEvents(id) {
+    return {
+      request: [...state.requests.values()].find((r) => r.id === id && r.type === 'request'),
+      invoice: [...state.requests.values()].find((r) => r.id === id && r.type === 'invoice'),
+      paid: [...state.requests.values()].find((r) => r.id === id && r.type === 'paid'),
+      reject: [...state.requests.values()].find((r) => r.id === id && r.type === 'reject')
+    };
+  }
+
+  function actionableRequests() {
+    const mine = state.profile.pubkey;
+    const seen = new Set();
+    const actions = [];
+    for (const r of state.requests.values()) {
+      if (seen.has(r.id)) continue;
+      seen.add(r.id);
+      const events = tradeEvents(r.id);
+      if (events.paid || events.reject) continue;
+      if (events.request?.sellerPubkey === mine && !events.invoice) actions.push(events.request);
+      if (events.invoice?.buyerPubkey === mine) actions.push(events.invoice);
+    }
+    return actions;
+  }
+
+  function renderActionTray() {
+    const actions = actionableRequests();
+    const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS);
+    $('[data-request-badge]').textContent = actions.length ? ` ${actions.length}` : '';
+    $('[data-market-badge]').textContent = people.length ? ` ${people.length}` : '';
+    if (actions.length) {
+      const next = actions[0];
+      state.notice = { title: next.type === 'invoice' ? 'Invoice ready' : 'Trade request', copy: next.copy || next.title, target: 'requests' };
+    }
+    $('[data-action-title]').textContent = state.notice.title;
+    $('[data-action-copy]').textContent = state.notice.copy;
+    $('[data-action-tray]').classList.toggle('hot', actions.length > 0);
+  }
+
+  function renderAll() { renderIdentity(); renderInventory(); renderPeople(); renderRequests(); renderModerator(); renderReceipts(); renderActionTray(); }
   function initials(name) { return (name || '?').split(/\s+/).map((p) => p[0]).join('').slice(0, 2).toUpperCase(); }
   function escapeHtml(text) { return String(text ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c])); }
   function normalizeKey(value) {
@@ -241,6 +299,7 @@
   async function joinRoom() {
     const feedback = $('[data-room-feedback]');
     if (!window.nostr?.signEvent) { feedback.textContent = 'Open inside Fedi and allow Nostr identity/signing to join the live room.'; return; }
+    if (!state.joined) assignNewRole();
     state.room = $('[data-room]').value.trim() || 'history-money-room';
     state.relayUrl = $('[data-relay]').value.trim() || DEFAULT_RELAYS;
     state.settings = { room: state.room, relayUrl: state.relayUrl, moderator: $('[data-moderator]').value.trim() };
@@ -251,6 +310,7 @@
       feedback.textContent = 'Fedi is asking you to sign your room status. Tap Yes to join.';
       await publishPresence();
       state.joined = true;
+      state.notice = { title: 'Joined room', copy: 'Tap Show me a trade or pick an online player.', target: 'market' };
       feedback.textContent = `Joined ${state.room}. Looking for online players…`;
     } catch (error) {
       state.joined = false;
@@ -344,7 +404,10 @@
     }
     if (['request', 'invoice', 'paid', 'reject'].includes(content.type)) {
       const id = content.requestId || event.id;
-      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
+      state.requests.set(id + ':' + content.type, { id, type: content.type, buyerPubkey: content.buyerPubkey, sellerPubkey: content.sellerPubkey, invoice: content.invoice, item: content.item, category: content.category, amount: content.amount, title: content.title || content.type, copy: content.copy || '', createdAt: (event.created_at || Math.floor(now() / 1000)) * 1000 });
+      if (content.type === 'request' && content.sellerPubkey === state.profile.pubkey) { state.notice = { title: 'New trade request', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
+      if (content.type === 'invoice' && content.buyerPubkey === state.profile.pubkey) { state.notice = { title: 'Invoice ready', copy: content.copy || content.title, target: 'requests' }; setTab('requests'); }
+      if (content.type === 'paid') applyTradeInventory(content);
     }
     if (content.type === 'crisis') applyCrisisIfValid(event, content);
     renderAll();
@@ -359,33 +422,46 @@
       buyerPubkey: state.profile.pubkey,
       sellerPubkey: pubkey,
       item: target.offer.item,
+      category: target.offer.category,
       amount: target.offer.amount,
       title: `${myDisplayName()} wants to buy ${target.offer.item}`,
       copy: `${myDisplayName()} offers ${target.offer.amount} sats for ${target.offer.item}.`
     }, [['p', pubkey]]);
+    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, amount: target.offer.amount, title: `${myDisplayName()} wants to buy ${target.offer.item}`, copy: `${myDisplayName()} offers ${target.offer.amount} sats for ${target.offer.item}.`, createdAt: now() });
+    state.notice = { title: 'Offer sent', copy: `Waiting for ${target.name} to accept.`, target: 'requests' };
+    setTab('requests');
     addReceipt('request', 'Trade request sent', `${target.offer.amount} sats offered to ${target.name} for ${target.offer.item}.`);
   }
 
   async function acceptRequest(id) {
     const req = [...state.requests.values()].find((r) => r.id === id && r.type === 'request');
-    if (!req) return;
+    if (!req || tradeEvents(id).invoice || tradeEvents(id).paid || tradeEvents(id).reject) return;
+    state.notice = { title: 'Creating invoice…', copy: 'Approve invoice creation in Fedi.', target: 'requests' };
+    renderAll();
     try {
       await window.webln.enable();
       const response = await window.webln.makeInvoice({ amount: req.amount, defaultMemo: `Sats Market: ${req.title}` });
-      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
+      await signAndPublish('invoice', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.` }, [['p', req.buyerPubkey]]);
+      state.requests.set(id + ':invoice', { id, type: 'invoice', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, invoice: response.paymentRequest, item: req.item, category: req.category, amount: req.amount, title: `Invoice for ${req.amount} sats`, copy: `Seller accepted ${req.item}. Buyer can pay the invoice now.`, createdAt: now() });
+      state.notice = { title: 'Invoice created', copy: 'Waiting for buyer to pay.', target: 'requests' };
       addReceipt('invoice', 'Accepted trade + created invoice', `${req.amount} sats invoice sent to buyer.`);
     } catch (error) { addReceipt('fail', 'Invoice failed', error.message || 'Could not create invoice.'); }
   }
 
   async function payRequestInvoice(id) {
     const invoice = [...state.requests.values()].find((r) => r.id === id && r.type === 'invoice');
-    if (!invoice) return;
+    if (!invoice || tradeEvents(id).paid || tradeEvents(id).reject) return;
+    state.notice = { title: 'Opening payment…', copy: 'Approve the payment in Fedi.', target: 'requests' };
+    renderAll();
     try {
       await window.webln.enable();
       const response = await window.webln.sendPayment(invoice.invoice);
       await refreshWalletBalance();
-      await signAndPublish('paid', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, amount: invoice.amount, preimage: response.preimage || '', title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats.` }, [['p', invoice.sellerPubkey]]);
-      addReceipt('paid', 'Paid trade invoice', `${invoice.amount} sats sent.`);
+      applyTradeInventory({ requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category });
+      await signAndPublish('paid', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, amount: invoice.amount, preimage: response.preimage || '', title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.` }, [['p', invoice.sellerPubkey]]);
+      state.requests.set(id + ':paid', { id, type: 'paid', buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, item: invoice.item, category: invoice.category, amount: invoice.amount, title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats for ${invoice.item}.`, createdAt: now() });
+      state.notice = { title: 'Trade complete', copy: `${invoice.item} inventory updated.`, target: 'market' };
+      addReceipt('paid', 'Paid trade invoice', `${invoice.amount} sats sent for ${invoice.item}.`);
       await publishPresence();
     } catch (error) { addReceipt('fail', 'Payment failed', error.message || 'Payment rejected or failed.'); }
   }
@@ -393,7 +469,25 @@
   async function rejectRequest(id) {
     const req = [...state.requests.values()].find((r) => r.id === id && r.type === 'request');
     if (!req) return;
-    await signAndPublish('reject', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, title: 'Trade rejected', copy: `${myDisplayName()} rejected the offer.` }, [['p', req.buyerPubkey]]);
+    await signAndPublish('reject', { requestId: id, buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, title: 'Trade rejected', copy: `${myDisplayName()} rejected the offer.` }, [['p', req.buyerPubkey]]);
+    state.requests.set(id + ':reject', { id, type: 'reject', buyerPubkey: req.buyerPubkey, sellerPubkey: state.profile.pubkey, item: req.item, category: req.category, title: 'Trade rejected', copy: `${myDisplayName()} rejected the offer.`, createdAt: now() });
+    renderAll();
+  }
+
+  function applyTradeInventory(trade) {
+    const key = trade.requestId || trade.id;
+    if (!key || state.appliedTrades.has(key)) return;
+    const category = trade.category;
+    if (!category || category === 'savings') return;
+    if (trade.buyerPubkey === state.profile.pubkey) {
+      state.inventory[category] = Number(state.inventory[category] || 0) + 1;
+    }
+    if (trade.sellerPubkey === state.profile.pubkey) {
+      state.inventory[category] = Math.max(0, Number(state.inventory[category] || 0) - 1);
+    }
+    state.appliedTrades.add(key);
+    saveJson('history-fedi-applied-trades-v4', [...state.appliedTrades]);
+    saveJson('history-fedi-inventory-v3', state.inventory);
   }
 
   function showTrade() {
@@ -462,6 +556,7 @@
     if (action === 'save-moderator') saveModerator();
     if (action === 'export-receipts') exportReceipts();
     if (action === 'clear-receipts') { state.receipts = []; saveJson(receiptsKey, state.receipts); renderReceipts(); }
+    if (action === 'open-next-action') setTab(state.notice.target || 'requests');
     if (crisis) publishCrisis(crisis);
   });
 
