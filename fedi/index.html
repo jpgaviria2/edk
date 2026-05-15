@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#100905" />
   <title>Sats Market for Fedi · History of Money</title>
-  <link rel="stylesheet" href="./style.css?v=3" />
+  <link rel="stylesheet" href="./style.css?v=4" />
 </head>
 <body>
   <main class="app">
@@ -31,28 +31,27 @@
     </section>
 
     <section class="panel setup-panel">
-      <span class="eyebrow">Room setup</span>
+      <span class="eyebrow">Start</span>
       <div class="form-grid">
         <label>Room code <input data-room value="history-money-room" /></label>
-        <label>Relay <input data-relay value="wss://relay.anmore.me" /></label>
-        <label>Your display name <input data-name value="JP" /></label>
-        <label>You sell
-          <select data-item>
-            <option value="Water refill|water|15">Water refill · 15 sats</option>
-            <option value="Shelter repair|shelter|35">Shelter repair · 35 sats</option>
-            <option value="Fresh mangoes|mangoes|20">Fresh mangoes · 20 sats</option>
-            <option value="Fish dinner|fish|25">Fish dinner · 25 sats</option>
-            <option value="Cattle transport|cattle|45">Cattle transport · 45 sats</option>
-            <option value="Lightning wallet help|savings|35">Lightning wallet help · 35 sats</option>
-          </select>
+        <label>Your Fedi name
+          <input data-name value="Fedi wallet" readonly />
+          <small class="help">To change this name, change your profile/name in the Fedi app, then reopen this mini app.</small>
         </label>
       </div>
+      <input type="hidden" data-relay value="wss://relay.anmore.me,wss://relay.damus.io,wss://nos.lol,wss://relay.primal.net" />
+      <select data-item hidden></select>
+      <article class="role-card" data-role-card>
+        <span class="eyebrow">Your random market role</span>
+        <h2 data-role-title>Assigning role…</h2>
+        <p data-role-copy>Each player gets goods and something to sell when they enter the room.</p>
+      </article>
       <div class="inventory-grid" data-inventory></div>
       <div class="button-row">
-        <button class="primary" data-action="join-room">Join room / publish status</button>
+        <button class="primary" data-action="join-room">Start / join room</button>
         <button data-action="show-trade">Show me a trade</button>
       </div>
-      <p class="feedback" data-room-feedback>Join the room from two devices to see each other online.</p>
+      <p class="feedback" data-room-feedback>Open this on two devices, then tap Start / join room on both.</p>
     </section>
 
     <section class="tabs" role="tablist">
@@ -100,6 +99,6 @@
       <div class="receipts" data-receipts></div>
     </section>
   </main>
-  <script src="./app.js?v=5"></script>
+  <script src="./app.js?v=6"></script>
 </body>
 </html>

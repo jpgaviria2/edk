@@ -6,12 +6,13 @@
   const APP = 'historyofmoney-sats-market';
   const KIND = 30078;
   const STALE_MS = 30 * 60 * 1000;
+  const DEFAULT_RELAYS = 'wss://relay.anmore.me,wss://relay.damus.io,wss://nos.lol,wss://relay.primal.net';
 
   const state = {
     profile: { alias: 'Fedi wallet', pubkey: '' },
     room: 'history-money-room',
-    relayUrl: 'wss://relay.anmore.me',
-    relay: null,
+    relayUrl: DEFAULT_RELAYS,
+    relays: [],
     joined: false,
     selectedPubkey: '',
     lastPresenceAt: 0,
@@ -21,7 +22,8 @@
     settings: loadJson(settingsKey, {}),
     walletBalanceSats: null,
     walletBalanceSource: '',
-    inventory: loadJson('history-fedi-inventory-v2', { water: 3, shelter: 1, mangoes: 5, fish: 2, cattle: 2 })
+    role: loadJson('history-fedi-role-v3', null),
+    inventory: loadJson('history-fedi-inventory-v3', null)
   };
 
   function loadJson(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch (_) { return fallback; } }
@@ -29,14 +31,35 @@
   function short(value) { return value && value.length > 18 ? `${value.slice(0, 10)}…${value.slice(-8)}` : (value || ''); }
   function isFediReady() { return Boolean(window.webln); }
   function now() { return Date.now(); }
-  function selectedOffer() { const [item, category, amount] = $('[data-item]').value.split('|'); return { item, category, amount: Number(amount) }; }
+  const roles = [
+    { item: 'Water refill', category: 'water', amount: 15, inventory: { water: 5, shelter: 0, mangoes: 1, fish: 1, cattle: 0 } },
+    { item: 'Shelter repair', category: 'shelter', amount: 35, inventory: { water: 1, shelter: 3, mangoes: 1, fish: 0, cattle: 1 } },
+    { item: 'Fresh mangoes', category: 'mangoes', amount: 20, inventory: { water: 1, shelter: 0, mangoes: 8, fish: 0, cattle: 0 } },
+    { item: 'Fish dinner', category: 'fish', amount: 25, inventory: { water: 1, shelter: 0, mangoes: 1, fish: 5, cattle: 0 } },
+    { item: 'Cattle transport', category: 'cattle', amount: 45, inventory: { water: 2, shelter: 1, mangoes: 0, fish: 0, cattle: 3 } },
+    { item: 'Lightning wallet help', category: 'savings', amount: 35, inventory: { water: 1, shelter: 1, mangoes: 1, fish: 1, cattle: 0 } }
+  ];
+
+  function ensureRole() {
+    if (!state.role) {
+      state.role = roles[Math.floor(Math.random() * roles.length)];
+      state.inventory = { ...state.role.inventory };
+      saveJson('history-fedi-role-v3', state.role);
+      saveJson('history-fedi-inventory-v3', state.inventory);
+    }
+    if (!state.inventory) state.inventory = { ...state.role.inventory };
+    $('[data-item]').innerHTML = `<option value="${state.role.item}|${state.role.category}|${state.role.amount}">${state.role.item}</option>`;
+  }
+
+  function selectedOffer() { return { item: state.role.item, category: state.role.category, amount: Number(state.role.amount) }; }
   function myDisplayName() { return $('[data-name]').value.trim() || state.profile.alias || 'Player'; }
 
   async function initIdentity() {
     $('[data-room]').value = state.settings.room || state.room;
-    $('[data-relay]').value = state.settings.relayUrl || state.relayUrl;
+    ensureRole();
+    const savedRelays = state.settings.relayUrl || state.relayUrl;
+    $('[data-relay]').value = savedRelays.includes(',') ? savedRelays : DEFAULT_RELAYS;
     $('[data-moderator]').value = state.settings.moderator || '';
-    if (state.settings.name) $('[data-name]').value = state.settings.name;
 
     const env = $('[data-env]');
     if (!isFediReady()) { env.textContent = 'Open inside Fedi'; env.className = 'status warn'; renderAll(); return; }
@@ -45,10 +68,32 @@
       await window.webln.enable();
       const info = await window.webln.getInfo?.();
       if (info?.node?.alias) state.profile.alias = info.node.alias;
+      const fediName = await readFediName();
+      if (fediName) state.profile.alias = fediName;
     } catch (error) { addReceipt('fail', 'Wallet warning', error.message || 'Could not read wallet info.'); }
     try { if (window.nostr?.getPublicKey) state.profile.pubkey = await window.nostr.getPublicKey(); } catch (_) {}
     await refreshWalletBalance();
+    $('[data-name]').value = state.profile.alias || 'Fedi wallet';
     renderAll();
+  }
+
+  async function readFediName() {
+    const candidates = [
+      () => window.fedi?.getUserInfo?.(),
+      () => window.fedi?.getUser?.(),
+      () => window.fedi?.getUsername?.(),
+      () => window.fedi?.getDisplayName?.()
+    ];
+    for (const call of candidates) {
+      try {
+        const result = await call();
+        if (typeof result === 'string' && result.trim()) return result.trim();
+        if (result?.displayName) return result.displayName;
+        if (result?.username) return result.username;
+        if (result?.name) return result.name;
+      } catch (_) {}
+    }
+    return '';
   }
 
   async function refreshWalletBalance() {
@@ -97,12 +142,16 @@
   }
 
   function renderInventory() {
-    const goods = Object.entries(state.inventory).map(([key, value]) => `
+    if (state.role) {
+      $('[data-role-title]').textContent = `${state.role.item} · ${state.role.amount} sats`;
+      $('[data-role-copy]').textContent = `You sell ${state.role.item}. Your starting goods are random for this room.`;
+    }
+    const goods = Object.entries(state.inventory || {}).map(([key, value]) => `
       <div class="inv"><span>${key}</span><b>${value}</b></div>
     `).join('');
     const sats = Number.isFinite(state.walletBalanceSats)
       ? `<div class="inv sats"><span>app sats</span><b>${state.walletBalanceSats}</b></div>`
-      : '<div class="inv sats unknown"><span>app sats</span><b>—</b><small>Fedi balance API unavailable</small></div>';
+      : '<div class="inv sats unknown"><span>app sats</span><b>—</b><small>Balance private</small></div>';
     $('[data-inventory]').innerHTML = goods + sats;
   }
 
@@ -193,11 +242,11 @@
     const feedback = $('[data-room-feedback]');
     if (!window.nostr?.signEvent) { feedback.textContent = 'Open inside Fedi and allow Nostr identity/signing to join the live room.'; return; }
     state.room = $('[data-room]').value.trim() || 'history-money-room';
-    state.relayUrl = $('[data-relay]').value.trim() || 'wss://relay.anmore.me';
-    state.settings = { room: state.room, relayUrl: state.relayUrl, name: myDisplayName(), moderator: $('[data-moderator]').value.trim() };
+    state.relayUrl = $('[data-relay]').value.trim() || DEFAULT_RELAYS;
+    state.settings = { room: state.room, relayUrl: state.relayUrl, moderator: $('[data-moderator]').value.trim() };
     saveJson(settingsKey, state.settings);
     feedback.textContent = 'Connecting to the room relay…';
-    await connectRelay();
+    await connectRelays();
     try {
       feedback.textContent = 'Fedi is asking you to sign your room status. Tap Yes to join.';
       await publishPresence();
@@ -211,26 +260,31 @@
     renderAll();
   }
 
-  function connectRelay() {
-    return new Promise((resolve) => {
-      if (state.relay?.readyState === WebSocket.OPEN) return resolve();
-      try { state.relay?.close(); } catch (_) {}
-      state.relay = new WebSocket(state.relayUrl);
-      state.relay.onopen = () => { subscribe(); resolve(); };
-      state.relay.onmessage = (message) => handleRelayMessage(message.data);
-      state.relay.onerror = () => { $('[data-room-feedback]').textContent = 'Relay connection failed. Try another relay.'; resolve(); };
-      state.relay.onclose = () => { if (state.joined) setTimeout(connectRelay, 2500); };
-    });
+  async function connectRelays() {
+    const urls = state.relayUrl.split(',').map((url) => url.trim()).filter(Boolean);
+    state.relays.forEach((relay) => { try { relay.close(); } catch (_) {} });
+    state.relays = [];
+    await Promise.all(urls.map((url) => new Promise((resolve) => {
+      try {
+        const relay = new WebSocket(url);
+        relay.onopen = () => { state.relays.push(relay); subscribe(relay); resolve(); };
+        relay.onmessage = (message) => handleRelayMessage(message.data);
+        relay.onerror = () => resolve();
+        relay.onclose = () => {};
+        setTimeout(resolve, 3500);
+      } catch (_) { resolve(); }
+    })));
   }
 
-  function subscribe() {
-    const filter = { kinds: [KIND], '#r': [state.room], '#a': [APP], since: Math.floor(Date.now() / 1000) - 3600, limit: 200 };
-    state.relay.send(JSON.stringify(['REQ', 'sats-market-room', filter]));
+  function subscribe(relay) {
+    const filter = { kinds: [KIND], '#r': [state.room], since: Math.floor(Date.now() / 1000) - 7200, limit: 300 };
+    relay.send(JSON.stringify(['REQ', 'sats-market-room', filter]));
   }
 
   async function signAndPublish(type, content, extraTags = []) {
-    if (!state.relay || state.relay.readyState !== WebSocket.OPEN) await connectRelay();
-    if (!state.relay || state.relay.readyState !== WebSocket.OPEN) throw new Error('Relay is not connected');
+    if (!state.relays.some((relay) => relay.readyState === WebSocket.OPEN)) await connectRelays();
+    const openRelays = state.relays.filter((relay) => relay.readyState === WebSocket.OPEN);
+    if (!openRelays.length) throw new Error('No room relays are connected');
     const payload = { type, ...content };
     const event = await window.nostr.signEvent({
       kind: KIND,
@@ -239,7 +293,7 @@
       content: humanSignText(type, payload)
     });
     if (event.pubkey && !state.profile.pubkey) state.profile.pubkey = event.pubkey;
-    state.relay.send(JSON.stringify(['EVENT', event]));
+    openRelays.forEach((relay) => relay.send(JSON.stringify(['EVENT', event])));
     return event;
   }
 
@@ -378,7 +432,7 @@
     if (mode === 'halve') state.inventory[resource] = Math.floor(Number(state.inventory[resource] || 0) / 2);
     if (mode === 'zero') state.inventory[resource] = 0;
     if (mode === 'minusOne') state.inventory[resource] = Math.max(0, Number(state.inventory[resource] || 0) - 1);
-    saveJson('history-fedi-inventory-v2', state.inventory);
+    saveJson('history-fedi-inventory-v3', state.inventory);
     addReceipt('crisis', `Crisis: ${content.title}`, content.copy || `${resource} changed.`);
     if (state.joined) publishPresence();
   }
@@ -411,7 +465,7 @@
     if (crisis) publishCrisis(crisis);
   });
 
-  $('[data-item]').addEventListener('change', () => { $('[data-room-feedback]').textContent = state.joined ? 'Offer changed locally. Tap Join room / publish status again when you want to update the room.' : 'Offer selected. Join the room when ready.'; });
+  
   setInterval(() => { renderPeople(); }, 30000);
 
   renderAll();
