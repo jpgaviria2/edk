@@ -179,14 +179,7 @@
       .filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS)
       .sort((a, b) => b.seenAt - a.seenAt);
     $('[data-online-count]').textContent = `${people.length} online`;
-    $('[data-people]').innerHTML = people.length ? people.map((p) => `
-      <article class="person ${state.selectedPubkey === p.pubkey ? 'active' : ''}">
-        <div class="person-top"><div class="avatar small">${initials(p.name)}</div><div><strong>${escapeHtml(p.name)}</strong><small>${short(p.pubkey)}</small></div></div>
-        <p>Selling <b>${escapeHtml(p.offer.item)}</b> · needs ${(p.offer.needs || []).map(escapeHtml).join(' + ') || 'unknown'}</p>
-        <div class="mini-inventory">${Object.entries(p.inventory || {}).map(([k, v]) => `<span>${k}: ${v}</span>`).join('')}</div>
-        <div class="button-row"><button data-action="request-trade" data-pubkey="${p.pubkey}">Make offer</button><button data-action="select-person" data-pubkey="${p.pubkey}">View</button></div>
-      </article>
-    `).join('') : '<p class="muted">No other players online yet. Open this page on your second Fedi wallet and join the same room.</p>';
+    $('[data-people]').innerHTML = '';
   }
 
 
@@ -213,19 +206,22 @@
     if (!card) return;
     const match = state.currentMatch ? state.online.get(state.currentMatch.pubkey) : null;
     if (!match) {
-      $('[data-match-title]').textContent = 'No match yet';
-      $('[data-match-copy]').textContent = 'Tap Show me a trade. The app tries double coincidence of wants first, then money.';
-      $('[data-match-options]').innerHTML = moneyButtons();
+      $('[data-match-title]').textContent = 'Waiting for a match';
+      $('[data-match-copy]').textContent = 'Tap Show me a trade. You will get one player card at a time.';
+      $('[data-match-options]').innerHTML = '<button class="primary" data-action="show-trade">Show me a trade</button>';
       return;
     }
     const mode = tradeModeFor(match);
     const myOffer = selectedOffer();
     const theirOffer = match.offer || {};
-    $('[data-match-title]').textContent = `${match.name} sells ${theirOffer.item}`;
-    $('[data-match-copy]').textContent = mode === 'barter'
-      ? `Double coincidence found: you need ${theirOffer.category}, and they need ${myOffer.category}. Try barter first.`
-      : `No perfect barter match. Use ${moneyEras[mode].label} to buy ${theirOffer.item}.`;
-    $('[data-match-options]').innerHTML = `${moneyButtons()}<button class="primary" data-action="request-trade" data-pubkey="${match.pubkey}">${mode === 'barter' ? 'Propose barter' : `Offer ${moneyEras[mode].label}`}</button>`;
+    const theirs = Object.entries(match.inventory || {}).filter(([, v]) => Number(v) > 0).map(([k, v]) => `${k}: ${v}`).join(' · ');
+    $('[data-match-title]').textContent = match.name || 'Matched player';
+    $('[data-match-copy]').innerHTML = `They have <b>${escapeHtml(theirOffer.item || 'goods')}</b>. They need ${(theirOffer.needs || []).map(escapeHtml).join(' + ') || 'unknown'}.<br>${mode === 'barter' ? `Match: you need ${escapeHtml(theirOffer.category)}, they need ${escapeHtml(myOffer.category)}. Barter works.` : `No perfect barter. Use ${escapeHtml(moneyEras[mode].label)} if you want to trade.`}<br><small>${escapeHtml(theirs)}</small>`;
+    $('[data-match-options]').innerHTML = `
+      <button class="primary" data-action="accept-match" data-pubkey="${match.pubkey}">Accept</button>
+      <button data-action="reject-match">Reject</button>
+      <button data-action="request-trade" data-pubkey="${match.pubkey}">Make offer</button>
+    `;
   }
 
   function moneyButtons() {
@@ -663,6 +659,23 @@
     return true;
   }
 
+  function rejectMatch() {
+    const old = state.currentMatch?.pubkey;
+    const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && p.pubkey !== old && now() - p.seenAt < STALE_MS);
+    if (!people.length) {
+      state.currentMatch = null;
+      state.notice = { title: 'No more matches', copy: 'No other players are online right now.', target: 'market' };
+      renderAll();
+      return;
+    }
+    const ranked = people.map((p) => ({ p, score: matchScore(p) })).sort((a, b) => b.score - a.score);
+    const pick = ranked[0].p;
+    state.selectedPubkey = pick.pubkey;
+    state.currentMatch = { pubkey: pick.pubkey, at: now() };
+    state.notice = { title: 'New match', copy: `${pick.name} is selling ${pick.offer?.item || 'goods'}.`, target: 'market' };
+    renderAll();
+  }
+
   function showTrade() {
     if (!state.joined) { $('[data-room-feedback]').textContent = 'Join the room first. Fedi will ask you to sign your room status.'; return; }
     const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS);
@@ -727,6 +740,8 @@
     if (action === 'join-room') joinRoom();
     if (action === 'show-trade') showTrade();
     if (action === 'request-trade') requestTrade(event.target.dataset.pubkey);
+    if (action === 'accept-match') requestTrade(event.target.dataset.pubkey);
+    if (action === 'reject-match') rejectMatch();
     if (action === 'select-person') { state.selectedPubkey = event.target.dataset.pubkey; state.currentMatch = { pubkey: event.target.dataset.pubkey, at: now() }; renderAll(); }
     if (action === 'accept-request') acceptRequest(event.target.dataset.id);
     if (action === 'reject-request') rejectRequest(event.target.dataset.id);
