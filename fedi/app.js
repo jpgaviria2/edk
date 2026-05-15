@@ -5,7 +5,7 @@
   const settingsKey = 'history-fedi-sats-market-settings-v2';
   const APP = 'historyofmoney-sats-market';
   const KIND = 30078;
-  const STALE_MS = 65000;
+  const STALE_MS = 30 * 60 * 1000;
 
   const state = {
     profile: { alias: 'Fedi wallet', pubkey: '' },
@@ -14,6 +14,7 @@
     relay: null,
     joined: false,
     selectedPubkey: '',
+    lastPresenceAt: 0,
     online: new Map(),
     requests: new Map(),
     receipts: loadJson(receiptsKey, []),
@@ -140,15 +141,24 @@
   }
 
   async function joinRoom() {
-    if (!window.nostr?.signEvent) { $('[data-room-feedback]').textContent = 'Open inside Fedi and allow Nostr identity/signing to join the live room.'; return; }
+    const feedback = $('[data-room-feedback]');
+    if (!window.nostr?.signEvent) { feedback.textContent = 'Open inside Fedi and allow Nostr identity/signing to join the live room.'; return; }
     state.room = $('[data-room]').value.trim() || 'history-money-room';
     state.relayUrl = $('[data-relay]').value.trim() || 'wss://relay.anmore.me';
     state.settings = { room: state.room, relayUrl: state.relayUrl, name: myDisplayName(), moderator: $('[data-moderator]').value.trim() };
     saveJson(settingsKey, state.settings);
+    feedback.textContent = 'Connecting to the room relay…';
     await connectRelay();
-    state.joined = true;
-    await publishPresence();
-    $('[data-room-feedback]').textContent = `Joined ${state.room}. Looking for online players…`;
+    try {
+      feedback.textContent = 'Fedi is asking you to sign your room status. Tap Yes to join.';
+      await publishPresence();
+      state.joined = true;
+      feedback.textContent = `Joined ${state.room}. Looking for online players…`;
+    } catch (error) {
+      state.joined = false;
+      feedback.textContent = `Join cancelled or failed: ${error.message || 'signature was not approved'}. Tap Join room again and choose Yes.`;
+      addReceipt('fail', 'Join failed', error.message || 'Presence signature was rejected or failed.');
+    }
     renderAll();
   }
 
@@ -171,19 +181,23 @@
 
   async function signAndPublish(type, content, extraTags = []) {
     if (!state.relay || state.relay.readyState !== WebSocket.OPEN) await connectRelay();
+    if (!state.relay || state.relay.readyState !== WebSocket.OPEN) throw new Error('Relay is not connected');
     const event = await window.nostr.signEvent({
       kind: KIND,
       created_at: Math.floor(Date.now() / 1000),
       tags: [['d', `${APP}:${state.room}:${type}:${crypto.randomUUID()}`], ['a', APP], ['r', state.room], ['t', type], ...extraTags],
       content: JSON.stringify({ type, ...content })
     });
+    if (event.pubkey && !state.profile.pubkey) state.profile.pubkey = event.pubkey;
     state.relay.send(JSON.stringify(['EVENT', event]));
     return event;
   }
 
   async function publishPresence() {
     const offer = selectedOffer();
-    await signAndPublish('presence', { name: myDisplayName(), offer, inventory: state.inventory, seenAt: now() });
+    const signed = await signAndPublish('presence', { name: myDisplayName(), offer, inventory: state.inventory, seenAt: now() });
+    state.lastPresenceAt = now();
+    state.online.set(signed.pubkey, { pubkey: signed.pubkey, name: myDisplayName(), offer, inventory: state.inventory, seenAt: now() });
   }
 
   function handleRelayMessage(raw) {
@@ -253,8 +267,9 @@
   }
 
   function showTrade() {
+    if (!state.joined) { $('[data-room-feedback]').textContent = 'Join the room first. Fedi will ask you to sign your room status.'; return; }
     const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS);
-    if (!people.length) { $('[data-room-feedback]').textContent = 'No other online players yet.'; return; }
+    if (!people.length) { $('[data-room-feedback]').textContent = 'No other online players yet. Join from your second device with the same room code.'; return; }
     const pick = people[Math.floor(Math.random() * people.length)];
     state.selectedPubkey = pick.pubkey;
     $('[data-room-feedback]').textContent = `Matched with ${pick.name}, selling ${pick.offer.item} for ${pick.offer.amount} sats.`;
@@ -320,8 +335,8 @@
     if (crisis) publishCrisis(crisis);
   });
 
-  $('[data-item]').addEventListener('change', () => { if (state.joined) publishPresence(); });
-  setInterval(() => { if (state.joined) publishPresence().catch(() => {}); renderPeople(); }, 30000);
+  $('[data-item]').addEventListener('change', () => { $('[data-room-feedback]').textContent = state.joined ? 'Offer changed locally. Tap Join room / publish status again when you want to update the room.' : 'Offer selected. Join the room when ready.'; });
+  setInterval(() => { renderPeople(); }, 30000);
 
   renderAll();
   initIdentity();
