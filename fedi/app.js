@@ -25,7 +25,9 @@
     role: null,
     inventory: null,
     appliedTrades: new Set(loadJson('history-fedi-applied-trades-v4', [])),
-    notice: { title: 'Ready', copy: 'Join the room, then tap Show me a trade.', target: 'market' }
+    notice: { title: 'Ready', copy: 'Join the room, then tap Show me a trade.', target: 'market' },
+    currentMatch: null,
+    moneyEra: loadJson('history-fedi-money-era-v1', 'bitcoin')
   };
 
   function loadJson(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch (_) { return fallback; } }
@@ -34,13 +36,14 @@
   function isFediReady() { return Boolean(window.webln); }
   function now() { return Date.now(); }
   const roles = [
-    { item: 'Water refill', category: 'water', amount: 15, inventory: { water: 5, shelter: 0, mangoes: 1, fish: 1, cattle: 0 } },
-    { item: 'Shelter repair', category: 'shelter', amount: 35, inventory: { water: 1, shelter: 3, mangoes: 1, fish: 0, cattle: 1 } },
-    { item: 'Fresh mangoes', category: 'mangoes', amount: 20, inventory: { water: 1, shelter: 0, mangoes: 8, fish: 0, cattle: 0 } },
-    { item: 'Fish dinner', category: 'fish', amount: 25, inventory: { water: 1, shelter: 0, mangoes: 1, fish: 5, cattle: 0 } },
-    { item: 'Cattle transport', category: 'cattle', amount: 45, inventory: { water: 2, shelter: 1, mangoes: 0, fish: 0, cattle: 3 } },
-    { item: 'Lightning wallet help', category: 'savings', amount: 35, inventory: { water: 1, shelter: 1, mangoes: 1, fish: 1, cattle: 0 } }
+    { item: 'Water refill', category: 'water', amount: 15, needs: ['shelter', 'mangoes'], inventory: { water: 5, shelter: 0, mangoes: 1, fish: 1, cattle: 0, shells: 4, gold: 1, claims: 2, dollars: 40 } },
+    { item: 'Shelter repair', category: 'shelter', amount: 35, needs: ['water', 'fish'], inventory: { water: 1, shelter: 3, mangoes: 1, fish: 0, cattle: 1, shells: 3, gold: 1, claims: 3, dollars: 35 } },
+    { item: 'Fresh mangoes', category: 'mangoes', amount: 20, needs: ['water', 'shelter'], inventory: { water: 1, shelter: 0, mangoes: 8, fish: 0, cattle: 0, shells: 5, gold: 0, claims: 1, dollars: 30 } },
+    { item: 'Fish dinner', category: 'fish', amount: 25, needs: ['mangoes', 'shelter'], inventory: { water: 1, shelter: 0, mangoes: 1, fish: 5, cattle: 0, shells: 2, gold: 1, claims: 2, dollars: 25 } },
+    { item: 'Cattle transport', category: 'cattle', amount: 45, needs: ['water', 'mangoes'], inventory: { water: 2, shelter: 1, mangoes: 0, fish: 0, cattle: 3, shells: 2, gold: 2, claims: 2, dollars: 45 } },
+    { item: 'Lightning wallet help', category: 'savings', amount: 35, needs: ['fish', 'shelter'], inventory: { water: 1, shelter: 1, mangoes: 1, fish: 1, cattle: 0, shells: 4, gold: 1, claims: 4, dollars: 50 } }
   ];
+  const moneyEras = { barter: { label: 'Barter', resource: null }, shells: { label: 'Shells', resource: 'shells' }, gold: { label: 'Gold', resource: 'gold' }, claims: { label: 'Paper claims', resource: 'claims' }, dollars: { label: 'Dollars', resource: 'dollars' }, bitcoin: { label: 'Bitcoin', resource: 'sats' } };
 
   function randomRole() {
     const last = localStorage.getItem('history-fedi-last-role-item') || '';
@@ -63,7 +66,7 @@
     $('[data-item]').innerHTML = `<option value="${state.role.item}|${state.role.category}|${state.role.amount}">${state.role.item}</option>`;
   }
 
-  function selectedOffer() { return { item: state.role.item, category: state.role.category, amount: Number(state.role.amount) }; }
+  function selectedOffer() { return { item: state.role.item, category: state.role.category, amount: Number(state.role.amount), needs: state.role.needs || [] }; }
   function myDisplayName() { return $('[data-name]').value.trim() || state.profile.alias || 'Player'; }
 
   async function initIdentity() {
@@ -156,7 +159,7 @@
   function renderInventory() {
     if (state.role) {
       $('[data-role-title]').textContent = `${state.role.item} · ${state.role.amount} sats`;
-      $('[data-role-copy]').textContent = `You sell ${state.role.item}. Your starting goods are random for this room.`;
+      $('[data-role-copy]').textContent = `You sell ${state.role.item}. You need ${(state.role.needs || []).join(' + ')}. Current money: ${moneyEras[state.moneyEra].label}.`;
     }
     const goods = Object.entries(state.inventory || {}).map(([key, value]) => `
       <div class="inv"><span>${key}</span><b>${value}</b></div>
@@ -179,11 +182,54 @@
     $('[data-people]').innerHTML = people.length ? people.map((p) => `
       <article class="person ${state.selectedPubkey === p.pubkey ? 'active' : ''}">
         <div class="person-top"><div class="avatar small">${initials(p.name)}</div><div><strong>${escapeHtml(p.name)}</strong><small>${short(p.pubkey)}</small></div></div>
-        <p>Selling <b>${escapeHtml(p.offer.item)}</b> for <b>${p.offer.amount}</b> sats · ${escapeHtml(p.offer.category)}</p>
+        <p>Selling <b>${escapeHtml(p.offer.item)}</b> · needs ${(p.offer.needs || []).map(escapeHtml).join(' + ') || 'unknown'}</p>
         <div class="mini-inventory">${Object.entries(p.inventory || {}).map(([k, v]) => `<span>${k}: ${v}</span>`).join('')}</div>
-        <div class="button-row"><button data-action="request-trade" data-pubkey="${p.pubkey}">Offer ${p.offer.amount} sats</button><button data-action="select-person" data-pubkey="${p.pubkey}">View</button></div>
+        <div class="button-row"><button data-action="request-trade" data-pubkey="${p.pubkey}">Make offer</button><button data-action="select-person" data-pubkey="${p.pubkey}">View</button></div>
       </article>
     `).join('') : '<p class="muted">No other players online yet. Open this page on your second Fedi wallet and join the same room.</p>';
+  }
+
+
+  function matchScore(peer) {
+    const myOffer = selectedOffer();
+    const theirOffer = peer.offer || {};
+    const theyNeedMine = (theirOffer.needs || []).includes(myOffer.category);
+    const iNeedTheirs = (myOffer.needs || []).includes(theirOffer.category);
+    const theyHaveNeed = Number(peer.inventory?.[myOffer.category] || 0) > 0;
+    const iHaveNeed = Number(state.inventory?.[theirOffer.category] || 0) > 0;
+    return (theyNeedMine ? 4 : 0) + (iNeedTheirs ? 4 : 0) + (theyHaveNeed ? 1 : 0) + (iHaveNeed ? 1 : 0);
+  }
+
+  function tradeModeFor(peer) {
+    const myOffer = selectedOffer();
+    const theirOffer = peer.offer || {};
+    const doubleCoincidence = (theirOffer.needs || []).includes(myOffer.category) && (myOffer.needs || []).includes(theirOffer.category);
+    if (doubleCoincidence && Number(state.inventory[myOffer.category] || 0) > 0 && Number(peer.inventory?.[theirOffer.category] || 0) > 0) return 'barter';
+    return state.moneyEra;
+  }
+
+  function renderMatch() {
+    const card = $('[data-match-card]');
+    if (!card) return;
+    const match = state.currentMatch ? state.online.get(state.currentMatch.pubkey) : null;
+    if (!match) {
+      $('[data-match-title]').textContent = 'No match yet';
+      $('[data-match-copy]').textContent = 'Tap Show me a trade. The app tries double coincidence of wants first, then money.';
+      $('[data-match-options]').innerHTML = moneyButtons();
+      return;
+    }
+    const mode = tradeModeFor(match);
+    const myOffer = selectedOffer();
+    const theirOffer = match.offer || {};
+    $('[data-match-title]').textContent = `${match.name} sells ${theirOffer.item}`;
+    $('[data-match-copy]').textContent = mode === 'barter'
+      ? `Double coincidence found: you need ${theirOffer.category}, and they need ${myOffer.category}. Try barter first.`
+      : `No perfect barter match. Use ${moneyEras[mode].label} to buy ${theirOffer.item}.`;
+    $('[data-match-options]').innerHTML = `${moneyButtons()}<button class="primary" data-action="request-trade" data-pubkey="${match.pubkey}">${mode === 'barter' ? 'Propose barter' : `Offer ${moneyEras[mode].label}`}</button>`;
+  }
+
+  function moneyButtons() {
+    return `<div class="money-row">${Object.entries(moneyEras).map(([key, era]) => `<button class="money-chip ${state.moneyEra === key ? 'active' : ''}" data-money-era="${key}">${era.label}</button>`).join('')}</div>`;
   }
 
   function renderRequests() {
@@ -267,7 +313,7 @@
     $('[data-action-tray]').classList.toggle('hot', actions.length > 0);
   }
 
-  function renderAll() { renderIdentity(); renderInventory(); renderPeople(); renderRequests(); renderModerator(); renderReceipts(); renderActionTray(); }
+  function renderAll() { renderIdentity(); renderInventory(); renderPeople(); renderMatch(); renderRequests(); renderModerator(); renderReceipts(); renderActionTray(); }
   function initials(name) { return (name || '?').split(/\s+/).map((p) => p[0]).join('').slice(0, 2).toUpperCase(); }
   function escapeHtml(text) { return String(text ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c])); }
   function normalizeKey(value) {
@@ -432,14 +478,27 @@
       sellerPubkey: pubkey,
       item: target.offer.item,
       category: target.offer.category,
-      amount: target.offer.amount,
-      title: `${myDisplayName()} wants to buy ${target.offer.item}`,
-      copy: `${myDisplayName()} offers ${target.offer.amount} sats for ${target.offer.item}.`
+      amount: tradeAmount(target),
+      mode: tradeModeFor(target),
+      title: `${myDisplayName()} wants to trade for ${target.offer.item}`,
+      copy: tradeCopy(target)
     }, [['p', pubkey]]);
-    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, amount: target.offer.amount, title: `${myDisplayName()} wants to buy ${target.offer.item}`, copy: `${myDisplayName()} offers ${target.offer.amount} sats for ${target.offer.item}.`, createdAt: now() });
+    state.requests.set(requestId + ':request', { id: requestId, type: 'request', buyerPubkey: state.profile.pubkey, sellerPubkey: pubkey, item: target.offer.item, category: target.offer.category, amount: tradeAmount(target), mode: tradeModeFor(target), title: `${myDisplayName()} wants to trade for ${target.offer.item}`, copy: tradeCopy(target), createdAt: now() });
     state.notice = { title: 'Offer sent', copy: `Waiting for ${target.name} to accept.`, target: 'requests' };
     setTab('requests');
-    addReceipt('request', 'Trade request sent', `${target.offer.amount} sats offered to ${target.name} for ${target.offer.item}.`);
+    addReceipt('request', 'Trade request sent', tradeCopy(target));
+  }
+
+  function tradeAmount(peer) {
+    const mode = tradeModeFor(peer);
+    if (mode === 'barter') return 0;
+    return Number(peer.offer?.amount || 0);
+  }
+
+  function tradeCopy(peer) {
+    const mode = tradeModeFor(peer);
+    if (mode === 'barter') return `${myDisplayName()} proposes barter: ${selectedOffer().item} for ${peer.offer.item}.`;
+    return `${myDisplayName()} offers ${peer.offer.amount} sats worth of ${moneyEras[mode].label} for ${peer.offer.item}.`;
   }
 
   async function acceptRequest(id) {
@@ -568,10 +627,15 @@
     if (!state.joined) { $('[data-room-feedback]').textContent = 'Join the room first. Fedi will ask you to sign your room status.'; return; }
     const people = [...state.online.values()].filter((p) => p.pubkey !== state.profile.pubkey && now() - p.seenAt < STALE_MS);
     if (!people.length) { $('[data-room-feedback]').textContent = 'No other online players yet. Join from your second device with the same room code.'; return; }
-    const pick = people[Math.floor(Math.random() * people.length)];
+    const ranked = people.map((p) => ({ p, score: matchScore(p) })).sort((a, b) => b.score - a.score);
+    const bestScore = ranked[0].score;
+    const pool = ranked.filter((entry) => entry.score === bestScore).map((entry) => entry.p);
+    const pick = pool[Math.floor(Math.random() * pool.length)];
     state.selectedPubkey = pick.pubkey;
-    $('[data-room-feedback]').textContent = `Matched with ${pick.name}, selling ${pick.offer.item} for ${pick.offer.amount} sats.`;
-    setTab('market'); renderPeople();
+    state.currentMatch = { pubkey: pick.pubkey, at: now() };
+    const mode = tradeModeFor(pick);
+    $('[data-room-feedback]').textContent = `Matched with ${pick.name}. ${mode === 'barter' ? 'Double coincidence found — barter is possible.' : `Use ${moneyEras[mode].label} if barter does not line up.`}`;
+    setTab('market'); renderAll();
   }
 
   function saveModerator() {
@@ -623,7 +687,7 @@
     if (action === 'join-room') joinRoom();
     if (action === 'show-trade') showTrade();
     if (action === 'request-trade') requestTrade(event.target.dataset.pubkey);
-    if (action === 'select-person') { state.selectedPubkey = event.target.dataset.pubkey; renderPeople(); }
+    if (action === 'select-person') { state.selectedPubkey = event.target.dataset.pubkey; state.currentMatch = { pubkey: event.target.dataset.pubkey, at: now() }; renderAll(); }
     if (action === 'accept-request') acceptRequest(event.target.dataset.id);
     if (action === 'reject-request') rejectRequest(event.target.dataset.id);
     if (action === 'pay-request-invoice') payRequestInvoice(event.target.dataset.id);
@@ -632,6 +696,8 @@
     if (action === 'export-receipts') exportReceipts();
     if (action === 'clear-receipts') { state.receipts = []; saveJson(receiptsKey, state.receipts); renderReceipts(); }
     if (action === 'open-next-action') setTab(state.notice.target || 'requests');
+    const moneyEra = event.target?.dataset?.moneyEra;
+    if (moneyEra) { state.moneyEra = moneyEra; saveJson('history-fedi-money-era-v1', state.moneyEra); renderAll(); }
     if (crisis) publishCrisis(crisis);
   });
 
