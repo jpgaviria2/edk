@@ -19,7 +19,9 @@
     requests: new Map(),
     receipts: loadJson(receiptsKey, []),
     settings: loadJson(settingsKey, {}),
-    inventory: loadJson('history-fedi-inventory-v2', { water: 3, shelter: 1, mangoes: 5, fish: 2, cattle: 2, sats: 100 })
+    walletBalanceSats: null,
+    walletBalanceSource: '',
+    inventory: loadJson('history-fedi-inventory-v2', { water: 3, shelter: 1, mangoes: 5, fish: 2, cattle: 2 })
   };
 
   function loadJson(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch (_) { return fallback; } }
@@ -45,7 +47,46 @@
       if (info?.node?.alias) state.profile.alias = info.node.alias;
     } catch (error) { addReceipt('fail', 'Wallet warning', error.message || 'Could not read wallet info.'); }
     try { if (window.nostr?.getPublicKey) state.profile.pubkey = await window.nostr.getPublicKey(); } catch (_) {}
+    await refreshWalletBalance();
     renderAll();
+  }
+
+  async function refreshWalletBalance() {
+    const candidates = [
+      ['fedi.getBalance', () => window.fedi?.getBalance?.()],
+      ['fedi.getWalletBalance', () => window.fedi?.getWalletBalance?.()],
+      ['fedi.getFederationBalance', () => window.fedi?.getFederationBalance?.()],
+      ['webln.getBalance', () => window.webln?.getBalance?.()]
+    ];
+    for (const [source, call] of candidates) {
+      try {
+        const result = await call();
+        const sats = extractSatsBalance(result);
+        if (Number.isFinite(sats)) {
+          state.walletBalanceSats = sats;
+          state.walletBalanceSource = source;
+          return sats;
+        }
+      } catch (_) {}
+    }
+    state.walletBalanceSats = null;
+    state.walletBalanceSource = '';
+    return null;
+  }
+
+  function extractSatsBalance(value) {
+    if (typeof value === 'number') return value;
+    if (!value || typeof value !== 'object') return null;
+    const directKeys = ['sats', 'sat', 'balanceSats', 'balanceSat', 'balance', 'amountSats', 'amountSat'];
+    for (const key of directKeys) {
+      if (typeof value[key] === 'number') return value[key];
+      if (typeof value[key] === 'string' && value[key].trim() !== '' && !Number.isNaN(Number(value[key]))) return Number(value[key]);
+    }
+    if (typeof value.msats === 'number') return Math.floor(value.msats / 1000);
+    if (typeof value.millisats === 'number') return Math.floor(value.millisats / 1000);
+    if (value.balance && typeof value.balance === 'object') return extractSatsBalance(value.balance);
+    if (value.wallet && typeof value.wallet === 'object') return extractSatsBalance(value.wallet);
+    return null;
   }
 
   function renderIdentity() {
@@ -56,9 +97,17 @@
   }
 
   function renderInventory() {
-    $('[data-inventory]').innerHTML = Object.entries(state.inventory).map(([key, value]) => `
+    const goods = Object.entries(state.inventory).map(([key, value]) => `
       <div class="inv"><span>${key}</span><b>${value}</b></div>
     `).join('');
+    const sats = Number.isFinite(state.walletBalanceSats)
+      ? `<div class="inv sats"><span>app sats</span><b>${state.walletBalanceSats}</b></div>`
+      : '<div class="inv sats unknown"><span>app sats</span><b>—</b><small>Fedi balance API unavailable</small></div>';
+    $('[data-inventory]').innerHTML = goods + sats;
+  }
+
+  function publicInventory() {
+    return Number.isFinite(state.walletBalanceSats) ? { ...state.inventory, sats: state.walletBalanceSats } : { ...state.inventory };
   }
 
   function renderPeople() {
@@ -194,10 +243,12 @@
   }
 
   async function publishPresence() {
+    await refreshWalletBalance();
     const offer = selectedOffer();
-    const signed = await signAndPublish('presence', { name: myDisplayName(), offer, inventory: state.inventory, seenAt: now() });
+    const inventory = publicInventory();
+    const signed = await signAndPublish('presence', { name: myDisplayName(), offer, inventory, seenAt: now() });
     state.lastPresenceAt = now();
-    state.online.set(signed.pubkey, { pubkey: signed.pubkey, name: myDisplayName(), offer, inventory: state.inventory, seenAt: now() });
+    state.online.set(signed.pubkey, { pubkey: signed.pubkey, name: myDisplayName(), offer, inventory, seenAt: now() });
   }
 
   function handleRelayMessage(raw) {
@@ -252,8 +303,7 @@
     try {
       await window.webln.enable();
       const response = await window.webln.sendPayment(invoice.invoice);
-      state.inventory.sats = Math.max(0, Number(state.inventory.sats || 0) - Number(invoice.amount || 0));
-      saveJson('history-fedi-inventory-v2', state.inventory);
+      await refreshWalletBalance();
       await signAndPublish('paid', { requestId: id, buyerPubkey: state.profile.pubkey, sellerPubkey: invoice.sellerPubkey, amount: invoice.amount, preimage: response.preimage || '', title: 'Trade paid', copy: `${myDisplayName()} paid ${invoice.amount} sats.` }, [['p', invoice.sellerPubkey]]);
       addReceipt('paid', 'Paid trade invoice', `${invoice.amount} sats sent.`);
       await publishPresence();
@@ -313,7 +363,7 @@
   }
 
   function exportReceipts() {
-    const blob = new Blob([JSON.stringify({ receipts: state.receipts, inventory: state.inventory }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ receipts: state.receipts, inventory: state.inventory, walletBalanceSats: state.walletBalanceSats, walletBalanceSource: state.walletBalanceSource }, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'sats-market-room-receipts.json'; link.click(); URL.revokeObjectURL(url);
   }
 
