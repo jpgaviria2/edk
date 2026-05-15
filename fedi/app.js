@@ -231,15 +231,34 @@
   async function signAndPublish(type, content, extraTags = []) {
     if (!state.relay || state.relay.readyState !== WebSocket.OPEN) await connectRelay();
     if (!state.relay || state.relay.readyState !== WebSocket.OPEN) throw new Error('Relay is not connected');
+    const payload = { type, ...content };
     const event = await window.nostr.signEvent({
       kind: KIND,
       created_at: Math.floor(Date.now() / 1000),
-      tags: [['d', `${APP}:${state.room}:${type}:${crypto.randomUUID()}`], ['a', APP], ['r', state.room], ['t', type], ...extraTags],
-      content: JSON.stringify({ type, ...content })
+      tags: [['d', `${APP}:${state.room}:${type}:${crypto.randomUUID()}`], ['a', APP], ['r', state.room], ['t', type], ['payload', encodePayload(payload)], ...extraTags],
+      content: humanSignText(type, payload)
     });
     if (event.pubkey && !state.profile.pubkey) state.profile.pubkey = event.pubkey;
     state.relay.send(JSON.stringify(['EVENT', event]));
     return event;
+  }
+
+  function humanSignText(type, payload) {
+    if (type === 'presence') return `${payload.name || 'Player'} is joining Sats Market room “${state.room}” and selling ${payload.offer?.item || 'an item'} for ${payload.offer?.amount || '?'} sats.`;
+    if (type === 'request') return `${myDisplayName()} offers ${payload.amount} sats to buy ${payload.item || 'an item'} in Sats Market room “${state.room}”.`;
+    if (type === 'invoice') return `${myDisplayName()} accepted a Sats Market trade and created an invoice for ${payload.amount} sats.`;
+    if (type === 'paid') return `${myDisplayName()} marked a Sats Market trade as paid for ${payload.amount} sats.`;
+    if (type === 'reject') return `${myDisplayName()} rejected a Sats Market trade request.`;
+    if (type === 'crisis') return `Moderator announces Sats Market crisis: ${payload.title}. ${payload.copy || ''}`.trim();
+    return `Sats Market ${type} event in room “${state.room}”.`;
+  }
+
+  function encodePayload(payload) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  }
+
+  function decodePayload(value) {
+    return JSON.parse(decodeURIComponent(escape(atob(value))));
   }
 
   async function publishPresence() {
@@ -255,7 +274,14 @@
     let msg; try { msg = JSON.parse(raw); } catch (_) { return; }
     if (msg[0] !== 'EVENT') return;
     const event = msg[2];
-    let content; try { content = JSON.parse(event.content || '{}'); } catch (_) { return; }
+    let content = null;
+    const payloadTag = event.tags?.find((t) => t[0] === 'payload')?.[1];
+    if (payloadTag) {
+      try { content = decodePayload(payloadTag); } catch (_) {}
+    }
+    if (!content) {
+      try { content = JSON.parse(event.content || '{}'); } catch (_) { return; }
+    }
     if (!event.tags?.some((t) => t[0] === 'r' && t[1] === state.room)) return;
     if (!event.tags?.some((t) => t[0] === 'a' && t[1] === APP)) return;
 
