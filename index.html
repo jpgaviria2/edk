@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#120b03" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Moneypoly" />
+  <meta name="apple-mobile-web-app-title" content="History of Money" />
   <link rel="manifest" href="/manifest.webmanifest?v=14" />
   <link rel="icon" href="/assets/icons/moneypoly-icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
-  <meta name="description" content="History of Money — an interactive Bitcoin education module featuring Moneypoly, a practical game about barter, commodity money, and trade." />
-  <title>History of Money · Moneypoly</title>
+  <meta name="description" content="History of Money is the flagship EDK experience: play Moneypoly, understand why money emerges, and teach it with host-ready materials." />
+  <title>History of Money · EDK</title>
   <style>
     :root {
       color-scheme: dark;
@@ -23,13 +23,12 @@
       --gold: #f7b733;
       --orange: #f26b21;
       --green: #35c66b;
+      --blue: #8ddcff;
       --border: rgba(255, 247, 225, 0.18);
       --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -39,265 +38,43 @@
         linear-gradient(135deg, #120b03 0%, #211105 48%, #050302 100%);
       color: var(--text);
     }
-
     a { color: inherit; }
-
-    .shell {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 42px;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 56px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 850;
-      letter-spacing: -0.04em;
-      text-decoration: none;
-      font-size: 1.12rem;
-    }
-
-    .coin {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #ffd978, #f7931a 62%, #8f4e06);
-      color: #241000;
-      box-shadow: 0 10px 28px rgba(247, 147, 26, 0.32);
-      font-weight: 950;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-height: 44px;
-      padding: 0 18px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255, 247, 225, 0.08);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 800;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-    }
-
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 42px; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 40px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 850; letter-spacing: -0.04em; text-decoration: none; font-size: 1.12rem; }
+    .coin { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(145deg, #ffd978, #f7931a 62%, #8f4e06); color: #241000; box-shadow: 0 10px 28px rgba(247, 147, 26, 0.32); font-weight: 950; }
+    .nav-links,.actions,.mini-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nav-links { justify-content: flex-end; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255, 247, 225, 0.08); color: var(--text); text-decoration: none; font-weight: 800; transition: transform 160ms ease, border-color 160ms ease, background 160ms ease; }
     .btn:hover { transform: translateY(-2px); border-color: rgba(255, 247, 225, 0.34); }
-
-    .btn.primary {
-      background: linear-gradient(135deg, var(--gold), var(--orange));
-      color: #241000;
-      border-color: transparent;
-      box-shadow: 0 16px 36px rgba(247, 147, 26, 0.28);
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.72fr);
-      gap: 28px;
-      align-items: stretch;
-    }
-
-    .hero-card, .game-card, .info-card {
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--panel-strong), var(--panel));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .hero-card {
-      border-radius: 34px;
-      padding: clamp(30px, 6vw, 64px);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      right: -80px;
-      bottom: -120px;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      border: 54px solid rgba(247, 183, 51, 0.08);
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 18px;
-      color: #ffd978;
-      font-size: 0.82rem;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      max-width: 780px;
-      font-size: clamp(3rem, 8vw, 6.9rem);
-      line-height: 0.88;
-      letter-spacing: -0.08em;
-    }
-
-    .lede {
-      max-width: 690px;
-      margin: 24px 0 0;
-      color: var(--muted);
-      font-size: clamp(1.08rem, 2.4vw, 1.35rem);
-      line-height: 1.55;
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 34px;
-    }
-
-    .game-card {
-      border-radius: 30px;
-      padding: 26px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 420px;
-    }
-
-    .moneypoly-art {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
-      background: rgba(0, 0, 0, 0.25);
-    }
-
-    .board-preview {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 7px;
-      padding: 12px;
-      border-radius: 22px;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border);
-    }
-
-    .tile {
-      aspect-ratio: 1;
-      border-radius: 10px;
-      background: rgba(255, 247, 225, 0.1);
-      border: 1px solid rgba(255, 247, 225, 0.1);
-    }
-
-    .tile.hot { background: linear-gradient(135deg, #f7b733, #f26b21); }
-    .tile.green { background: linear-gradient(135deg, #35c66b, #0a7a3f); }
-    .tile.dark { background: rgba(0, 0, 0, 0.38); }
-
-    .game-card h2, .info-card h2 { margin: 24px 0 10px; font-size: 1.55rem; letter-spacing: -0.04em; }
-    .game-card p, .info-card p { margin: 0; color: var(--muted); line-height: 1.55; }
-
-    .section {
-      margin-top: 28px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .info-card {
-      border-radius: 24px;
-      padding: 22px;
-    }
-
-    .badge {
-      display: inline-flex;
-      width: 42px;
-      height: 42px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      background: rgba(247, 183, 51, 0.14);
-      border: 1px solid rgba(247, 183, 51, 0.22);
-      font-size: 1.2rem;
-    }
-
-
-    .partner-strip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 28px;
-      color: rgba(255, 247, 225, 0.7);
-      font-size: 0.86rem;
-      font-weight: 800;
-    }
-
-    .partner-mark {
-      display: inline-flex;
-      align-items: center;
-      min-height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 247, 225, 0.16);
-      background: rgba(255, 247, 225, 0.07);
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-
-    .partner-mark.foundation { border-color: rgba(247, 183, 51, 0.28); }
-    .partner-mark.mfb { border-color: rgba(53, 198, 107, 0.26); }
-    .partner-mark.edk { border-color: rgba(242, 107, 33, 0.3); }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 30px;
-      padding: 0 4px;
-      color: rgba(255, 247, 225, 0.62);
-      font-size: 0.94rem;
-    }
-
-    @media (max-width: 840px) {
-      .nav { align-items: flex-start; margin-bottom: 28px; }
-      .hero, .section { grid-template-columns: 1fr; }
-      .game-card { min-height: auto; }
-    }
-
-    @media (max-width: 560px) {
-      .shell { width: min(100% - 22px, 1120px); padding-top: 16px; }
-      .nav { flex-direction: column; }
-      .nav-links, .actions { width: 100%; }
-      .btn { width: 100%; }
-      .hero-card { border-radius: 26px; padding: 28px 22px; }
-      .game-card, .info-card { border-radius: 22px; }
-    }
+    .btn.primary { background: linear-gradient(135deg, var(--gold), var(--orange)); color: #241000; border-color: transparent; box-shadow: 0 16px 36px rgba(247, 147, 26, 0.28); }
+    .btn.green { background: rgba(53, 198, 107, 0.14); border-color: rgba(53, 198, 107, 0.28); }
+    .btn.blue { background: rgba(141, 220, 255, 0.12); border-color: rgba(141, 220, 255, 0.3); }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.76fr); gap: 28px; align-items: stretch; }
+    .hero-card, .game-card, .info-card, .feature-card { border: 1px solid var(--border); background: linear-gradient(180deg, var(--panel-strong), var(--panel)); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+    .hero-card { border-radius: 34px; padding: clamp(30px, 6vw, 64px); position: relative; overflow: hidden; }
+    .hero-card::after { content: ""; position: absolute; right: -80px; bottom: -120px; width: 320px; height: 320px; border-radius: 50%; border: 54px solid rgba(247, 183, 51, 0.08); pointer-events: none; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #ffd978; font-size: 0.82rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+    h1 { margin: 0; max-width: 780px; font-size: clamp(3rem, 8vw, 6.5rem); line-height: 0.9; letter-spacing: -0.08em; }
+    .lede { max-width: 720px; margin: 24px 0 0; color: var(--muted); font-size: clamp(1.08rem, 2.4vw, 1.35rem); line-height: 1.55; }
+    .sublede { margin-top: 16px; color: rgba(255,247,225,.8); line-height: 1.55; }
+    .game-card,.feature-card { border-radius: 30px; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
+    .game-card { min-height: 420px; }
+    .moneypoly-art { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 22px; border: 1px solid var(--border); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28); background: rgba(0, 0, 0, 0.25); }
+    .game-card h2,.info-card h2,.feature-card h2 { margin: 18px 0 10px; font-size: 1.55rem; letter-spacing: -0.04em; }
+    .game-card p,.info-card p,.feature-card p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .section { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .section.two { grid-template-columns: repeat(2, 1fr); }
+    .section.five { grid-template-columns: repeat(5, 1fr); }
+    .info-card,.feature-card { border-radius: 24px; padding: 22px; }
+    .badge { display: inline-flex; width: 42px; height: 42px; align-items: center; justify-content: center; border-radius: 14px; background: rgba(247, 183, 51, 0.14); border: 1px solid rgba(247, 183, 51, 0.22); font-size: 1.2rem; }
+    .mini-label { color: #ffd978; font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; }
+    .partner-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 28px; color: rgba(255, 247, 225, 0.7); font-size: 0.86rem; font-weight: 800; }
+    .partner-mark { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255, 247, 225, 0.16); background: rgba(255, 247, 225, 0.07); color: var(--text); }
+    .footer { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 30px; padding: 0 4px; color: rgba(255, 247, 225, 0.62); font-size: 0.94rem; }
+    @media (max-width: 980px) { .section.five { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 840px) { .nav { align-items: flex-start; margin-bottom: 28px; } .hero, .section, .section.two, .section.five { grid-template-columns: 1fr; } .game-card { min-height: auto; } }
+    @media (max-width: 560px) { .shell { width: min(100% - 22px, 1120px); padding-top: 16px; } .nav { flex-direction: column; } .nav-links, .actions,.mini-actions { width: 100%; } .btn { width: 100%; } .hero-card { border-radius: 26px; padding: 28px 22px; } .game-card, .info-card,.feature-card { border-radius: 22px; } }
   </style>
 </head>
 <body><a class="global-home-button" href="/" aria-label="Home" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(33,60,36,.35);background:rgba(255,250,240,.94);color:#172016;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px)">⌂ Home</a>
@@ -305,60 +82,127 @@
     <header class="nav" aria-label="Site navigation">
       <a class="brand" href="./" aria-label="History of Money home"><span class="coin">₿</span><span>History of Money</span></a>
       <nav class="nav-links">
-        <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Block 02</a>
-        <a class="btn" href="./fedi/">Fedi Mini App</a>
-        <a class="btn" href="https://github.com/jpgaviria2/edk">GitHub</a>
+        <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play</a>
+        <a class="btn" href="./learn/">Learn</a>
+        <a class="btn" href="./host/">Host</a>
+        <a class="btn" href="./resources/medici/">Medici Kit</a>
       </nav>
     </header>
 
     <section class="hero">
       <article class="hero-card">
-        <span class="eyebrow">Interactive Bitcoin education</span>
-        <h1>Play through the history of money.</h1>
-        <p class="lede">Start with barter, feel why trade gets messy, then discover how commodity money makes markets easier. The practical activity is Moneypoly: Barter Market.</p>
+        <span class="eyebrow">Flagship experience</span>
+        <h1>Feel the money problem before the theory.</h1>
+        <p class="lede">History of Money is now the front door to EDK: one coherent path from barter friction to money, from money to fiat failure, and from there to Bitcoin.</p>
+        <p class="sublede">Everything else now supports that flagship journey: play the market, learn the lesson, teach the workshop, then go deeper with the broader curriculum and Medici host materials.</p>
         <div class="actions">
-          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play Moneypoly</a>
-          <a class="btn" href="./fedi/">Test Fedi Sats Market</a>
-          <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">View the lesson</a>
+          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Start with Moneypoly</a>
+          <a class="btn green" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open flagship lesson</a>
+          <a class="btn blue" href="./host/">Teach it live</a>
         </div>
         <div class="partner-strip" aria-label="Project partners">
           <span>In collaboration with</span>
-          <span class="partner-mark foundation">Learning Bitcoin Foundation</span>
-          <span class="partner-mark mfb">My First Bitcoin</span>
-          <span class="partner-mark edk">EDK</span>
+          <span class="partner-mark">Learning Bitcoin Foundation</span>
+          <span class="partner-mark">My First Bitcoin</span>
+          <span class="partner-mark">EDK</span>
         </div>
       </article>
 
       <aside class="game-card" aria-label="Moneypoly preview">
         <img class="moneypoly-art" src="/assets/moneypoly-board-logo.jpg" alt="Moneypoly: The Evolution of Currency board game artwork" loading="eager" />
         <div>
-          <h2>Moneypoly: Barter Market</h2>
-          <p>A Monopoly-style board game where players secure food, water, and shelter, then test which money can build generational wealth.</p>
+          <span class="mini-label">Start here</span>
+          <h2>Moneypoly is the main entry point.</h2>
+          <p>It gives the site a clear first move: let learners struggle with barter, discover why saleable money wins, and carry that insight into fiat and Bitcoin.</p>
+        </div>
+        <div class="mini-actions">
+          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play now</a>
+          <a class="btn" href="./learn/">See the full learning path</a>
         </div>
       </aside>
     </section>
 
-    <section class="section" aria-label="What learners experience">
+    <section class="section five" aria-label="Flagship path">
       <article class="info-card">
-        <span class="badge">🤝</span>
-        <h2>Barter friction</h2>
-        <p>Players learn why direct exchange is hard when both sides need to want what the other has.</p>
+        <span class="badge">1</span>
+        <h2>Start here</h2>
+        <p>Use the homepage and flagship lesson as the clean entry point for the product family.</p>
       </article>
       <article class="info-card">
-        <span class="badge">🐚</span>
-        <h2>Commodity money</h2>
-        <p>Shells enter as a common trading good, showing why some goods become easier to price and exchange.</p>
+        <span class="badge">2</span>
+        <h2>Play</h2>
+        <p>Lead with Moneypoly so the market problem is felt before it is explained.</p>
       </article>
       <article class="info-card">
-        <span class="badge">₿</span>
-        <h2>Bitcoin bridge</h2>
-        <p>The lesson tees up the deeper question: what makes money durable, scarce, portable, and verifiable?</p>
+        <span class="badge">3</span>
+        <h2>Learn</h2>
+        <p>Frame the core concepts inside Block 02, then continue the money story into Block 03 and beyond.</p>
+      </article>
+      <article class="info-card">
+        <span class="badge">4</span>
+        <h2>Teach</h2>
+        <p>Switch to Host mode for run-of-show guidance, printables, and facilitator decisions.</p>
+      </article>
+      <article class="info-card">
+        <span class="badge">5</span>
+        <h2>Go deeper</h2>
+        <p>Use Medici resources and the rest of EDK as supporting depth, not competing first impressions.</p>
+      </article>
+    </section>
+
+    <section class="section two" aria-label="Core surfaces">
+      <article class="feature-card">
+        <span class="mini-label">Learn path</span>
+        <h2>Flagship lesson + deeper curriculum</h2>
+        <p>Learn mode now makes the sequence obvious: optional primer, flagship lesson, next lesson, then the supporting blocks for mastery.</p>
+        <div class="mini-actions"><a class="btn primary" href="./learn/">Open Learn mode</a></div>
+      </article>
+      <article class="feature-card">
+        <span class="mini-label">Host layer</span>
+        <h2>Medici host kit is now intentionally integrated.</h2>
+        <p>Medici is positioned as the live-teaching extension for trust, ledgers, banking networks, and Florence role-play after the core lesson lands.</p>
+        <div class="mini-actions"><a class="btn" href="./resources/medici/">Open Medici kit</a><a class="btn" href="./host/">Open Host mode</a></div>
+      </article>
+    </section>
+
+    <section class="section" aria-label="Supporting curriculum">
+      <article class="info-card">
+        <span class="mini-label">Primer</span>
+        <h2>Block 01: What Is Money?</h2>
+        <p>Use it when a group needs basic money vocabulary before stepping into the flagship market lesson.</p>
+        <div class="mini-actions"><a class="btn" href="./BLOCK%2001%20-%20WHAT%20IS%20MONEY/">Open Block 01</a></div>
+      </article>
+      <article class="info-card">
+        <span class="mini-label">Next step</span>
+        <h2>Block 03: Fiat & Inflation</h2>
+        <p>Continue immediately after History of Money to show how modern money systems reopen old weaknesses.</p>
+        <div class="mini-actions"><a class="btn" href="./BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/">Open Block 03</a></div>
+      </article>
+      <article class="info-card">
+        <span class="mini-label">Supporting depth</span>
+        <h2>Full 12-block curriculum</h2>
+        <p>The broader EDK curriculum remains available for classes, self-study, and follow-on learning after the flagship experience.</p>
+        <div class="mini-actions"><a class="btn" href="./learn/">Browse curriculum</a></div>
+      </article>
+    </section>
+
+    <section class="section two" aria-label="Experimental labs">
+      <article class="info-card">
+        <span class="mini-label">Experimental lab</span>
+        <h2>Fedi Sats Market is now a pilot, not the front door.</h2>
+        <p>The live sats-trading surfaces remain public, but they are positioned as workshop experiments for facilitators and wallet testing rather than core flagship onboarding.</p>
+      </article>
+      <article class="info-card">
+        <span class="mini-label">Use it when ready</span>
+        <h2>Find the lab from Host mode.</h2>
+        <p>Once the core lesson is stable in the room, facilitators can explore the experimental Fedi and solo Sats Market labs from the host layer.</p>
+        <div class="mini-actions"><a class="btn" href="./host/">Open Host mode</a><a class="btn" href="./fedi/">Open Fedi lab</a></div>
       </article>
     </section>
 
     <footer class="footer">
-      <span>HistoryOfMoney.me · Learning Bitcoin Foundation · My First Bitcoin · EDK</span>
-      <span>Built for classrooms, meetups, and curious learners.</span>
+      <span>HistoryOfMoney.me · flagship experience inside EDK</span>
+      <span>Built for self-learners first, then facilitators, classrooms, and experimental labs.</span>
     </footer>
   </main>
 
