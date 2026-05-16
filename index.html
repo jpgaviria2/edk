@@ -3,209 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#120b03" />
+  <meta name="theme-color" content="#f7efe2" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="History of Money" />
   <link rel="manifest" href="/manifest.webmanifest?v=14" />
-  <link rel="icon" href="/assets/icons/moneypoly-icon-192.png" type="image/png" />
+  <link rel="icon" href="/assets/icons/learning-bitcoin-foundation-icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
-  <meta name="description" content="History of Money is the flagship EDK experience: play Moneypoly, understand why money emerges, and teach it with host-ready materials." />
-  <title>History of Money · EDK</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #120b03;
-      --panel: rgba(255, 247, 225, 0.08);
-      --panel-strong: rgba(255, 247, 225, 0.14);
-      --text: #fff7e1;
-      --muted: #d8c49b;
-      --gold: #f7b733;
-      --orange: #f26b21;
-      --green: #35c66b;
-      --blue: #8ddcff;
-      --border: rgba(255, 247, 225, 0.18);
-      --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(247, 183, 51, 0.24), transparent 32rem),
-        radial-gradient(circle at 78% 12%, rgba(242, 107, 33, 0.2), transparent 34rem),
-        linear-gradient(135deg, #120b03 0%, #211105 48%, #050302 100%);
-      color: var(--text);
-    }
-    a { color: inherit; }
-    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 42px; }
-    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 40px; }
-    .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 850; letter-spacing: -0.04em; text-decoration: none; font-size: 1.12rem; }
-    .coin { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(145deg, #ffd978, #f7931a 62%, #8f4e06); color: #241000; box-shadow: 0 10px 28px rgba(247, 147, 26, 0.32); font-weight: 950; }
-    .nav-links,.actions,.mini-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .nav-links { justify-content: flex-end; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255, 247, 225, 0.08); color: var(--text); text-decoration: none; font-weight: 800; transition: transform 160ms ease, border-color 160ms ease, background 160ms ease; }
-    .btn:hover { transform: translateY(-2px); border-color: rgba(255, 247, 225, 0.34); }
-    .btn.primary { background: linear-gradient(135deg, var(--gold), var(--orange)); color: #241000; border-color: transparent; box-shadow: 0 16px 36px rgba(247, 147, 26, 0.28); }
-    .btn.green { background: rgba(53, 198, 107, 0.14); border-color: rgba(53, 198, 107, 0.28); }
-    .btn.blue { background: rgba(141, 220, 255, 0.12); border-color: rgba(141, 220, 255, 0.3); }
-    .hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.76fr); gap: 28px; align-items: stretch; }
-    .hero-card, .game-card, .info-card, .feature-card { border: 1px solid var(--border); background: linear-gradient(180deg, var(--panel-strong), var(--panel)); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
-    .hero-card { border-radius: 34px; padding: clamp(30px, 6vw, 64px); position: relative; overflow: hidden; }
-    .hero-card::after { content: ""; position: absolute; right: -80px; bottom: -120px; width: 320px; height: 320px; border-radius: 50%; border: 54px solid rgba(247, 183, 51, 0.08); pointer-events: none; }
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #ffd978; font-size: 0.82rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
-    h1 { margin: 0; max-width: 780px; font-size: clamp(3rem, 8vw, 6.5rem); line-height: 0.9; letter-spacing: -0.08em; }
-    .lede { max-width: 720px; margin: 24px 0 0; color: var(--muted); font-size: clamp(1.08rem, 2.4vw, 1.35rem); line-height: 1.55; }
-    .sublede { margin-top: 16px; color: rgba(255,247,225,.8); line-height: 1.55; }
-    .game-card,.feature-card { border-radius: 30px; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
-    .game-card { min-height: 420px; }
-    .moneypoly-art { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 22px; border: 1px solid var(--border); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28); background: rgba(0, 0, 0, 0.25); }
-    .game-card h2,.info-card h2,.feature-card h2 { margin: 18px 0 10px; font-size: 1.55rem; letter-spacing: -0.04em; }
-    .game-card p,.info-card p,.feature-card p { margin: 0; color: var(--muted); line-height: 1.55; }
-    .section { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .section.two { grid-template-columns: repeat(2, 1fr); }
-    .section.five { grid-template-columns: repeat(5, 1fr); }
-    .info-card,.feature-card { border-radius: 24px; padding: 22px; }
-    .badge { display: inline-flex; width: 42px; height: 42px; align-items: center; justify-content: center; border-radius: 14px; background: rgba(247, 183, 51, 0.14); border: 1px solid rgba(247, 183, 51, 0.22); font-size: 1.2rem; }
-    .mini-label { color: #ffd978; font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; }
-    .partner-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 28px; color: rgba(255, 247, 225, 0.7); font-size: 0.86rem; font-weight: 800; }
-    .partner-mark { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255, 247, 225, 0.16); background: rgba(255, 247, 225, 0.07); color: var(--text); }
-    .footer { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 30px; padding: 0 4px; color: rgba(255, 247, 225, 0.62); font-size: 0.94rem; }
-    @media (max-width: 980px) { .section.five { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 840px) { .nav { align-items: flex-start; margin-bottom: 28px; } .hero, .section, .section.two, .section.five { grid-template-columns: 1fr; } .game-card { min-height: auto; } }
-    @media (max-width: 560px) { .shell { width: min(100% - 22px, 1120px); padding-top: 16px; } .nav { flex-direction: column; } .nav-links, .actions,.mini-actions { width: 100%; } .btn { width: 100%; } .hero-card { border-radius: 26px; padding: 28px 22px; } .game-card, .info-card,.feature-card { border-radius: 22px; } }
-  </style>
+  <meta name="description" content="History of Money is the flagship Learning Bitcoin Foundation workshop path inside EDK: start with Moneypoly, understand why money emerges, and host the lesson live." />
+  <title>History of Money · Learning Bitcoin Foundation</title>
+  <link rel="stylesheet" href="/assets/edk.css?v=4" />
 </head>
-<body><a class="global-home-button" href="/" aria-label="Home" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(33,60,36,.35);background:rgba(255,250,240,.94);color:#172016;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px)">⌂ Home</a>
-  <main class="shell">
-    <header class="nav" aria-label="Site navigation">
-      <a class="brand" href="./" aria-label="History of Money home"><span class="coin">₿</span><span>History of Money</span></a>
+<body class="home-page"><a class="global-home-button" href="/" aria-label="Home" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(33,60,36,.18);background:rgba(255,250,240,.94);color:#172016;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.12);backdrop-filter:blur(10px)">⌂ Home</a>
+  <main class="home-shell">
+    <header class="app-header" aria-label="Site navigation">
+      <a class="brand" href="./" aria-label="History of Money home">
+        <img class="brand-logo-img" src="/assets/icons/learning-bitcoin-foundation-logo.jpg" alt="Learning Bitcoin Foundation" />
+        <span class="brand-lockup"><span class="brand-title">History of Money</span><span class="brand-subtitle">Learning Bitcoin Foundation workshop</span></span>
+      </a>
       <nav class="nav-links">
-        <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play</a>
-        <a class="btn" href="./learn/">Learn</a>
-        <a class="btn" href="./host/">Host</a>
-        <a class="btn" href="./resources/medici/">Medici Kit</a>
+        <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Start flagship lesson</a>
+        <a class="btn blue" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play Moneypoly</a>
+        <a class="btn ghost" href="./host/">Host</a>
+        <a class="btn ghost" href="./learn/">Learn</a>
       </nav>
+      <button class="btn hamburger" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">☰ Menu</button>
     </header>
 
-    <section class="hero">
-      <article class="hero-card">
-        <span class="eyebrow">Flagship experience</span>
-        <h1>Feel the money problem before the theory.</h1>
-        <p class="lede">History of Money is now the front door to EDK: one coherent path from barter friction to money, from money to fiat failure, and from there to Bitcoin.</p>
-        <p class="sublede">Everything else now supports that flagship journey: play the market, learn the lesson, teach the workshop, then go deeper with the broader curriculum and Medici host materials.</p>
-        <div class="actions">
-          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Start with Moneypoly</a>
-          <a class="btn green" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open flagship lesson</a>
-          <a class="btn blue" href="./host/">Teach it live</a>
-        </div>
-        <div class="partner-strip" aria-label="Project partners">
-          <span>In collaboration with</span>
-          <span class="partner-mark">Learning Bitcoin Foundation</span>
-          <span class="partner-mark">My First Bitcoin</span>
-          <span class="partner-mark">EDK</span>
-        </div>
-      </article>
+    <nav class="mobile-menu" id="mobile-menu">
+      <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Start flagship lesson</a>
+      <a class="btn" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play Moneypoly</a>
+      <a class="btn" href="./host/">Host mode</a>
+      <a class="btn" href="./learn/">Learn mode</a>
+      <a class="btn" href="./resources/medici/">Medici host kit</a>
+    </nav>
 
-      <aside class="game-card" aria-label="Moneypoly preview">
-        <img class="moneypoly-art" src="/assets/moneypoly-board-logo.jpg" alt="Moneypoly: The Evolution of Currency board game artwork" loading="eager" />
-        <div>
-          <span class="mini-label">Start here</span>
-          <h2>Moneypoly is the main entry point.</h2>
-          <p>It gives the site a clear first move: let learners struggle with barter, discover why saleable money wins, and carry that insight into fiat and Bitcoin.</p>
+    <section class="home-hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Flagship workshop</span>
+        <h1>History of Money, taught the Learning Bitcoin Foundation way.</h1>
+        <p class="lede">This is the flagship workshop path: start with a felt market problem, show why money emerges, then carry that insight into fiat fragility and Bitcoin.</p>
+        <p class="home-kicker">The experience stays centered on History of Money, with Moneypoly as the hands-on entry point and host materials ready for live workshops, classrooms, and conference sessions.</p>
+        <div class="actions">
+          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Start the flagship lesson</a>
+          <a class="btn blue" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play the market first</a>
+          <a class="btn green" href="./host/">Run it live</a>
         </div>
-        <div class="mini-actions">
-          <a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play now</a>
-          <a class="btn" href="./learn/">See the full learning path</a>
+        <div class="brand-row">
+          <span class="brand-mark">Learning Bitcoin Foundation</span>
+          <span class="brand-mark">EDK curriculum</span>
+          <span class="brand-mark">Built for workshops, meetups, and classrooms</span>
+        </div>
+      </div>
+      <aside class="home-side">
+        <div class="brand-note">
+          <img src="/assets/icons/learning-bitcoin-foundation-logo.jpg" alt="Learning Bitcoin Foundation logo" />
+          <div>
+            <strong>Presented as an LBF workshop property</strong>
+            <p>Premium, facilitator-ready, and grounded in experiential education instead of abstract explanation first.</p>
+          </div>
+        </div>
+        <div class="callout warm">
+          <span class="eyebrow">Workshop context</span>
+          <h3>Bitcoin Is For Everyone · Portland 2026</h3>
+          <p>History of Money is being shaped to run cleanly in live conference settings: strong first impression, obvious facilitator flow, and resources that travel well into the room.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><strong>1</strong><p>Flagship lesson that anchors the site</p></div>
+          <div class="stat-card"><strong>3</strong><p>Clear paths: learner, host, experimental</p></div>
+          <div class="stat-card"><strong>12</strong><p>Supporting curriculum blocks behind the core journey</p></div>
         </div>
       </aside>
     </section>
 
-    <section class="section five" aria-label="Flagship path">
-      <article class="info-card">
-        <span class="badge">1</span>
-        <h2>Start here</h2>
-        <p>Use the homepage and flagship lesson as the clean entry point for the product family.</p>
-      </article>
-      <article class="info-card">
-        <span class="badge">2</span>
-        <h2>Play</h2>
-        <p>Lead with Moneypoly so the market problem is felt before it is explained.</p>
-      </article>
-      <article class="info-card">
-        <span class="badge">3</span>
-        <h2>Learn</h2>
-        <p>Frame the core concepts inside Block 02, then continue the money story into Block 03 and beyond.</p>
-      </article>
-      <article class="info-card">
-        <span class="badge">4</span>
-        <h2>Teach</h2>
-        <p>Switch to Host mode for run-of-show guidance, printables, and facilitator decisions.</p>
-      </article>
-      <article class="info-card">
-        <span class="badge">5</span>
-        <h2>Go deeper</h2>
-        <p>Use Medici resources and the rest of EDK as supporting depth, not competing first impressions.</p>
-      </article>
+    <section class="section" aria-label="Audience paths">
+      <div class="section-head"><div><span class="eyebrow">Choose the right entry</span><h2>Three flows, one flagship story.</h2></div></div>
+      <div class="audience-grid">
+        <article class="path-card learner">
+          <span class="pill gold">Learner path</span>
+          <h3>I want to understand the idea.</h3>
+          <p>Start with Block 02, use Moneypoly when you want to feel the market friction, then continue into fiat and Bitcoin.</p>
+          <ul class="mini-list"><li>Homepage → Block 02</li><li>Moneypoly inside the lesson</li><li>Continue to Block 03</li></ul>
+          <div class="actions"><a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open learner path</a></div>
+        </article>
+        <article class="path-card host">
+          <span class="pill green">Host path</span>
+          <h3>I need to run this with a room.</h3>
+          <p>Use Host mode for timing, printables, room formats, and the clean extension into Medici once the flagship lesson lands.</p>
+          <ul class="mini-list"><li>Host flow and session formats</li><li>Facilitator kit and printables</li><li>Conference-ready room setup</li></ul>
+          <div class="actions"><a class="btn green" href="./host/">Open host path</a></div>
+        </article>
+        <article class="path-card experimental">
+          <span class="pill blue">Experimental path</span>
+          <h3>I want to test wallets and live labs.</h3>
+          <p>Explore Fedi and sats-market pilots only after the core History of Money experience is understood.</p>
+          <ul class="mini-list"><li>Clearly secondary to the flagship lesson</li><li>Useful for workshop pilots</li><li>Public but intentionally not the front door</li></ul>
+          <div class="actions"><a class="btn blue" href="./fedi/">Open experimental lab</a></div>
+        </article>
+      </div>
     </section>
 
-    <section class="section two" aria-label="Core surfaces">
-      <article class="feature-card">
-        <span class="mini-label">Learn path</span>
-        <h2>Flagship lesson + deeper curriculum</h2>
-        <p>Learn mode now makes the sequence obvious: optional primer, flagship lesson, next lesson, then the supporting blocks for mastery.</p>
-        <div class="mini-actions"><a class="btn primary" href="./learn/">Open Learn mode</a></div>
-      </article>
-      <article class="feature-card">
-        <span class="mini-label">Host layer</span>
-        <h2>Medici host kit is now intentionally integrated.</h2>
-        <p>Medici is positioned as the live-teaching extension for trust, ledgers, banking networks, and Florence role-play after the core lesson lands.</p>
-        <div class="mini-actions"><a class="btn" href="./resources/medici/">Open Medici kit</a><a class="btn" href="./host/">Open Host mode</a></div>
-      </article>
+    <section class="section">
+      <div class="section-head"><div><span class="eyebrow">Flagship narrative</span><h2>Homepage → Block 02 → Host/resources now reads as one system.</h2></div></div>
+      <div class="stack-card">
+        <article class="stack-step"><span class="pill">1 · Front door</span><strong>Homepage frames the workshop</strong><p>Lead with the flagship promise, not a pile of equal-weight pages.</p></article>
+        <article class="stack-step"><span class="pill gold">2 · Block 02</span><strong>History of Money teaches the core idea</strong><p>Barter friction, money emergence, then the bridge to fiat and Bitcoin.</p></article>
+        <article class="stack-step"><span class="pill green">3 · Host mode</span><strong>Facilitators get a dedicated operating surface</strong><p>Room format, printables, sequence, and live prompts stay together.</p></article>
+        <article class="stack-step"><span class="pill blue">4 · Medici/resources</span><strong>Extensions support the flagship lesson</strong><p>Resources now deepen the workshop instead of competing with it.</p></article>
+      </div>
     </section>
 
-    <section class="section" aria-label="Supporting curriculum">
-      <article class="info-card">
-        <span class="mini-label">Primer</span>
-        <h2>Block 01: What Is Money?</h2>
-        <p>Use it when a group needs basic money vocabulary before stepping into the flagship market lesson.</p>
-        <div class="mini-actions"><a class="btn" href="./BLOCK%2001%20-%20WHAT%20IS%20MONEY/">Open Block 01</a></div>
-      </article>
-      <article class="info-card">
-        <span class="mini-label">Next step</span>
-        <h2>Block 03: Fiat & Inflation</h2>
-        <p>Continue immediately after History of Money to show how modern money systems reopen old weaknesses.</p>
-        <div class="mini-actions"><a class="btn" href="./BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/">Open Block 03</a></div>
-      </article>
-      <article class="info-card">
-        <span class="mini-label">Supporting depth</span>
-        <h2>Full 12-block curriculum</h2>
-        <p>The broader EDK curriculum remains available for classes, self-study, and follow-on learning after the flagship experience.</p>
-        <div class="mini-actions"><a class="btn" href="./learn/">Browse curriculum</a></div>
-      </article>
+    <section class="section">
+      <div class="grid two">
+        <article class="home-panel feature-card">
+          <span class="eyebrow">Recommended start</span>
+          <h2>Block 02 is the anchor.</h2>
+          <p>History of Money now carries the premium educational story: experience first, explanation second, depth after the insight lands.</p>
+          <div class="actions"><a class="btn primary" href="./BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open flagship lesson</a><a class="btn ghost" href="./learn/">See the full learning path</a></div>
+        </article>
+        <article class="home-panel">
+          <span class="eyebrow">Host credibility</span>
+          <h2>Ready for meetups, schools, and Portland-style conference rooms.</h2>
+          <p>The workshop layer now communicates structure and trust more clearly, with Learning Bitcoin Foundation branding cues and a cleaner facilitator flow.</p>
+          <div class="actions"><a class="btn green" href="./host/">Open Host mode</a><a class="btn ghost" href="./resources/medici/">Open Medici kit</a></div>
+        </article>
+      </div>
     </section>
 
-    <section class="section two" aria-label="Experimental labs">
-      <article class="info-card">
-        <span class="mini-label">Experimental lab</span>
-        <h2>Fedi Sats Market is now a pilot, not the front door.</h2>
-        <p>The live sats-trading surfaces remain public, but they are positioned as workshop experiments for facilitators and wallet testing rather than core flagship onboarding.</p>
-      </article>
-      <article class="info-card">
-        <span class="mini-label">Use it when ready</span>
-        <h2>Find the lab from Host mode.</h2>
-        <p>Once the core lesson is stable in the room, facilitators can explore the experimental Fedi and solo Sats Market labs from the host layer.</p>
-        <div class="mini-actions"><a class="btn" href="./host/">Open Host mode</a><a class="btn" href="./fedi/">Open Fedi lab</a></div>
-      </article>
+    <section class="section">
+      <div class="grid three">
+        <article class="card"><span class="pill green">Primer</span><h3>Block 01: What Is Money?</h3><p>Use it when a group needs basic vocabulary before the flagship workshop.</p><a class="btn ghost" href="./BLOCK%2001%20-%20WHAT%20IS%20MONEY/">Open Block 01</a></article>
+        <article class="card feature-card"><span class="pill gold">Next lesson</span><h3>Block 03: Fiat & Inflation</h3><p>Continue immediately after History of Money so the lesson keeps moving.</p><a class="btn primary" href="./BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/">Open Block 03</a></article>
+        <article class="card"><span class="pill blue">Host extension</span><h3>Medici workshop kit</h3><p>Add banking, trust, and Florence role-play after the core market lesson is secure.</p><a class="btn blue" href="./resources/medici/">Open Medici kit</a></article>
+      </div>
     </section>
 
-    <footer class="footer">
-      <span>HistoryOfMoney.me · flagship experience inside EDK</span>
-      <span>Built for self-learners first, then facilitators, classrooms, and experimental labs.</span>
+    <footer class="home-footer">
+      <div class="home-footer-note">
+        <strong>History of Money is the flagship Learning Bitcoin Foundation workshop layer inside EDK.</strong>
+        <p class="small">Centered on one durable lesson. Branded for trust. Structured for self-learners, facilitators, and live conference delivery.</p>
+      </div>
+      <div class="footer-links"><a class="btn ghost" href="./learn/">Learn</a><a class="btn ghost" href="./host/">Host</a><a class="btn ghost" href="./resources/medici/">Medici Kit</a></div>
     </footer>
   </main>
 
+  <script src="/assets/edk.js?v=2"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
