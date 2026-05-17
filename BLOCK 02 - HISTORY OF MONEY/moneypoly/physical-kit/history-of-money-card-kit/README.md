@@ -9,9 +9,10 @@ This kit adds a **physical card-trading format** for Block 02 that fits JP's new
 - `app.js` — the 8 card categories, default counts, mirrored back-page logic, and sheet rendering
 - `generate-bw-pdf.py` — generates the office-printer-friendly black-and-white PDF
 - `generate-bw-pdf-8up.py` — generates the safer 8-up black-and-white PDF
+- `generate-color-pdf.py` — generates the cleaner color PDF
 - `history-of-money-card-trading-kit-bw.pdf` — bundled 9-up black-and-white printable deck
 - `history-of-money-card-trading-kit-bw-8up.pdf` — bundled safer 8-up black-and-white printable deck
-- `history-of-money-card-trading-kit.pdf` — rebuilt color PDF to better match the live print card look
+- `history-of-money-card-trading-kit.pdf` — bundled cleaner color printable deck
 
 ## Card types included
 
