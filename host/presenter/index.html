@@ -48,6 +48,7 @@
     h1{font-size:clamp(2.6rem,5.2vw,5.8rem);line-height:.9;letter-spacing:-.06em;margin-top:10px;max-width:11ch}
     .subtitle{margin-top:10px;font-size:clamp(1rem,1.5vw,1.24rem);line-height:1.5;color:var(--muted);max-width:58rem}
     .controls{display:grid;gap:10px;align-content:start;min-width:min(100%,360px)}
+    .control-note{font-size:.84rem;line-height:1.45;color:var(--soft);text-align:right}
     .control-row{justify-content:flex-end}
     .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 16px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.07);color:var(--text);text-decoration:none;font-weight:850}
     .btn:hover{background:rgba(255,255,255,.12)}
@@ -101,8 +102,8 @@
     .meta-strip{align-items:center}
     .headline-wrap{display:grid;gap:16px;max-width:66rem}
     .slide-kicker{font-size:clamp(1rem,1.55vw,1.32rem);line-height:1.45;color:var(--muted);max-width:52rem}
-    .slide-title{font-size:clamp(2.9rem,6vw,6.5rem);line-height:.92;letter-spacing:-.07em;max-width:13ch}
-    .slide-subtitle{font-size:clamp(1.2rem,2vw,1.8rem);line-height:1.45;color:#f4efe6;max-width:46rem}
+    .slide-title{font-size:clamp(3.2rem,6.5vw,7rem);line-height:.9;letter-spacing:-.07em;max-width:11ch}
+    .slide-subtitle{font-size:clamp(1.28rem,2.15vw,1.95rem);line-height:1.42;color:#f4efe6;max-width:38rem}
     .audience-panel{padding:18px 20px;border-radius:24px;border:1px solid rgba(var(--accent-rgb),.18);background:linear-gradient(135deg,rgba(var(--accent-rgb),.18),rgba(255,255,255,.04));display:grid;gap:12px;max-width:64rem}
     .audience-panel h3{font-size:.86rem;letter-spacing:.18em;text-transform:uppercase;color:#fff3cf}
     .audience-line{font-size:clamp(1.5rem,2.9vw,2.5rem);line-height:1.18;font-weight:900;max-width:25ch}
@@ -116,16 +117,8 @@
     .guide-card ul{margin:0;padding-left:18px;display:grid;gap:10px}
     .guide-card li{line-height:1.5;color:var(--muted);font-size:1rem}
     .guide-card strong{color:var(--text)}
-    .script-callout{padding:18px 20px;border-radius:22px;background:rgba(137,182,255,.12);border:1px solid rgba(137,182,255,.22);font-size:clamp(1.1rem,1.55vw,1.36rem);line-height:1.55;color:#edf4ff;max-width:66rem}
-    .slide-footer{justify-content:space-between;align-items:flex-end;gap:16px}
-    .bridge-box{flex:1;min-width:300px;padding:18px 20px;border-radius:22px;background:rgba(97,216,164,.12);border:1px solid rgba(97,216,164,.22);display:grid;gap:8px}
-    .bridge-box h4{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:#bbf5dd}
-    .bridge-box p{font-size:clamp(1.12rem,1.65vw,1.42rem);line-height:1.45;color:#f6fff9}
-    .success-chip{display:grid;gap:10px;min-width:250px;max-width:340px}
-    .success-chip .panel{padding:16px 18px;background:rgba(0,0,0,.2)}
-    .success-chip h4{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin-bottom:8px}
-    .success-chip ul{margin:0;padding-left:18px;display:grid;gap:8px}
-    .success-chip li{line-height:1.45;color:var(--muted)}
+    .slide-footer{justify-content:flex-start;align-items:flex-end;gap:16px}
+    .stage-takeaway{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);font-size:1rem;font-weight:900;color:var(--accent-soft)}
     .console-column{display:grid;gap:14px}
     .console-card,.jump-card,.panel{padding:18px;display:grid;gap:12px}
     .console-card p,.jump-card p,.panel p{color:var(--muted);line-height:1.55}
@@ -156,7 +149,9 @@
     .compact .layout{grid-template-columns:1fr}
     .compact .console-column,.compact .jump-card{display:none}
     .compact .slide-shell{min-height:84vh;padding:clamp(24px,3vw,44px)}
-    .compact .slide-title{max-width:12ch}
+    .compact .slide-title{max-width:10ch}
+    .compact .slide-kicker{display:none}
+    .compact .slide-subtitle{max-width:32rem;font-size:clamp(1.18rem,2vw,1.62rem)}
     .compact .audience-line{font-size:clamp(1.8rem,3.4vw,2.9rem)}
     .compact .guide-card{background:rgba(255,255,255,.025)}
     .compact .timeline-card{padding:14px 16px}
@@ -173,14 +168,15 @@
       .slide-shell{min-height:auto}
       .deck-code{display:none}
       .slide-footer{flex-direction:column;align-items:stretch}
+      .control-note{text-align:left}
       .center-note{order:-1}
     }
     @media print{
       body{background:#fff;color:#000}
       .controls,.timeline-card,.console-column,.bottom-nav,.global-home-button,.gate{display:none!important}
       .app{padding:0}
-      .brand,.hero-card,.slide-shell,.guide-card,.bridge-box,.script-callout,.panel{box-shadow:none;background:#fff;color:#000;border-color:#999}
-      .subtitle,.slide-kicker,.guide-card li,.bridge-box p,.script-callout,.note-block p,.note-block li,.success-chip li{color:#111!important}
+      .brand,.hero-card,.slide-shell,.guide-card,.panel,.stage-takeaway,.audience-panel,.beat{box-shadow:none;background:#fff;color:#000;border-color:#999}
+      .subtitle,.slide-kicker,.slide-subtitle,.audience-line,.beat p,.note-block p,.note-block li,.stage-takeaway{color:#111!important}
     }
   </style>
 </head>
@@ -206,12 +202,12 @@
       <section class="brand">
         <div class="eyebrow">History of Money · Moderator presentation</div>
         <h1>Projector-first deck for the flagship workshop</h1>
-        <p class="subtitle">Designed for a room of 100: fewer ideas per slide, stronger audience instructions, bigger phase markers, and cleaner bridges into Medici or Block 03.</p>
+        <p class="subtitle">Designed for a room of 100: clean audience-facing slides for the 27-minute core arc, with an optional 8-minute Medici extension when the room and clock support it.</p>
       </section>
       <section class="controls" aria-label="Presenter controls">
         <div class="control-row">
-          <button class="btn" id="compactBtn" type="button">Projector mode</button>
-          <button class="btn" id="fullscreenBtn" type="button">Fullscreen</button>
+          <button class="btn" id="compactBtn" type="button">Projector mode (P)</button>
+          <button class="btn" id="fullscreenBtn" type="button">Fullscreen (F)</button>
           <button class="btn" id="printBtn" type="button">Print slide</button>
         </div>
         <div class="control-row">
@@ -221,8 +217,10 @@
         <div class="statusbar">
           <span class="pill gold" id="stageLabel"></span>
           <span class="pill blue" id="slideTime"></span>
+          <span class="pill green" id="deckModePill">Core 27 min · Medici +8 optional</span>
           <span class="pill" id="slideCount"></span>
         </div>
+        <div class="control-note">Audience screen stays cleanest in Projector mode. Use the right-side console for notes and branch cues.</div>
       </section>
     </header>
 
@@ -232,7 +230,7 @@
           <div class="timeline-top">
             <div>
               <div class="eyebrow">Run of show</div>
-              <h3 id="deckRuntime">Core flow · 35 minutes</h3>
+              <h3 id="deckRuntime">Core 27 min · Medici +8 optional</h3>
             </div>
             <div class="pill green" id="slideObjective"></div>
           </div>
@@ -267,32 +265,10 @@
                   <div class="audience-line" id="slidePrompt"></div>
                   <div class="audience-beats" id="slideBeats"></div>
                 </section>
-
-                <div class="room-grid">
-                  <section class="guide-card">
-                    <h4>Presenter beats</h4>
-                    <ul id="slideExplain"></ul>
-                  </section>
-                  <section class="guide-card">
-                    <h4>Watch the room for</h4>
-                    <ul id="slideCues"></ul>
-                  </section>
-                </div>
-
-                <section class="script-callout" id="slideScript"></section>
               </div>
 
               <div class="slide-footer">
-                <section class="bridge-box">
-                  <h4>Bridge line</h4>
-                  <p id="slideTransition"></p>
-                </section>
-                <section class="success-chip">
-                  <div class="panel">
-                    <h4>Success check</h4>
-                    <ul id="slideChecks"></ul>
-                  </div>
-                </section>
+                <div class="stage-takeaway" id="slideTakeaway"></div>
               </div>
             </div>
           </section>
@@ -324,6 +300,26 @@
               <h4>Debrief / explain / branch</h4>
               <p id="slideDebrief"></p>
             </section>
+            <section class="note-block">
+              <h4>Presenter beats</h4>
+              <ul id="slideExplain"></ul>
+            </section>
+            <section class="note-block">
+              <h4>Watch the room for</h4>
+              <ul id="slideCues"></ul>
+            </section>
+            <section class="note-block">
+              <h4>Bridge line</h4>
+              <p id="slideTransition"></p>
+            </section>
+            <section class="note-block">
+              <h4>Success check</h4>
+              <ul id="slideChecks"></ul>
+            </section>
+            <section class="note-block">
+              <h4>Suggested talk track</h4>
+              <p id="slideScript"></p>
+            </section>
           </div>
         </article>
 
@@ -349,6 +345,8 @@
   <script>
     const PASSWORD = 'portland2026';
     const STORAGE_KEY = 'homPresenterUnlocked';
+    const COMPACT_KEY = 'homPresenterCompact';
+    const CORE_RUNTIME = 'Core 27 min · Medici +8 optional';
     const gate = document.getElementById('gate');
     const app = document.getElementById('app');
     const gateForm = document.getElementById('gateForm');
@@ -361,6 +359,9 @@
     }
 
     if (localStorage.getItem(STORAGE_KEY) === 'true') unlockPresenter();
+    if (localStorage.getItem(COMPACT_KEY) === 'true' || new URLSearchParams(window.location.search).get('projector') === '1') {
+      document.body.classList.add('compact');
+    }
 
     gateForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -674,7 +675,8 @@
       stage: document.getElementById('stageLabel'),
       center: document.getElementById('centerNote'),
       runtime: document.getElementById('deckRuntime'),
-      number: document.getElementById('slideNumber')
+      number: document.getElementById('slideNumber'),
+      takeaway: document.getElementById('slideTakeaway')
     };
 
     function render() {
@@ -691,13 +693,14 @@
       els.prompt.textContent = slide.prompt;
       els.script.textContent = slide.script;
       els.transition.textContent = slide.transition;
+      els.takeaway.textContent = slide.transition;
       els.noteTitle.textContent = `${slide.tag} notes`;
       els.notes.textContent = slide.notes;
       els.debrief.textContent = slide.debrief;
       els.count.textContent = `Slide ${index + 1} of ${slides.length}`;
       els.stage.textContent = slide.phase;
       els.center.textContent = `${slide.phase} · ${slide.objective}`;
-      els.runtime.textContent = 'Core flow · 35 minutes';
+      els.runtime.textContent = CORE_RUNTIME;
       els.number.textContent = String(index + 1).padStart(2, '0');
 
       els.beats.innerHTML = slide.beats.map(([label, copy]) => `<div class="beat"><b>${label}</b><p>${copy}</p></div>`).join('');
@@ -742,11 +745,19 @@
       }
     });
 
-    document.getElementById('compactBtn').addEventListener('click', () => document.body.classList.toggle('compact'));
+    document.getElementById('compactBtn').addEventListener('click', () => {
+      const on = document.body.classList.toggle('compact');
+      localStorage.setItem(COMPACT_KEY, String(on));
+    });
     document.getElementById('fullscreenBtn').addEventListener('click', async () => {
       try {
-        if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
-        else await document.exitFullscreen();
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+          document.body.classList.add('compact');
+          localStorage.setItem(COMPACT_KEY, 'true');
+        } else {
+          await document.exitFullscreen();
+        }
       } catch (_) {}
     });
     document.getElementById('printBtn').addEventListener('click', () => window.print());
