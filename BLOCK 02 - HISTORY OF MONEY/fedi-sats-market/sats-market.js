@@ -125,8 +125,8 @@
     $('[data-mode-label]').textContent = adapter ? 'Fedi adapter' : 'Solo';
     $('[data-player-count]').textContent = state.wallets.length;
     $('[data-room-copy]').textContent = adapter
-      ? 'A wallet adapter is available. Confirming a buy can call the injected app transfer method.'
-      : 'Solo two-wallet mode uses a local game ledger, so you can test the full flow without risking funds.';
+      ? 'A wallet adapter is available. This bridge lab can now hand the same confirmation step to a real wallet flow.'
+      : 'Solo two-wallet mode uses a local game ledger, so you can test the bridge from money theory to wallet behavior without risking funds.';
 
     $('[data-buyer-avatar]').textContent = b.avatar;
     $('[data-buyer-name]').textContent = b.name;
@@ -174,10 +174,10 @@
     state.round = state.round >= 6 ? 1 : state.round + 1;
     state.countered = false;
     if (state.round === 3) {
-      receipt('cold', 'Market shock', 'Communication and trust matter more. Profiles reduce risk, but they do not remove the need to verify payments.');
+      receipt('cold', 'Market shock', 'Communication and trust matter more. Profiles reduce risk, but they do not remove the need to verify payments and counterparties.');
     }
     if (state.round === 5) {
-      receipt('cold', 'Custody lesson', 'Cold storage sats are protected from impulse spending, but unavailable for quick trades.');
+      receipt('cold', 'Custody lesson', 'Cold storage sats are protected from impulse spending, but unavailable for quick trades. Better money still requires better custody habits.');
     }
   }
 
@@ -189,7 +189,7 @@
       return;
     }
     state.pending = { amount: s.price, sellerId: s.id, buyerId: b.id };
-    $('[data-feedback]').textContent = 'Confirm before sats move. This mirrors the real wallet confirmation step.';
+    $('[data-feedback]').textContent = 'Confirm before sats move. This is the bridge moment from classroom theory into real wallet behavior.';
     render();
   }
 
@@ -207,7 +207,7 @@
         state.useful += 1;
       }
       receipt('buy', `Bought ${s.offer}`, `${b.name} sent ${amount} sats to ${s.name}. ${useful ? `Met ${b.name}'s ${s.category} need.` : 'Purchase did not match an active need.'}`, result);
-      $('[data-feedback]').textContent = `Confirmed: ${amount} sats sent from ${b.name} to ${s.name}.`;
+      $('[data-feedback]').textContent = `Confirmed: ${amount} sats sent from ${b.name} to ${s.name}. Debrief whether sats improved coordination or just made the trade legible.`;
       state.pending = null;
       nextRound();
       rotateSellerOffer();
@@ -264,7 +264,7 @@
     b.cold += amount;
     if (b.needs.includes('Savings') && !b.metNeeds.includes('Savings')) b.metNeeds.push('Savings');
     receipt('cold', 'Saved to cold storage', `${b.name} moved ${amount} sats out of the spending wallet. Protected, but unavailable for quick trades.`);
-    $('[data-feedback]').textContent = `${amount} sats moved to cold storage for ${b.name}.`;
+    $('[data-feedback]').textContent = `${amount} sats moved to cold storage for ${b.name}. Now ask what got easier and what responsibility stayed with the holder.`;
     render();
   }
 

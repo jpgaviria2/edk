@@ -1168,8 +1168,8 @@
     $('[data-results]').classList.remove('hidden');
     toggleCommodityButton(true);
     $('[data-result-summary]').textContent = survived
-      ? `You survived the ${profile.name} board with food, water, and shelter after ${state.tradeAttempts} trade attempts. Now compare whether this money helped Maya preserve wealth for future generations.`
-      : `You ended the ${profile.name} board short on ${missing.map(label).join(', ')} after ${state.tradeAttempts} trade attempts. Survival comes first before generational wealth is possible.`;
+      ? `You survived the ${profile.name} board with food, water, and shelter after ${state.tradeAttempts} trade attempts. Debrief the coordination lesson now, then compare whether this money helped Maya preserve wealth for future generations.`
+      : `You ended the ${profile.name} board short on ${missing.map(label).join(', ')} after ${state.tradeAttempts} trade attempts. Debrief the failure clearly: survival comes first before generational wealth is possible.`;
     const lessons = [
       `Survived: ${survived ? 'Yes' : 'No — missing ' + missing.map(label).join(', ')}`,
       `Trades: ${state.successfulTrades} successful, ${state.failedTrades} failed`,
@@ -1179,10 +1179,19 @@
       `Portability / divisibility / ease of use: ${portabilityScore}/5`,
       state.mode === 'medici' ? `Ledger trust: signed slips ${human().inventory.slips || 0}, branch reserves F/V/R ${state.bankReserves.Florence}/${state.bankReserves.Venice}/${state.bankReserves.Rome}, bank run risk ${state.bankRunRisk}` : null,
       `Generational wealth test: ${generationalWealthSummary(profile, portabilityScore)}`,
+      `Bridge: ${bridgeRecommendation()}`,
       `Lesson: ${profile.lesson}`
     ];
     $('[data-result-lessons]').innerHTML = lessons.filter(Boolean).map((lesson) => `<li>${lesson}</li>`).join('') + comparisonHtml(state.mode);
     setCard(`${profile.name} round complete`, profile.lesson, false);
+  }
+
+  function bridgeRecommendation() {
+    if (state.mode === 'barter') return 'Replay with commodity money, then name why broad acceptability changes the market.';
+    if (state.mode === 'commodity' || state.mode === 'gold' || state.mode === 'medici') return 'Compare this board to fiat and Bitcoin, then decide whether to test the sats lab or continue the flagship explanation.';
+    if (state.mode === 'fiat') return 'Go straight to Block 03 after debriefing purchasing power, freezes, and policy risk.';
+    if (state.mode === 'bitcoin') return 'Use Sats Market to make the wallet layer concrete, or return to Block 03/04 to connect hard money to the wider curriculum.';
+    return 'Return to the flagship lesson page and make the explanation explicit before moving on.';
   }
 
   function generationalWealthSummary(profile, portabilityScore) {
@@ -1196,7 +1205,7 @@
   }
 
   function comparisonHtml(activeMode = state.mode) {
-    return `<li class="comparison-block"><strong>Same needs, different money systems</strong><p class="comparison-intro">Each era is scored against the full properties of money.</p><div class="comparison-grid">${Object.entries(eraProfiles).map(([key, profile]) => comparisonCardHtml(key, profile, activeMode)).join('')}</div></li>`;
+    return `<li class="comparison-block"><strong>Same needs, different money systems</strong><p class="comparison-intro">Use this to move from play into explanation: same needs, same shocks, different money properties and outcomes.</p><div class="comparison-grid">${Object.entries(eraProfiles).map(([key, profile]) => comparisonCardHtml(key, profile, activeMode)).join('')}</div></li>`;
   }
 
   function comparisonCardHtml(key, profile, activeMode = state.mode) {
@@ -1220,7 +1229,7 @@
   }
 
   function previewCommodity() {
-    $('[data-commodity-preview]').textContent = 'Commodity preview: shells become the first common money. Traders quote prices in shells and accept them broadly, so you do not need the exact good they personally want.';
+    $('[data-commodity-preview]').textContent = 'Commodity preview: shells become the first common money. The debrief point is not just convenience; it is that trade no longer depends on the exact wants of the person in front of you.';
   }
 
   function renderAll() {

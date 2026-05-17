@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#160f08" />
   <title>Sats Market · History of Money</title>
   <link rel="stylesheet" href="../../assets/edk.css?v=2" />
-  <link rel="stylesheet" href="./sats-market.css?v=2" />
+  <link rel="stylesheet" href="./sats-market.css?v=3" />
 </head>
 <body>
   <a class="global-home-button" href="/" aria-label="Home">⌂ Home</a>
@@ -14,9 +14,9 @@
     <header class="sats-header">
       <a class="brand" href="../"><span class="logo">₿</span><span>EDK</span></a>
       <div>
-        <span class="eyebrow">Block 02 · Fedi app trade room</span>
+        <span class="eyebrow">Block 02 · bridge lab after the flagship lesson</span>
         <h1>Sats Market</h1>
-        <p>Trade with sats. Earn by helping others. Decide what to spend, what to save, and what to protect.</p>
+        <p>A modern follow-on to History of Money: trade with sats, test wallet-style decisions, and debrief what digital hard money changes — and what it doesn’t.</p>
       </div>
       <div class="header-actions">
         <button class="btn green" data-action="toggle-mode">Solo two-wallet mode</button>
@@ -30,13 +30,31 @@
       <div>
         <span class="pill gold" data-room-code>Room ATC-214</span>
         <h2 data-room-title>Ready for in-app testing</h2>
-        <p data-room-copy>Default mode uses a local game ledger. If a Fedi wallet adapter is injected later, the same confirmation flow can call real wallet transfers.</p>
+        <p data-room-copy>Use this after Moneypoly once the room already understands why money emerged. Default mode uses a local game ledger; later it can hand off to a real wallet adapter.</p>
       </div>
       <div class="room-stats">
         <span>Round <b data-round>1</b>/6</span>
         <span>Mode <b data-mode-label>Solo</b></span>
         <span>Players <b data-player-count>2</b></span>
       </div>
+    </section>
+
+    <section class="story-grid" aria-label="Lesson flow">
+      <article class="panel story-card">
+        <span class="eyebrow">Frame</span>
+        <h3>This is not the first lesson.</h3>
+        <p>Start here only after the barter problem, money emergence, and hard-money comparison are already in the room.</p>
+      </article>
+      <article class="panel story-card">
+        <span class="eyebrow">Play</span>
+        <h3>Use sats as the coordination layer.</h3>
+        <p>Buy, counter, skip, save, and swap roles so learners can feel the app-layer tradeoffs around payments and custody.</p>
+      </article>
+      <article class="panel story-card">
+        <span class="eyebrow">Debrief + bridge</span>
+        <h3>Name what Bitcoin fixed — and what humans still must do.</h3>
+        <p>Sats remove exact-match barter, but reputation, useful goods, identity, and custody habits still matter. Then bridge back to the flagship story or forward to Block 03/04.</p>
+      </article>
     </section>
 
     <section class="wallet-switcher" aria-label="Solo test wallet controls">
@@ -140,7 +158,27 @@
         <article class="panel"><h3>What did cold storage teach?</h3><p>Saving protects future purchasing power, but locked savings cannot solve every immediate need.</p></article>
       </div>
     </section>
+
+    <section class="prompt-grid bridge-grid" aria-label="Next steps">
+      <article class="panel">
+        <span class="eyebrow">Explain</span>
+        <h3>Make the lesson explicit.</h3>
+        <p>Use this room to restate the core message: better money lowers coordination costs, but it does not eliminate trust, judgment, or the need to produce real value.</p>
+      </article>
+      <article class="panel">
+        <span class="eyebrow">Bridge back</span>
+        <h3>Reconnect to the flagship lesson.</h3>
+        <p>If learners need the full narrative again, return to History of Money and compare barter, commodity money, fiat, and Bitcoin in one arc.</p>
+        <a class="btn primary" href="../">Open History of Money</a>
+      </article>
+      <article class="panel">
+        <span class="eyebrow">Bridge forward</span>
+        <h3>Keep the curriculum moving.</h3>
+        <p>After this lab, the cleanest next step is usually Block 03: broken money, inflation, and purchasing power.</p>
+        <a class="btn ghost" href="../../BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/">Open Block 03</a>
+      </article>
+    </section>
   </main>
-  <script src="./sats-market.js?v=2"></script>
+  <script src="./sats-market.js?v=3"></script>
 </body>
 </html>
