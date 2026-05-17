@@ -27,21 +27,25 @@ pageSizeStyle.id = 'page-size-style';
 document.head.appendChild(pageSizeStyle);
 
 function buildControls() {
-  countControls.innerHTML = CARD_TYPES.map(type => `
-    <label class="count-chip" for="count-${type.key}">
-      <span>${type.label}</span>
-      <input id="count-${type.key}" type="number" min="0" max="200" step="1" value="${DEFAULT_COUNT}" data-key="${type.key}" />
-    </label>
-  `).join('');
+  if (countControls) {
+    countControls.innerHTML = CARD_TYPES.map(type => `
+      <label class="count-chip" for="count-${type.key}">
+        <span>${type.label}</span>
+        <input id="count-${type.key}" type="number" min="0" max="200" step="1" value="${DEFAULT_COUNT}" data-key="${type.key}" />
+      </label>
+    `).join('');
+  }
 
-  legend.innerHTML = CARD_TYPES.map(type => `
-    <article class="legend-card">
-      <span class="legend-swatch" style="background:${type.accent}">${type.icon}</span>
-      <h3>${type.label}</h3>
-      <p><strong>${type.note}</strong></p>
-      <p>${type.lesson}</p>
-    </article>
-  `).join('');
+  if (legend) {
+    legend.innerHTML = CARD_TYPES.map(type => `
+      <article class="legend-card">
+        <span class="legend-swatch" style="background:${type.accent}">${type.icon}</span>
+        <h3>${type.label}</h3>
+        <p><strong>${type.note}</strong></p>
+        <p>${type.lesson}</p>
+      </article>
+    `).join('');
+  }
 }
 
 function readCounts() {
@@ -181,6 +185,7 @@ function render(options = {}) {
   body.classList.toggle('paper-a4', ctx.isA4);
   body.classList.toggle('paper-letter', !ctx.isA4);
   body.classList.toggle('printing-cards-only', Boolean(options.cardsOnly));
+  body.classList.toggle('url-print-mode', Boolean(options.urlPrintMode));
   applyLayoutVars(ctx);
   pageSizeStyle.textContent = `@page { size: ${ctx.isA4 ? 'A4' : 'letter'} ${ctx.landscape ? 'landscape' : 'portrait'}; margin: 0; }`;
 
@@ -188,16 +193,22 @@ function render(options = {}) {
   const frontsPages = Math.ceil(ctx.cards.length / perPage);
   const mode = options.mode || renderMode.value;
 
-  deckSummary.innerHTML = `${ctx.cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${ctx.layout.label} (${ctx.layout.cols}×${ctx.layout.rows}).`;
+  if (deckSummary) {
+    deckSummary.innerHTML = `${ctx.cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${ctx.layout.label} (${ctx.layout.cols}×${ctx.layout.rows}).`;
+  }
 
   if (!ctx.cards.length) {
-    printStage.innerHTML = '<section class="panel"><h2>No cards selected</h2><p>Add at least one card count to generate printable sheets.</p></section>';
+    if (printStage) {
+      printStage.innerHTML = '<section class="panel"><h2>No cards selected</h2><p>Add at least one card count to generate printable sheets.</p></section>';
+    }
     return;
   }
 
   const fronts = renderSheets(ctx.cards, 'front', { cardsOnly: options.cardsOnly });
   const backs = renderSheets(ctx.cards, 'back', { cardsOnly: options.cardsOnly });
-  printStage.innerHTML = [mode !== 'backs' ? fronts : '', mode !== 'fronts' ? backs : ''].join('');
+  if (printStage) {
+    printStage.innerHTML = [mode !== 'backs' ? fronts : '', mode !== 'fronts' ? backs : ''].join('');
+  }
 }
 
 function printCurrentPage(mode) {
@@ -236,9 +247,44 @@ document.addEventListener('input', event => {
   if (event.target.matches('input[data-key]')) render();
 });
 
+function applyUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const paper = params.get('paper');
+  const layout = params.get('layout');
+  const mode = params.get('mode');
+  const cardsOnly = params.get('cardsOnly') === '1';
+  const autoPrint = params.get('autoprint') === '1';
+  const counts = Number.parseInt(params.get('count') || '', 10);
+
+  if (paper && paperSize) paperSize.value = paper;
+  if (layout && layoutMode) layoutMode.value = layout;
+  if (mode && renderMode) renderMode.value = mode;
+  if (Number.isFinite(counts) && counts > 0) {
+    CARD_TYPES.forEach(type => {
+      const input = document.getElementById(`count-${type.key}`);
+      if (input) input.value = counts;
+    });
+  }
+
+  render({
+    mode: mode || undefined,
+    cardsOnly,
+    urlPrintMode: cardsOnly
+  });
+
+  if (autoPrint) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+      });
+    });
+  }
+}
+
 window.addEventListener('afterprint', () => {
+  if (window.location.search.includes('cardsOnly=1')) return;
   render();
 });
 
 buildControls();
-render();
+applyUrlParams();

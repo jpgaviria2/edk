@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>History of Money Card Trading Kit · Print</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="kit-shell">
+    <section class="controls no-print" style="display:none">
+      <article class="panel">
+        <div class="toolbar">
+          <label>Paper size
+            <select id="paperSize">
+              <option value="letter" selected>US Letter</option>
+              <option value="a4">A4</option>
+            </select>
+          </label>
+          <label>Layout
+            <select id="layoutMode">
+              <option value="safe8" selected>Landscape 8-up poker size</option>
+              <option value="dense9">Dense 9-up</option>
+            </select>
+          </label>
+          <label>Side
+            <select id="renderMode">
+              <option value="both" selected>Fronts + mirrored backs</option>
+              <option value="fronts">Fronts only</option>
+              <option value="backs">Backs only</option>
+            </select>
+          </label>
+        </div>
+        <div class="counts-grid" id="countControls"></div>
+      </article>
+    </section>
+    <section class="legend no-print" id="legend" style="display:none"></section>
+    <div id="deckSummary" class="no-print" style="display:none"></div>
+    <section class="print-stage" id="printStage"></section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
