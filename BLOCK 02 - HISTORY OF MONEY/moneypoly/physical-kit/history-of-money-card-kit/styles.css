@@ -53,7 +53,8 @@ label{display:grid;gap:6px;font-weight:700;font-size:.95rem} input,select{paddin
   @page{margin:0}
   body{background:#fff}
   .kit-shell{padding:0;max-width:none}
-  .no-print{display:none!important}
+  .hero,.controls,.legend,.no-print{display:none!important}
   .print-stage{gap:0}
   .sheet{margin:0;box-shadow:none}
+  .sheet-head{display:none!important}
 }
