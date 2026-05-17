@@ -11,6 +11,7 @@ This kit adds a **physical card-trading format** for Block 02 that fits JP's new
 - `generate-bw-pdf-8up.py` — generates the safer 8-up black-and-white PDF
 - `history-of-money-card-trading-kit-bw.pdf` — bundled 9-up black-and-white printable deck
 - `history-of-money-card-trading-kit-bw-8up.pdf` — bundled safer 8-up black-and-white printable deck
+- `history-of-money-card-trading-kit.pdf` — rebuilt color PDF to better match the live print card look
 
 ## Card types included
 
