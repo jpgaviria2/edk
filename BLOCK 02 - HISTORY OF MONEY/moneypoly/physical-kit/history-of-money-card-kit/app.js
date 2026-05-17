@@ -9,7 +9,10 @@ const CARD_TYPES = [
   { key: 'dollars', label: 'Dollars', icon: '💵', accent: '#1b9d5d', accentDark: '#0b4d2c', accentGlow: '#8bf3bf', note: 'Fiat convenience', back: 'Modern liquidity', lesson: 'Easy to use, easy to issue, and vulnerable to debasement.' }
 ];
 const DEFAULT_COUNT = 100;
-const CARDS_PER_PAGE = 9;
+const LAYOUTS = {
+  safe8: { key: 'safe8', label: 'Safer 8-up', cols: 2, rows: 4, gap: 0.18, pagePad: 0.28, pagePadA4: 0.24 },
+  dense9: { key: 'dense9', label: 'Dense 9-up', cols: 3, rows: 3, gap: 0.12, pagePad: 0.2, pagePadA4: 0.16 }
+};
 
 const body = document.body;
 const countControls = document.getElementById('countControls');
@@ -17,6 +20,7 @@ const legend = document.getElementById('legend');
 const printStage = document.getElementById('printStage');
 const deckSummary = document.getElementById('deckSummary');
 const paperSize = document.getElementById('paperSize');
+const layoutMode = document.getElementById('layoutMode');
 const renderMode = document.getElementById('renderMode');
 const pageSizeStyle = document.createElement('style');
 pageSizeStyle.id = 'page-size-style';
@@ -65,8 +69,18 @@ function expandCards(typeCounts) {
   return cards;
 }
 
+function currentLayout() {
+  return LAYOUTS[layoutMode.value] || LAYOUTS.safe8;
+}
+
+function cardsPerPage() {
+  const layout = currentLayout();
+  return layout.cols * layout.rows;
+}
+
 function mirrorForBacks(pageCards) {
-  const rows = chunk(pageCards, 3);
+  const { cols } = currentLayout();
+  const rows = chunk(pageCards, cols);
   return rows.flatMap(row => row.slice().reverse());
 }
 
@@ -110,14 +124,15 @@ function renderCard(card, side = 'front') {
 }
 
 function renderSheets(cards, side) {
-  const pages = chunk(cards, CARDS_PER_PAGE);
+  const layout = currentLayout();
+  const pages = chunk(cards, cardsPerPage());
   return pages.map((pageCards, pageIndex) => {
     const printableCards = side === 'back' ? mirrorForBacks(pageCards) : pageCards;
     const label = side === 'front' ? 'Fronts' : 'Mirrored backs';
     return `
       <section class="sheet">
         <div class="sheet-head">
-          <div><strong>History of Money Card Trading Kit</strong><br/>${label}</div>
+          <div><strong>History of Money Card Trading Kit</strong><br/>${label} · ${layout.label}</div>
           <div>Page ${pageIndex + 1} of ${pages.length}</div>
         </div>
         <div class="sheet-grid">
@@ -130,16 +145,35 @@ function renderSheets(cards, side) {
 
 function render() {
   const isA4 = paperSize.value === 'a4';
+  const layout = currentLayout();
+  const pageW = isA4 ? 8.27 : 8.5;
+  const pageH = isA4 ? 11.69 : 11;
+  const pagePad = isA4 ? layout.pagePadA4 : layout.pagePad;
+  const gap = layout.gap;
+  const headerReserve = 0.34;
+  const aspect = 2.5 / 3.5;
+  const maxCardWFromWidth = (pageW - (2 * pagePad) - (gap * (layout.cols - 1))) / layout.cols;
+  const maxCardHFromHeight = (pageH - (2 * pagePad) - headerReserve - (gap * (layout.rows - 1))) / layout.rows;
+  const cardW = Math.min(maxCardWFromWidth, maxCardHFromHeight * aspect);
+  const cardH = cardW / aspect;
+
   body.classList.toggle('paper-a4', isA4);
   body.classList.toggle('paper-letter', !isA4);
+  body.style.setProperty('--sheet-cols', String(layout.cols));
+  body.style.setProperty('--sheet-rows', String(layout.rows));
+  body.style.setProperty('--gap', `${gap}in`);
+  body.style.setProperty('--page-pad', `${pagePad}in`);
+  body.style.setProperty('--card-w', `${cardW}in`);
+  body.style.setProperty('--card-h', `${cardH}in`);
   pageSizeStyle.textContent = `@page { size: ${isA4 ? 'A4' : 'letter'} portrait; margin: 0; }`;
 
   const typeCounts = readCounts();
   const cards = expandCards(typeCounts);
-  const frontsPages = Math.ceil(cards.length / CARDS_PER_PAGE);
+  const perPage = cardsPerPage();
+  const frontsPages = Math.ceil(cards.length / perPage);
   const mode = renderMode.value;
 
-  deckSummary.innerHTML = `${cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · default run = 800 cards across 89 front sheets and 89 mirrored back sheets.`;
+  deckSummary.innerHTML = `${cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${layout.label} (${layout.cols}×${layout.rows}).`;
 
   if (!cards.length) {
     printStage.innerHTML = '<section class="panel"><h2>No cards selected</h2><p>Add at least one card count to generate printable sheets.</p></section>';
@@ -161,6 +195,7 @@ document.addEventListener('click', event => {
       if (input) input.value = DEFAULT_COUNT;
     });
     paperSize.value = 'letter';
+    layoutMode.value = 'safe8';
     renderMode.value = 'both';
     render();
   }
