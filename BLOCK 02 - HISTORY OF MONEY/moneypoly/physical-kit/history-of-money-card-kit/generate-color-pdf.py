@@ -1,20 +1,20 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.colors import Color, HexColor, white
 from reportlab.lib.utils import ImageReader
 
 OUT = Path(__file__).resolve().parent / 'history-of-money-card-trading-kit.pdf'
-PAGE_W, PAGE_H = letter
+PAGE_W, PAGE_H = landscape(letter)
 MARGIN_X = 20
 MARGIN_Y = 24
 GAP_X = 10
 GAP_Y = 12
-COLS = 2
-ROWS = 4
-CARD_W = (PAGE_W - 2 * MARGIN_X - GAP_X * (COLS - 1)) / COLS
-CARD_H = (PAGE_H - 2 * MARGIN_Y - GAP_Y * (ROWS - 1)) / ROWS
+COLS = 4
+ROWS = 2
+CARD_W = 2.5 * 72
+CARD_H = 3.5 * 72
 RADIUS = 14
 COUNT = 100
 
@@ -219,20 +219,20 @@ def footer(pdf, label, page_num, total_pages):
 
 
 def build_pdf():
-    pdf = canvas.Canvas(str(OUT), pagesize=letter)
+    pdf = canvas.Canvas(str(OUT), pagesize=landscape(letter))
     cards = all_cards()
     pos = positions()
     pages = chunk(cards, COLS * ROWS)
     total = len(pages)
 
     for page_num, page_cards in enumerate(pages, start=1):
-        footer(pdf, 'Color fronts · safer 8-up layout', page_num, total)
+        footer(pdf, 'Color fronts · landscape 8-up poker size', page_num, total)
         for (x, y), card in zip(pos, page_cards):
             draw_face(pdf, card, x, y)
         pdf.showPage()
 
     for page_num, page_cards in enumerate(pages, start=1):
-        footer(pdf, 'Color mirrored backs · safer 8-up layout', page_num, total)
+        footer(pdf, 'Color mirrored backs · landscape 8-up poker size', page_num, total)
         rows = [page_cards[i:i + COLS] for i in range(0, len(page_cards), COLS)]
         mirrored = []
         for row in rows:

@@ -1,18 +1,18 @@
 from pathlib import Path
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.colors import black, white, HexColor
 from reportlab.pdfgen import canvas
 
 OUT = Path(__file__).resolve().parent / 'history-of-money-card-trading-kit-bw-8up.pdf'
-PAGE_W, PAGE_H = letter
+PAGE_W, PAGE_H = landscape(letter)
 MARGIN_X = 20
 MARGIN_Y = 24
 GAP_X = 10
 GAP_Y = 12
-COLS = 2
-ROWS = 4
-CARD_W = (PAGE_W - 2 * MARGIN_X - GAP_X * (COLS - 1)) / COLS
-CARD_H = (PAGE_H - 2 * MARGIN_Y - GAP_Y * (ROWS - 1)) / ROWS
+COLS = 4
+ROWS = 2
+CARD_W = 2.5 * 72
+CARD_H = 3.5 * 72
 HEADER_H = 18
 RADIUS = 12
 BG = HexColor('#f6f6f6')
@@ -149,17 +149,17 @@ def main():
             cards.append({'label': label, 'note': note, 'lesson': lesson, 'pattern': pattern, 'serial': serial})
     pos = positions()
     grouped = chunks(cards, COLS * ROWS)
-    pdf = canvas.Canvas(str(OUT), pagesize=letter)
+    pdf = canvas.Canvas(str(OUT), pagesize=landscape(letter))
     total = len(grouped)
 
     for page_num, group in enumerate(grouped, start=1):
-        header(pdf, 'Black & white fronts · safer 8-up layout', page_num, total)
+        header(pdf, 'Black & white fronts · landscape 8-up poker size', page_num, total)
         for (x, y), card in zip(pos, group):
             draw_face(pdf, card, x, y)
         pdf.showPage()
 
     for page_num, group in enumerate(grouped, start=1):
-        header(pdf, 'Black & white mirrored backs · safer 8-up layout', page_num, total)
+        header(pdf, 'Black & white mirrored backs · landscape 8-up poker size', page_num, total)
         rows = [group[i:i + COLS] for i in range(0, len(group), COLS)]
         mirrored = []
         for row in rows:

@@ -10,8 +10,8 @@ const CARD_TYPES = [
 ];
 const DEFAULT_COUNT = 100;
 const LAYOUTS = {
-  safe8: { key: 'safe8', label: 'Safer 8-up', cols: 2, rows: 4, gap: 0.1, pagePad: 0.16, pagePadA4: 0.14 },
-  dense9: { key: 'dense9', label: 'Dense 9-up', cols: 3, rows: 3, gap: 0.12, pagePad: 0.2, pagePadA4: 0.16 }
+  safe8: { key: 'safe8', label: 'Landscape 8-up poker size', cols: 4, rows: 2, gap: 0.1, pagePad: 0.18, pagePadA4: 0.16, orientation: 'landscape', fixedCard: true },
+  dense9: { key: 'dense9', label: 'Dense 9-up', cols: 3, rows: 3, gap: 0.12, pagePad: 0.2, pagePadA4: 0.16, orientation: 'portrait', fixedCard: false }
 };
 
 const body = document.body;
@@ -147,19 +147,22 @@ function renderSheets(cards, side, options = {}) {
 function getRenderContext(options = {}) {
   const isA4 = paperSize.value === 'a4';
   const layout = currentLayout();
-  const pageW = isA4 ? 8.27 : 8.5;
-  const pageH = isA4 ? 11.69 : 11;
+  const baseW = isA4 ? 8.27 : 8.5;
+  const baseH = isA4 ? 11.69 : 11;
+  const landscape = layout.orientation === 'landscape';
+  const pageW = landscape ? baseH : baseW;
+  const pageH = landscape ? baseW : baseH;
   const pagePad = isA4 ? layout.pagePadA4 : layout.pagePad;
   const gap = layout.gap;
   const headerReserve = options.cardsOnly ? 0.02 : 0.34;
   const aspect = 2.5 / 3.5;
   const maxCardWFromWidth = (pageW - (2 * pagePad) - (gap * (layout.cols - 1))) / layout.cols;
   const maxCardHFromHeight = (pageH - (2 * pagePad) - headerReserve - (gap * (layout.rows - 1))) / layout.rows;
-  const cardW = Math.min(maxCardWFromWidth, maxCardHFromHeight * aspect);
-  const cardH = cardW / aspect;
+  const cardW = layout.fixedCard ? 2.5 : Math.min(maxCardWFromWidth, maxCardHFromHeight * aspect);
+  const cardH = layout.fixedCard ? 3.5 : cardW / aspect;
   const typeCounts = readCounts();
   const cards = expandCards(typeCounts);
-  return { isA4, layout, pagePad, gap, cardW, cardH, cards };
+  return { isA4, layout, landscape, pageW, pageH, pagePad, gap, cardW, cardH, cards };
 }
 
 function applyLayoutVars(ctx, target = body) {
@@ -169,6 +172,8 @@ function applyLayoutVars(ctx, target = body) {
   target.style.setProperty('--page-pad', `${ctx.pagePad}in`);
   target.style.setProperty('--card-w', `${ctx.cardW}in`);
   target.style.setProperty('--card-h', `${ctx.cardH}in`);
+  target.style.setProperty('--page-w', `${ctx.pageW}in`);
+  target.style.setProperty('--page-h', `${ctx.pageH}in`);
 }
 
 function render(options = {}) {
@@ -177,7 +182,7 @@ function render(options = {}) {
   body.classList.toggle('paper-letter', !ctx.isA4);
   body.classList.toggle('printing-cards-only', Boolean(options.cardsOnly));
   applyLayoutVars(ctx);
-  pageSizeStyle.textContent = `@page { size: ${ctx.isA4 ? 'A4' : 'letter'} portrait; margin: 0; }`;
+  pageSizeStyle.textContent = `@page { size: ${ctx.isA4 ? 'A4' : 'letter'} ${ctx.landscape ? 'landscape' : 'portrait'}; margin: 0; }`;
 
   const perPage = cardsPerPage();
   const frontsPages = Math.ceil(ctx.cards.length / perPage);
