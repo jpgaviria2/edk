@@ -7,6 +7,8 @@ This kit adds a **physical card-trading format** for Block 02 that fits JP's new
 - `index.html` — deck builder and print-ready sheet generator
 - `styles.css` — poker-card layout, print styling, crop marks, and responsive preview
 - `app.js` — the 8 card categories, default counts, mirrored back-page logic, and sheet rendering
+- `generate-bw-pdf.py` — generates the office-printer-friendly black-and-white PDF
+- `history-of-money-card-trading-kit-bw.pdf` — bundled black-and-white printable deck
 
 ## Card types included
 
@@ -36,11 +38,12 @@ If you prefer from the repo root, you can also open:
 ## How to print
 
 1. Open `index.html`.
-2. Leave the default counts at `100` for each category, or reduce them for a smaller test deck.
-3. Click **Print fronts**.
-4. Reinsert the printed sheets.
-5. Click **Print backs** and use **flip on long edge**.
-6. Cut along crop marks.
+2. Use **Download B&W PDF** for the office-printer-friendly version, or **Download color PDF** if you want the richer file.
+3. Leave the default counts at `100` for each category, or reduce them for a smaller test deck.
+4. Click **Print fronts**.
+5. Reinsert the printed sheets.
+6. Click **Print backs** and use **flip on long edge**.
+7. Cut along crop marks.
 
 ## Suggested workshop use
 
