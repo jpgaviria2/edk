@@ -1,5 +1,7 @@
 # Moneypoly Physical Workshop Facilitator Kit
 
+> New addition: a poker-card-style deck builder for the updated workshop format now lives at `history-of-money-card-kit/index.html` inside this same `physical-kit` folder.
+
 ## Purpose
 
 Moneypoly is a live, table-based history-of-money game. Players first learn to survive by securing food, water, and shelter, then discover the deeper goal: preserve and grow wealth that can be passed to future generations.

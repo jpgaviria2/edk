@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>History of Money Card Trading Kit</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="kit-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Block 02 · physical kit · JP workshop direction</p>
+        <h1>History of Money Card Trading Kit</h1>
+        <p class="lede">A Monopoly-Go-like physical card deck for barter, commodity money, gold, banknotes, and dollars. Default output: <strong>100 cards for each of 8 resource types</strong>, laid out as poker-size print sheets with matching backs.</p>
+      </div>
+      <div class="hero-actions no-print">
+        <button class="btn primary" data-action="print-fronts">Print fronts</button>
+        <button class="btn" data-action="print-backs">Print backs</button>
+        <button class="btn gold" data-action="print-both">Print full deck</button>
+      </div>
+    </header>
+
+    <section class="controls no-print">
+      <article class="panel">
+        <h2>Deck builder</h2>
+        <p>Leave the defaults to produce an 800-card full workshop deck. Adjust counts if you want a smaller demo run.</p>
+        <div class="toolbar">
+          <label>Paper size
+            <select id="paperSize">
+              <option value="letter" selected>US Letter</option>
+              <option value="a4">A4</option>
+            </select>
+          </label>
+          <label>Side
+            <select id="renderMode">
+              <option value="both" selected>Fronts + mirrored backs</option>
+              <option value="fronts">Fronts only</option>
+              <option value="backs">Backs only</option>
+            </select>
+          </label>
+          <button class="btn primary" data-action="render">Rebuild sheets</button>
+          <button class="btn" data-action="reset">Reset to 100 each</button>
+        </div>
+        <div class="counts-grid" id="countControls"></div>
+      </article>
+
+      <article class="panel quick-guide">
+        <h2>Print notes</h2>
+        <ol>
+          <li>Print fronts first on cardstock or heavy matte paper.</li>
+          <li>Reinsert sheets and print mirrored backs using <strong>flip on long edge</strong>.</li>
+          <li>Cut along the light crop marks. Optional: sleeve or round the corners.</li>
+        </ol>
+        <div class="summary" id="deckSummary"></div>
+      </article>
+    </section>
+
+    <section class="legend no-print" id="legend"></section>
+    <section class="print-stage" id="printStage"></section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
