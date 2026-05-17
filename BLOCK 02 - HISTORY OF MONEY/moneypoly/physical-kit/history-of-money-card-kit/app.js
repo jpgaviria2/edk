@@ -10,7 +10,7 @@ const CARD_TYPES = [
 ];
 const DEFAULT_COUNT = 100;
 const LAYOUTS = {
-  safe8: { key: 'safe8', label: 'Safer 8-up', cols: 2, rows: 4, gap: 0.18, pagePad: 0.28, pagePadA4: 0.24 },
+  safe8: { key: 'safe8', label: 'Safer 8-up', cols: 2, rows: 4, gap: 0.1, pagePad: 0.16, pagePadA4: 0.14 },
   dense9: { key: 'dense9', label: 'Dense 9-up', cols: 3, rows: 3, gap: 0.12, pagePad: 0.2, pagePadA4: 0.16 }
 };
 
@@ -144,14 +144,14 @@ function renderSheets(cards, side, options = {}) {
   }).join('');
 }
 
-function getRenderContext() {
+function getRenderContext(options = {}) {
   const isA4 = paperSize.value === 'a4';
   const layout = currentLayout();
   const pageW = isA4 ? 8.27 : 8.5;
   const pageH = isA4 ? 11.69 : 11;
   const pagePad = isA4 ? layout.pagePadA4 : layout.pagePad;
   const gap = layout.gap;
-  const headerReserve = 0.34;
+  const headerReserve = options.cardsOnly ? 0.02 : 0.34;
   const aspect = 2.5 / 3.5;
   const maxCardWFromWidth = (pageW - (2 * pagePad) - (gap * (layout.cols - 1))) / layout.cols;
   const maxCardHFromHeight = (pageH - (2 * pagePad) - headerReserve - (gap * (layout.rows - 1))) / layout.rows;
@@ -172,7 +172,7 @@ function applyLayoutVars(ctx, target = body) {
 }
 
 function render(options = {}) {
-  const ctx = getRenderContext();
+  const ctx = getRenderContext(options);
   body.classList.toggle('paper-a4', ctx.isA4);
   body.classList.toggle('paper-letter', !ctx.isA4);
   body.classList.toggle('printing-cards-only', Boolean(options.cardsOnly));

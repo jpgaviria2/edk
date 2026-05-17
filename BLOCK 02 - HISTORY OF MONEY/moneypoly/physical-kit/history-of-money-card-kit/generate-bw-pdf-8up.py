@@ -5,10 +5,10 @@ from reportlab.pdfgen import canvas
 
 OUT = Path(__file__).resolve().parent / 'history-of-money-card-trading-kit-bw-8up.pdf'
 PAGE_W, PAGE_H = letter
-MARGIN_X = 34
-MARGIN_Y = 42
-GAP_X = 18
-GAP_Y = 20
+MARGIN_X = 20
+MARGIN_Y = 24
+GAP_X = 10
+GAP_Y = 12
 COLS = 2
 ROWS = 4
 CARD_W = (PAGE_W - 2 * MARGIN_X - GAP_X * (COLS - 1)) / COLS
@@ -63,9 +63,9 @@ def crop_marks(pdf, x, y, w, h):
 
 def header(pdf, title, page_num, total_pages):
     pdf.setFillColor(TEXT_SOFT)
-    pdf.setFont('Helvetica', 8)
-    pdf.drawString(MARGIN_X, 16, title)
-    pdf.drawRightString(PAGE_W - MARGIN_X, 16, f'Page {page_num} of {total_pages}')
+    pdf.setFont('Helvetica', 7)
+    pdf.drawString(MARGIN_X, 10, title)
+    pdf.drawRightString(PAGE_W - MARGIN_X, 10, f'Page {page_num} of {total_pages}')
 
 
 def draw_face(pdf, card, x, y):
