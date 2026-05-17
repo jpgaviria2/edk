@@ -4,22 +4,23 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Host · History of Money</title>
-  <link rel="stylesheet" href="../assets/edk.css?v=4"/>
+  <link rel="stylesheet" href="../assets/edk.css?v=5"/>
 </head>
 <body>
   <a class="global-home-button" href="/" aria-label="Home" style="position:fixed;left:calc(10px + env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 13px;border-radius:999px;border:2px solid rgba(33,60,36,.18);background:rgba(255,250,240,.94);color:#172016;text-decoration:none;font:800 14px/1 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.12);backdrop-filter:blur(10px)">⌂ Home</a>
   <main class="app-shell">
     <header class="app-header">
       <a class="brand" href="../"><img class="brand-logo-img" src="/assets/icons/learning-bitcoin-foundation-logo.jpg" alt="Learning Bitcoin Foundation" /><span class="brand-lockup"><span class="brand-title">History of Money</span><span class="brand-subtitle">Host mode</span></span></a>
-      <nav class="nav-links"><a class="btn blue" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play</a><a class="btn ghost" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Flagship lesson</a><a class="btn ghost" href="../learn/">Learn</a><a class="btn ghost" href="../resources/medici/">Medici Kit</a></nav>
+      <nav class="nav-links"><a class="btn blue" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play</a><a class="btn ghost" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Flagship lesson</a><a class="btn ghost" href="./presenter/">Moderator deck</a><a class="btn ghost" href="../resources/medici/">Medici Kit</a></nav>
       <button class="btn hamburger" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">☰ Menu</button>
     </header>
 
     <nav class="mobile-menu" id="mobile-menu">
       <a class="btn" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Flagship lesson</a>
       <a class="btn" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/">Play flagship</a>
-      <a class="btn" href="../learn/">Learn mode</a>
+      <a class="btn" href="./presenter/">Moderator deck</a>
       <a class="btn" href="../resources/medici/">Medici host kit</a>
+      <a class="btn" href="../resources/">Facilitator resources</a>
       <a class="btn" href="#labs">Experimental labs</a>
     </nav>
 
@@ -29,8 +30,8 @@
         <h1>Run the flagship lesson with confidence.</h1>
         <p class="lede">Host mode is the facilitator layer for the Learning Bitcoin Foundation version of History of Money: start with the core lesson, choose the room format, then pull the right materials for the workshop you are actually running.</p>
         <div class="actions">
-          <a class="btn primary" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open flagship lesson</a>
-          <a class="btn green" href="../resources/medici/">Open Medici host kit</a>
+          <a class="btn primary" href="./presenter/">Open moderator deck</a>
+          <a class="btn green" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/">Open flagship lesson</a>
           <a class="btn blue" href="#sessions">Choose session format</a>
         </div>
       </div>
@@ -49,8 +50,16 @@
       <div class="section-head"><div><span class="eyebrow">Session formats</span><h2>Pick the room you are actually in.</h2></div></div>
       <div class="grid three">
         <article class="card run-card"><span class="pill">10 minutes</span><h3>Meetup opener</h3><p>Run one trade failure, one debrief question, and point the room into the flagship lesson.</p></article>
-        <article class="card run-card feature-card"><span class="pill gold">30 minutes</span><h3>Flagship workshop</h3><p>Best default for a conference or meetup: Moneypoly, debrief, money emergence, then the bridge to fiat and Bitcoin.</p></article>
+        <article class="card run-card feature-card"><span class="pill gold">30 minutes</span><h3>Flagship workshop</h3><p>Best default for a conference or meetup: moderator deck on projector, Moneypoly in the room, debrief, then the bridge to fiat and Bitcoin.</p></article>
         <article class="card run-card"><span class="pill green">60 minutes</span><h3>Extended class</h3><p>Add Medici role-play, trust networks, and institutional coordination after the core lesson is understood.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><div><span class="eyebrow">Presenter layer</span><h2>The projector deck is now part of the host system.</h2></div></div>
+      <div class="grid two">
+        <article class="card feature-card"><span class="pill gold">Room-facing</span><h3>Moderator presentation</h3><p>Use the presenter deck to explain key story beats, cue each workshop phase, and keep the room synchronized without breaking the flagship flow.</p><div class="actions"><a class="btn primary" href="./presenter/">Launch presenter deck</a><a class="btn ghost" href="../resources/">Open facilitator resources</a></div></article>
+        <article class="card"><span class="pill blue">Access</span><h3>Lightly protected for workshop use</h3><p>The presenter page is password gated for facilitators so casual visitors do not land directly on the projector surface.</p><ul class="bullet-list"><li>Password prompt appears before the deck loads.</li><li>Access is remembered locally in the browser after unlock.</li><li>Static-site safe: no server logic required.</li></ul></article>
       </div>
     </section>
 
@@ -58,7 +67,7 @@
       <div class="section-head"><div><span class="eyebrow">Host stack</span><h2>Lead with Block 02. Support with the right add-ons.</h2></div></div>
       <div class="grid two">
         <a class="card link feature-card" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/"><span class="pill gold">Core</span><h3>Flagship lesson</h3><p>The main workshop surface: barter friction, money emergence, and the bridge into modern monetary questions.</p></a>
-        <a class="card link" href="../BLOCK%2002%20-%20HISTORY%20OF%20MONEY/moneypoly/physical-kit/FACILITATOR-KIT.pdf"><span class="pill green">Printables</span><h3>Moneypoly facilitator kit</h3><p>Use the printable flagship kit when you need a low-friction physical setup.</p></a>
+        <a class="card link" href="./presenter/"><span class="pill green">Projector</span><h3>Moderator presentation</h3><p>Put the key story points and live room cues on screen while you facilitate.</p></a>
         <a class="card link" href="../resources/medici/"><span class="pill blue">Extension</span><h3>Medici host kit</h3><p>Add banking, credit slips, trust, and Florence context as a second layer, not a competing start point.</p></a>
         <a class="card link" href="../BLOCK%2003%20-%20FIAT%20INFLATION%20%26%20PURCHASING%20POWER/"><span class="pill">Follow-on</span><h3>Block 03: Fiat & Inflation</h3><p>Use it immediately after the flagship session to carry the lesson forward.</p></a>
       </div>
@@ -99,7 +108,7 @@
       </div>
     </section>
 
-    <footer class="footer"><p class="small">Host mode now treats History of Money as the flagship Learning Bitcoin Foundation workshop, with Medici and labs as deliberate extensions.</p><div class="footer-links"><a class="btn ghost" href="../">Home</a><a class="btn ghost" href="../learn/">Learn</a><a class="btn ghost" href="../resources/medici/">Medici Kit</a></div></footer>
+    <footer class="footer"><p class="small">Host mode now treats History of Money as the flagship Learning Bitcoin Foundation workshop, with a projector-ready moderator deck, Medici extension, and labs arranged as deliberate supporting layers.</p><div class="footer-links"><a class="btn ghost" href="../">Home</a><a class="btn ghost" href="../resources/">Resources</a><a class="btn ghost" href="./presenter/">Moderator deck</a></div></footer>
   </main>
   <script src="../assets/edk.js?v=2"></script>
 </body>
