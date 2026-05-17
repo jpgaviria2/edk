@@ -5,14 +5,14 @@ from reportlab.pdfgen import canvas
 
 OUT = Path(__file__).resolve().parent / 'history-of-money-card-trading-kit-bw.pdf'
 PAGE_W, PAGE_H = letter
-MARGIN_X = 24
-MARGIN_Y = 30
-GAP_X = 12
-GAP_Y = 12
+MARGIN_X = 32
+MARGIN_Y = 38
+GAP_X = 14
+GAP_Y = 16
 COLS = 3
 ROWS = 3
 CARD_W = (PAGE_W - 2 * MARGIN_X - GAP_X * (COLS - 1)) / COLS
-CARD_H = (PAGE_H - 2 * MARGIN_Y - 28 - GAP_Y * (ROWS - 1)) / ROWS
+CARD_H = (PAGE_H - 2 * MARGIN_Y - GAP_Y * (ROWS - 1)) / ROWS
 HEADER_H = 18
 RADIUS = 12
 BG = HexColor('#f6f6f6')
@@ -37,7 +37,7 @@ def chunks(items, size):
 
 
 def positions():
-    top_y = PAGE_H - MARGIN_Y - 28 - CARD_H
+    top_y = PAGE_H - MARGIN_Y - CARD_H
     out = []
     for r in range(ROWS):
         for c in range(COLS):
@@ -62,12 +62,10 @@ def crop_marks(pdf, x, y, w, h):
 
 
 def header(pdf, title, page_num, total_pages):
-    pdf.setFillColor(BG)
-    pdf.rect(0, PAGE_H - 24, PAGE_W, 24, stroke=0, fill=1)
-    pdf.setFillColor(black)
-    pdf.setFont('Helvetica-Bold', 10)
-    pdf.drawString(MARGIN_X, PAGE_H - 15, f'History of Money Card Trading Kit · {title}')
-    pdf.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 15, f'Page {page_num} of {total_pages}')
+    pdf.setFillColor(TEXT_SOFT)
+    pdf.setFont('Helvetica', 8)
+    pdf.drawString(MARGIN_X, 16, f'{title}')
+    pdf.drawRightString(PAGE_W - MARGIN_X, 16, f'Page {page_num} of {total_pages}')
 
 
 def draw_face(pdf, card, x, y):
@@ -85,18 +83,18 @@ def draw_face(pdf, card, x, y):
 
     pdf.setFillColor(LIGHT)
     pdf.setStrokeColor(MID)
-    pdf.roundRect(x + 16, y + CARD_H - 112, CARD_W - 32, 58, 10, stroke=1, fill=1)
+    pdf.roundRect(x + 16, y + CARD_H - 104, CARD_W - 32, 52, 10, stroke=1, fill=1)
     pdf.setFillColor(TEXT_SOFT)
-    pdf.setFont('Courier-Bold', 18)
-    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 88, card['pattern'])
+    pdf.setFont('Courier-Bold', 16)
+    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 83, card['pattern'])
 
     pdf.setFillColor(black)
-    pdf.setFont('Helvetica-Bold', 17)
-    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 132, card['label'])
-    pdf.setFont('Helvetica-Bold', 11)
-    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 148, card['note'])
+    pdf.setFont('Helvetica-Bold', 16)
+    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 122, card['label'])
+    pdf.setFont('Helvetica-Bold', 10)
+    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H - 138, card['note'])
 
-    text = pdf.beginText(x + 14, y + CARD_H - 172)
+    text = pdf.beginText(x + 14, y + CARD_H - 160)
     text.setFont('Helvetica', 9)
     text.setLeading(11)
     text.textLine('Workshop trade card · black & white print edition')
@@ -133,12 +131,12 @@ def draw_back(pdf, card, x, y):
 
     pdf.setFillColor(LIGHT)
     pdf.setStrokeColor(MID)
-    pdf.roundRect(x + 22, y + CARD_H / 2 - 30, CARD_W - 44, 60, 12, stroke=1, fill=1)
+    pdf.roundRect(x + 22, y + CARD_H / 2 - 28, CARD_W - 44, 56, 12, stroke=1, fill=1)
     pdf.setFillColor(TEXT_SOFT)
-    pdf.setFont('Courier-Bold', 20)
-    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H / 2 + 8, card['pattern'])
-    pdf.setFont('Courier-Bold', 20)
-    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H / 2 - 12, card['pattern'])
+    pdf.setFont('Courier-Bold', 18)
+    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H / 2 + 7, card['pattern'])
+    pdf.setFont('Courier-Bold', 18)
+    pdf.drawCentredString(x + CARD_W / 2, y + CARD_H / 2 - 11, card['pattern'])
 
     pdf.setFillColor(black)
     pdf.setFont('Helvetica', 9)
