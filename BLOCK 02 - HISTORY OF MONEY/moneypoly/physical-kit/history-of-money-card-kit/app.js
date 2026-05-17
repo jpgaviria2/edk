@@ -171,16 +171,17 @@ function applyLayoutVars(ctx, target = body) {
   target.style.setProperty('--card-h', `${ctx.cardH}in`);
 }
 
-function render() {
+function render(options = {}) {
   const ctx = getRenderContext();
   body.classList.toggle('paper-a4', ctx.isA4);
   body.classList.toggle('paper-letter', !ctx.isA4);
+  body.classList.toggle('printing-cards-only', Boolean(options.cardsOnly));
   applyLayoutVars(ctx);
   pageSizeStyle.textContent = `@page { size: ${ctx.isA4 ? 'A4' : 'letter'} portrait; margin: 0; }`;
 
   const perPage = cardsPerPage();
   const frontsPages = Math.ceil(ctx.cards.length / perPage);
-  const mode = renderMode.value;
+  const mode = options.mode || renderMode.value;
 
   deckSummary.innerHTML = `${ctx.cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${ctx.layout.label} (${ctx.layout.cols}×${ctx.layout.rows}).`;
 
@@ -189,32 +190,18 @@ function render() {
     return;
   }
 
-  const fronts = renderSheets(ctx.cards, 'front');
-  const backs = renderSheets(ctx.cards, 'back');
+  const fronts = renderSheets(ctx.cards, 'front', { cardsOnly: options.cardsOnly });
+  const backs = renderSheets(ctx.cards, 'back', { cardsOnly: options.cardsOnly });
   printStage.innerHTML = [mode !== 'backs' ? fronts : '', mode !== 'fronts' ? backs : ''].join('');
 }
 
-function openPrintWindow(mode) {
-  const ctx = getRenderContext();
-  if (!ctx.cards.length) return;
-  const printHtml = [
-    mode !== 'backs' ? renderSheets(ctx.cards, 'front', { cardsOnly: true }) : '',
-    mode !== 'fronts' ? renderSheets(ctx.cards, 'back', { cardsOnly: true }) : ''
-  ].join('');
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-  if (!printWindow) {
-    renderMode.value = mode;
-    render();
-    window.print();
-    return;
-  }
-  const styleVars = `:root{--sheet-cols:${ctx.layout.cols};--sheet-rows:${ctx.layout.rows};--gap:${ctx.gap}in;--page-pad:${ctx.pagePad}in;--card-w:${ctx.cardW}in;--card-h:${ctx.cardH}in;}`;
-  printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>History of Money Print</title><link rel="stylesheet" href="./styles.css" /><style>${styleVars}@page{size:${ctx.isA4 ? 'A4' : 'letter'} portrait;margin:0}body{background:#fff;margin:0;padding:0}.print-stage{gap:0}.sheet{margin:0;box-shadow:none}.sheet-head{display:none!important}</style></head><body class="${ctx.isA4 ? 'paper-a4' : 'paper-letter'}"><main class="kit-shell" style="padding:0;max-width:none"><section class="print-stage">${printHtml}</section></main></body></html>`);
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.onload = () => {
-    printWindow.print();
-  };
+function printCurrentPage(mode) {
+  render({ mode, cardsOnly: true });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.print();
+    });
+  });
 }
 
 document.addEventListener('click', event => {
@@ -231,9 +218,9 @@ document.addEventListener('click', event => {
     renderMode.value = 'both';
     render();
   }
-  if (action === 'print-fronts') openPrintWindow('fronts');
-  if (action === 'print-backs') openPrintWindow('backs');
-  if (action === 'print-both') openPrintWindow('both');
+  if (action === 'print-fronts') printCurrentPage('fronts');
+  if (action === 'print-backs') printCurrentPage('backs');
+  if (action === 'print-both') printCurrentPage('both');
 });
 
 document.addEventListener('change', event => {
@@ -242,6 +229,10 @@ document.addEventListener('change', event => {
 
 document.addEventListener('input', event => {
   if (event.target.matches('input[data-key]')) render();
+});
+
+window.addEventListener('afterprint', () => {
+  render();
 });
 
 buildControls();
