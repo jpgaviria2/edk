@@ -30,6 +30,8 @@ label{display:grid;gap:6px;font-weight:700;font-size:.95rem} input,select{paddin
 .print-stage{display:grid;gap:18px}
 .sheet{width:var(--page-w);min-height:var(--page-h);padding:var(--page-pad);margin:0 auto;background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.16);position:relative;page-break-after:always;break-after:page}
 .sheet-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:.12in;font-size:.88rem;color:#6a5b46}
+.sheet.cards-only{padding-top:calc(var(--page-pad) + .02in)}
+.sheet.cards-only .sheet-head{display:none}
 .sheet-grid{display:grid;grid-template-columns:repeat(var(--sheet-cols),var(--card-w));grid-template-rows:repeat(var(--sheet-rows),var(--card-h));gap:var(--gap);justify-content:center}
 .card{width:var(--card-w);height:var(--card-h);border-radius:.18in;overflow:hidden;position:relative;border:1.5px solid rgba(39,29,13,.2);background:#f8f1e3}
 .card-inner{position:absolute;inset:0;padding:.18in;display:flex;flex-direction:column;justify-content:space-between}

@@ -123,14 +123,15 @@ function renderCard(card, side = 'front') {
   `;
 }
 
-function renderSheets(cards, side) {
+function renderSheets(cards, side, options = {}) {
   const layout = currentLayout();
   const pages = chunk(cards, cardsPerPage());
+  const cardsOnly = options.cardsOnly ? ' cards-only' : '';
   return pages.map((pageCards, pageIndex) => {
     const printableCards = side === 'back' ? mirrorForBacks(pageCards) : pageCards;
     const label = side === 'front' ? 'Fronts' : 'Mirrored backs';
     return `
-      <section class="sheet">
+      <section class="sheet${cardsOnly}">
         <div class="sheet-head">
           <div><strong>History of Money Card Trading Kit</strong><br/>${label} · ${layout.label}</div>
           <div>Page ${pageIndex + 1} of ${pages.length}</div>
@@ -143,7 +144,7 @@ function renderSheets(cards, side) {
   }).join('');
 }
 
-function render() {
+function getRenderContext() {
   const isA4 = paperSize.value === 'a4';
   const layout = currentLayout();
   const pageW = isA4 ? 8.27 : 8.5;
@@ -156,33 +157,64 @@ function render() {
   const maxCardHFromHeight = (pageH - (2 * pagePad) - headerReserve - (gap * (layout.rows - 1))) / layout.rows;
   const cardW = Math.min(maxCardWFromWidth, maxCardHFromHeight * aspect);
   const cardH = cardW / aspect;
-
-  body.classList.toggle('paper-a4', isA4);
-  body.classList.toggle('paper-letter', !isA4);
-  body.style.setProperty('--sheet-cols', String(layout.cols));
-  body.style.setProperty('--sheet-rows', String(layout.rows));
-  body.style.setProperty('--gap', `${gap}in`);
-  body.style.setProperty('--page-pad', `${pagePad}in`);
-  body.style.setProperty('--card-w', `${cardW}in`);
-  body.style.setProperty('--card-h', `${cardH}in`);
-  pageSizeStyle.textContent = `@page { size: ${isA4 ? 'A4' : 'letter'} portrait; margin: 0; }`;
-
   const typeCounts = readCounts();
   const cards = expandCards(typeCounts);
+  return { isA4, layout, pagePad, gap, cardW, cardH, cards };
+}
+
+function applyLayoutVars(ctx, target = body) {
+  target.style.setProperty('--sheet-cols', String(ctx.layout.cols));
+  target.style.setProperty('--sheet-rows', String(ctx.layout.rows));
+  target.style.setProperty('--gap', `${ctx.gap}in`);
+  target.style.setProperty('--page-pad', `${ctx.pagePad}in`);
+  target.style.setProperty('--card-w', `${ctx.cardW}in`);
+  target.style.setProperty('--card-h', `${ctx.cardH}in`);
+}
+
+function render() {
+  const ctx = getRenderContext();
+  body.classList.toggle('paper-a4', ctx.isA4);
+  body.classList.toggle('paper-letter', !ctx.isA4);
+  applyLayoutVars(ctx);
+  pageSizeStyle.textContent = `@page { size: ${ctx.isA4 ? 'A4' : 'letter'} portrait; margin: 0; }`;
+
   const perPage = cardsPerPage();
-  const frontsPages = Math.ceil(cards.length / perPage);
+  const frontsPages = Math.ceil(ctx.cards.length / perPage);
   const mode = renderMode.value;
 
-  deckSummary.innerHTML = `${cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${layout.label} (${layout.cols}×${layout.rows}).`;
+  deckSummary.innerHTML = `${ctx.cards.length} total cards · ${frontsPages || 0} sheet${frontsPages === 1 ? '' : 's'} per side · active layout: ${ctx.layout.label} (${ctx.layout.cols}×${ctx.layout.rows}).`;
 
-  if (!cards.length) {
+  if (!ctx.cards.length) {
     printStage.innerHTML = '<section class="panel"><h2>No cards selected</h2><p>Add at least one card count to generate printable sheets.</p></section>';
     return;
   }
 
-  const fronts = renderSheets(cards, 'front');
-  const backs = renderSheets(cards, 'back');
+  const fronts = renderSheets(ctx.cards, 'front');
+  const backs = renderSheets(ctx.cards, 'back');
   printStage.innerHTML = [mode !== 'backs' ? fronts : '', mode !== 'fronts' ? backs : ''].join('');
+}
+
+function openPrintWindow(mode) {
+  const ctx = getRenderContext();
+  if (!ctx.cards.length) return;
+  const printHtml = [
+    mode !== 'backs' ? renderSheets(ctx.cards, 'front', { cardsOnly: true }) : '',
+    mode !== 'fronts' ? renderSheets(ctx.cards, 'back', { cardsOnly: true }) : ''
+  ].join('');
+  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+  if (!printWindow) {
+    renderMode.value = mode;
+    render();
+    window.print();
+    return;
+  }
+  const styleVars = `:root{--sheet-cols:${ctx.layout.cols};--sheet-rows:${ctx.layout.rows};--gap:${ctx.gap}in;--page-pad:${ctx.pagePad}in;--card-w:${ctx.cardW}in;--card-h:${ctx.cardH}in;}`;
+  printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>History of Money Print</title><link rel="stylesheet" href="./styles.css" /><style>${styleVars}@page{size:${ctx.isA4 ? 'A4' : 'letter'} portrait;margin:0}body{background:#fff;margin:0;padding:0}.print-stage{gap:0}.sheet{margin:0;box-shadow:none}.sheet-head{display:none!important}</style></head><body class="${ctx.isA4 ? 'paper-a4' : 'paper-letter'}"><main class="kit-shell" style="padding:0;max-width:none"><section class="print-stage">${printHtml}</section></main></body></html>`);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.onload = () => {
+    printWindow.print();
+  };
 }
 
 document.addEventListener('click', event => {
@@ -199,21 +231,9 @@ document.addEventListener('click', event => {
     renderMode.value = 'both';
     render();
   }
-  if (action === 'print-fronts') {
-    renderMode.value = 'fronts';
-    render();
-    window.print();
-  }
-  if (action === 'print-backs') {
-    renderMode.value = 'backs';
-    render();
-    window.print();
-  }
-  if (action === 'print-both') {
-    renderMode.value = 'both';
-    render();
-    window.print();
-  }
+  if (action === 'print-fronts') openPrintWindow('fronts');
+  if (action === 'print-backs') openPrintWindow('backs');
+  if (action === 'print-both') openPrintWindow('both');
 });
 
 document.addEventListener('change', event => {
